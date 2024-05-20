@@ -1,0 +1,80 @@
+{% extends "loyal_ryde_system/base/base.html" %}
+{% load static %}
+{% block title %}
+    Inicio
+{% endblock title %}
+{% block extra_css %}
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css"/>
+{% endblock extra_css %}
+{% block content %}
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+        <!--begin::Container-->
+        <div id="kt_content_container" class="container-xxl">
+            <!--begin::Navbar-->
+            <div class="card mb-5 mb-xxl-12">
+                <div class="card-body">
+                    <div class="col-md-12 text-center pb-0">
+                        <h1>Listado de Transferencias Transporte GGMN</h1>
+                    </div>
+                    <div class="mb-10 pt-9">
+                        <div class="table-responsive">
+                            <table class="table table-rounded table-striped border gy-7 gs-7" id="transfer_list_table">
+                                <thead>
+                                    <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
+                                        <th>Fecha y Hora</th>
+                                        <th>Lugar de salida</th>
+                                        <th>Destino</th>
+                                        <th>Solicitado</th>
+                                        <th>Aprobado por</th>
+                                        <th>Estatus</th>
+                                        <th>Aprobar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transfer_request in transfer_requests %}
+                                        <tr>
+                                            <td class="text-center">{{ transfer_request.date|date:'d/m/Y'}}-{{ transfer_request.hour|date:'G:i' }}</td>
+                                            <td class="text-center">{{ transfer_request.departure_site }}</td>
+                                            <td class="text-center">{{ transfer_request.destination }}</td>
+                                            <td class="text-center">{{ transfer_request.service_requested.username }}</td>
+                                            <td class="text-center">{{ transfer_request.service_authorize }}</td>
+                                            <td class="text-center">
+                                                <span class="d-inline-block position-relative ms-2">
+                                                    <!--begin::Label-->
+                                                    <span class="d-inline-block mb-2 fs-1tx fw-bolder">
+                                                        {{ transfer_request.status|title }}
+                                                    </span>
+                                                    {% if transfer_request.status == 'esperando validacion' %}
+                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-warning translate rounded"></span>
+                                                    {% elif transfer_request.status == 'validada' %}
+                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-primary translate rounded"></span>
+                                                    {% elif transfer_request.status == 'en proceso' %}
+                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-info translate rounded"></span>
+                                                    {% elif transfer_request.status == 'finalizada' %}
+                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-success translate rounded"></span>
+                                                    {% endif %}
+                                                    <!--end::Line-->
+                                                </span>
+                                            </td>
+                                            
+                                            <td><a href="#" class="btn btn-primary {% if transfer_request.status == 'validada' %}disabled{% endif %}" data-id="{{ transfer_request.id }}">Aprobar Solicitud</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--end::Navbar-->
+        </div>
+        <!--end::Container-->
+    </div>
+{% endblock content %}
+{% block extra_js %}
+<script>
+let url_approve_ajax = "{% url 'core:transfer_request_approve' %}";
+</script>
+<script src="{% static 'trasnfer_request_list.js' %}"></script>
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+{% endblock extra_js %}

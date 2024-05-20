@@ -1,0 +1,9 @@
+{% load i18n %}
+{% autoescape off %}
+    {% block content %}
+    {% endblock %}
+
+    {% blocktrans with site_name=current_site.name site_domain=current_site.domain %}
+        Muchas gracias por afiliarse a nuestro sistema {{ site_name }}!
+    {% endblocktrans %}
+{% endautoescape %}

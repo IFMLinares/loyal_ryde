@@ -1,0 +1,165 @@
+{% extends "base/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<div class="col-12 grid-margin">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Registrar nuevo usuario</h4>
+            <form class="form-sample" id="signup_form" method="post" action="{% url 'account_signup' %}">
+                {% csrf_token %}
+                {% if form.errors %}
+                {% for field in form %}
+                {% for error in field.errors %}
+                <div class="alert alert-error">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+                {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                <div class="alert alert-error">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+                {% endfor %}
+                {% endif %}
+                <div id="type_load">
+                    <div class="col-md-12">
+                        <h3 class="mb-xl-4">Por favor seleccione el rol de usuario:</h3>
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group form-check form-check-success ml-xl-3">
+                                <label class="form-check-label fs-35">
+                                    <span class="ti-settings"></span><span class="ti-user"></span><input required type="radio" class="form-check-inpu"
+                                        name="role" id="id_role_op" value="OP">
+                                    Operador
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-check form-check-success ml-xl-3">
+                                <label class="form-check-label fs-35">
+                                    <span class="ti-user"></span><input required type="radio"
+                                        class="form-check-input" name="role" id="id_role_cl" value="CL">
+                                    Cliente
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-success" style="float: right!important;"
+                                id="confirm">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-none" id="sing-up">
+                    <p class="card-description">
+                        Información del registro.
+                    </p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Nombre:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control add-order" name="first_name" id="id_first_name" placeholder="nombre"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Apellido:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control add-order" name="last_name" id="id_last_name" placeholder="apellido"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Correo:</label>
+                                <div class="col-sm-8">
+                                    <input type="email" class="form-control add-order" name="email" id="id_email" placeholder="email"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Nombre de usuario:</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control add-order" name="username" id="id_username" placeholder="usuario"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="form-cliente">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Empresa:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control add-order" name="company_name" id="id_company_name" placeholder="nombre de la empresa"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">RIF/CI:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control add-order" name="rif" id="id_rif" maxlength="10" placeholder="V9999999/V999999999"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Dirección:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control add-order" name="direction" id="id_direction" placeholder="dirección"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Número de teléfono:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control add-order" name="phone_number" id="id_phone_number" placeholder="teléfono"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                    <input type="hidden" class="form-control add-order" name="password1" id="id_password1" value="rU4;Ph=RF+L`:>3~"/>
+                                    <input type="hidden" class="form-control add-order" name="password2" id="id_password2-2" value="rU4;Ph=RF+L`:>3~"/>
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-success">Registrar usuario</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    $('#confirm').on('click', function () {
+        event.preventDefault();
+        $(this).fadeOut().addClass("d-none");
+        $('#type_load').animate({
+            height: 'toggle'
+        });
+        $('#sing-up').removeClass('d-none').fadeTo("slow")
+
+        if($('input:radio[name=role]:checked').val() == 'OP'){
+            // alert($(this).val())
+            $('#form-cliente :input').val('').attr('readonly')
+            $('#form-cliente').css('display', 'none')
+        }else{
+            // $('#form-cliente :input').val('').attr('readonly', false)
+            // $('#form-cliente').css('display', 'block')
+        }
+    })
+</script>
+{% endblock %}

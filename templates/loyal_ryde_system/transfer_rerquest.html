@@ -1,0 +1,169 @@
+{% extends "loyal_ryde_system/base/base.html" %} 
+{% load static %} 
+
+{% block title %}Inicio{% endblock title %}
+
+{% block extra_css %} 
+
+{% endblock extra_css %}
+
+{% block content %}
+
+<!-- {{ form.as_p }} -->
+
+    <!--begin::Post-->
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+        <!--begin::Container-->
+        <div id="kt_content_container" class="container-xxl">
+            <!--begin::Navbar-->
+            <div class="card mb-5 mb-xxl-12">
+                <div class="card-body pt-9 pb-0">
+                    <div class="mb-10">
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <h1 class="">Formulario de Transporte GGMN</h1>
+                                </div>
+                                <div class="mt-5 col-md-12">
+                                    <h3>Servicio requerido:</h3>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_date">Fecha:</label>
+                                    <input class="form-control" placeholder="Selecciona una fecha" id="id_date" name="date" required/>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_hour">Hora:</label>
+                                    <input type="time" class="form-control" id="id_hour" name="hour" required/>
+                                </div>
+                                <!-- <div class="mt-5 col-md-12">
+                                    <h3>Métodos de pago:</h3>
+                                </div> -->
+                                <div class="mt-5 col-md-12">
+                                    <label class="form-label" for="id_payment_method">Método de Pago:</label>
+                                    <select class="form-select" id="id_payment_method" name="payment_method" required>
+                                        <option disabled selected>Seleccione una opción</option>
+                                        <option value="1">CECO/GRAFO/PEDIDO</option>
+                                        <option value="2">EFECTIVO</option>
+                                        <option value="3">TARJETA DE CRÉDITO</option>
+                                    </select>
+                                </div>
+                                <div class="mt-8 col-md-12">
+                                    <h3>Datos requeridos:</h3>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_ceco_grafo_pedido">CECO/GRAFO/PEDIDO::</label>
+                                    <input type="text" class="form-control" id="id_ceco_grafo_pedido" name="ceco_grafo_pedido" required/>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_division">División:</label>
+                                    <input type="text" class="form-control" id="id_division" name="division" required>
+                                </div>
+                                <div class="mt-8 col-md-12">
+                                    <h3>Tipo de servicio:</h3>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check form-check-custom form-check-solid mt-5">
+                                            <input class="form-check-input" type="checkbox" value="" id="id_in_town"  name="in_town"/>
+                                            <label class="form-check-label" for="id_in_town">
+                                                Dentro de la localidad
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check form-check-custom form-check-solid mt-5">
+                                            <input class="form-check-input" type="checkbox" value="" id="id_outside_town"  name="outside_town"/>
+                                            <label class="form-check-label" for="id_outside_town">
+                                                Fuera de la localidad
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-8 col-md-12">
+                                    <h3>Datos del vuelo de origen:</h3>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_airline">Aerolínea:</label>
+                                    <input type="text" class="form-control" id="id_airline" name="airline" required/>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_flight">Vuelo:</label>
+                                    <input type="text" class="form-control" id="id_flight" name="flight" required/>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_route">Ruta:</label>
+                                    <input type="text" class="form-control" id="id_route" name="route" required/>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                </div>
+                                
+                                <div class="mt-8 col-md-12">
+                                    <h3>Listado de persona(s) a transferir:</h3>
+                                </div>
+                                <div class="mt-5 col-md-3">
+                                    <label class="form-label" for="id_person_to_transfer">Nombre Completo:</label>
+                                    <input class="form-control" type="text" id="name" name="name" placeholder="Nombre">
+                                </div>
+                                <div class="mt-5 col-md-3">
+                                    <label class="form-label" for="id_person_to_transfer">Teléfono:</label>
+                                    <input class="form-control" type="text" id="phone" name="phone" placeholder="Teléfono">
+                                </div>
+                                <div class="mt-5 col-md-3">
+                                    <label class="form-label" for="id_person_to_transfer">Empresa:</label>
+                                    <input class="form-control" type="text" id="company" name="company" placeholder="Empresa">
+                                </div>
+                                <div class="mt-13 col-md-3">
+                                    <button type="button" id="people-transfer-form" class="btn btn-info btn-hover-rotate-end">Registrar persona</button>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_person_to_transfer">Persona(s) a Transferir:</label>
+                                    <!-- <input type="text" class="form-control" id="id_person_to_transfer" name="person_to_transfer"/> -->
+                                    <select class="form-select" aria-label="Select example" multiple  id="id_person_to_transfer" name="person_to_transfer" required>
+                                        <option disabled>Listado de personas añadidas</option>
+                                    </select>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                </div>
+                                <div class="mt-8 col-md-12">
+                                    <h3>Salida/Destino(s):</h3>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_departure_site">Lugar de Salida:</label>
+                                    <input type="text" class="form-control" id="id_departure_site" name="departure_site" required/>
+                                </div>
+                                <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_destination">Destino:</label>
+                                    <input type="text" class="form-control" id="id_destination" name="destination" required/>
+                                </div>
+                                <!-- <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_service_authorize">Autorización del Servicio:</label>
+                                    <input type="text" class="form-control" id="id_service_authorize" name="service_authorize"/>
+                                </div> -->
+                                <!-- hidden inputs -->
+                                
+                                <input type="hidden" name="status" id="status" value="{{form.instance.status}}">
+                            </div>
+                            <!-- {{ form }} -->
+                            <br>
+                            <button type="submit" class="btn btn-success btn-hover-rotate-end">Solicitar traslado</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--end::Navbar-->
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Post-->
+</div>
+
+{% endblock content %} 
+
+{% block extra_js %} 
+<script>
+let url_form = "{% url 'core:transfer_request_people_create' %}";
+</script>
+<script src="{% static 'transfer_form.js' %}"></script>
+
+{% endblock extra_js %}

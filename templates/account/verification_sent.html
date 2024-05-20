@@ -1,0 +1,23 @@
+{% extends "base/baseLogin.html" %}
+
+{% load i18n %}
+
+{% block title %}{% trans "Verify Your E-mail Address" %}{% endblock %}
+
+{% block content %}
+<div class="col-12 grid-margin">
+    <div class="card">
+        <div class="card-body">
+            <h2>Verificar Email</h2>
+            <br>
+            <p>Se le ha enviado al usuario un correo electrónico para su verificación. Debe seguir el enlace proporcionado para finalizar el proceso de registro. 
+                Por favor contacte al cliente para confirmar la recepción del mismo.</p>
+                <br>
+                
+                <a href="{% url 'transactions:add_order_nominal' %}" class="btn btn-success">Registrar orden</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="{% url 'core:list_user' %}" class="btn btn-success">Regresar</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

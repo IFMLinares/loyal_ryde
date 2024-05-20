@@ -1,0 +1,15 @@
+{% extends "loyal_ryde_system/base/base.html" %} 
+{% load static %} 
+
+{% block title %}Inicio{% endblock title %}
+
+{% block extra_css %} 
+
+{% endblock extra_css %}
+
+{% block content %}
+{% endblock content %} 
+
+{% block extra_js %} 
+
+{% endblock extra_js %}
