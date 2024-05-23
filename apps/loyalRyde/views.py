@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, ListView, DeleteView, DetailView, CreateView
+from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,10 +13,21 @@ from .forms import *
 from .models import *
 # Create your views here.
 
+#  INICIO
 class Index(LoginRequiredMixin, TemplateView):
     template_name = 'loyal_ryde_system/index.html'
 
-# CREAR NUEVA TRANSFERENCIA
+# VISTAS DE USUARIOS (PARA ADMINISTRADORES)
+
+#  Agregar usuario
+class UserAdd(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/add_user.html'
+
+#  Agregar usuario (de las eempresas)
+class UserCompanyAdd(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/add_user_company.html'
+
+# Agregar nuevo traslado
 class TransferRequestCreateView(LoginRequiredMixin, CreateView):
     model = TransferRequest
     template_name = 'loyal_ryde_system/transfer_rerquest.html'
@@ -41,12 +53,112 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
 
         return super().post(request, *args, **kwargs)
 
+#  Agregar conductor
+class DriverAdd(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/add_driver.html'
 
-# listado de Transferencias
+#  Agregar Flota
+class FleetAdd(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/add_fleet.html'
+
+#  Agregar Ruta
+class RouteCreateView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/add_route.html'
+
+#  Listado de conductores
+class DriverListView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/driver_list.html'
+
+#  Listado de Flotas
+class FleetListView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/fleet_list.html'
+
+#  Listado de Rutas
+class RouteListView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/route_list.html'
+
+#  Listado de Viajes en progreso
+class TripsProgressListView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/trips_progress.html'
+
+#  Listado de Viajes en completados
+class TripsCompletedListView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/trips_complete.html'
+
+#  Listado de Viajes en en espera
+class TripsHoldListView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/trips_on_hold.html'
+
+#  Listado de Viajes programados
+class TripsProgramedListView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/trips_programed.html'
+
+#  Listado de Viajes cancelados
+class TripsCancelledListView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/trips_canceled.html'
+
+
+#  Listado de Tarifas
+class RatesListView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/rates.html'
+
+
+#  Listado de conductores Activos
+class DriverActiveListView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/driver_list_active.html'
+
+#  Listado de conductores Pendientes
+class DriverPendingListView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/driver_list_pending.html'
+
+# Lista de administradores
+class UserAdminListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'loyal_ryde_system/user_list_view.html'
+
+    def get_queryset(self):
+        return User.objects.filter(is_staff=True)
+
+# Lista de despacahdores
+class UserDispatchListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'loyal_ryde_system/user_list_view_dispatcher.html'
+
+    def get_queryset(self):
+        return User.objects.filter(is_staff=True)
+
+# Lista de Operadores (Usuarios del cliente)
+class UserOperatorListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'loyal_ryde_system/user_list_view_operators.html'
+
+    def get_queryset(self):
+        return User.objects.filter(is_staff=True)
+
+# Lista de Supervisores (Usuarios del cliente)
+class UserSupervisorListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'loyal_ryde_system/user_list_view_supervisors.html'
+
+    def get_queryset(self):
+        return User.objects.filter(is_staff=True)
+
+# listado de Traslados
 class TransferRequestListView(LoginRequiredMixin, ListView):
     model = TransferRequest
     template_name = 'loyal_ryde_system/transfer_request_list.html'
     context_object_name = 'transfer_requests'
+
+# listado de Empresas
+class CompaniesListView(LoginRequiredMixin, ListView):
+    model = TransferRequest
+    template_name = 'loyal_ryde_system/companies_list.html'
+    context_object_name = 'transfer_requests'
+
+#  Agregar Empresa
+class CompnayAdd(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/add_company.html'
+
 
 # AJAX FUNCTIONS
 @csrf_exempt

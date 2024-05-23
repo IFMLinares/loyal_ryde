@@ -1,0 +1,211 @@
+{% extends "loyal_ryde_system/base/base.html" %} 
+{% load static %} 
+
+{% block title %}Agregar conductorrs{% endblock title %}
+
+{% block extra_css %} 
+
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+        <form id="kt_ecommerce_add_category_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="../../demo1/dist/apps/ecommerce/catalog/categories.html">
+            <!--begin::Aside column-->
+            <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
+                <!--begin::Thumbnail settings-->
+                <div class="card card-flush py-4">
+                    <!--begin::Card header-->
+                    <div class="card-header">
+                        <!--begin::Card title-->
+                        <div class="card-title text-center">
+                            <h2>Foto del Conductor</h2>
+                        </div>
+                        <!--end::Card title-->
+                    </div>
+                    <!--end::Card header-->
+                    <!--begin::Card body-->
+                    <div class="card-body text-center pt-0">
+                        <!--begin::Image input-->
+                        <div class="image-input image-input-empty image-input-outline mb-3" data-kt-image-input="true" style="background-image: url({% static 'assets/media/svg/files/blank-image.svg'%})">
+                            <!--begin::Preview existing avatar-->
+                            <div class="image-input-wrapper w-150px h-150px"></div>
+                            <!--end::Preview existing avatar-->
+                            <!--begin::Label-->
+                            <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+                                <!--begin::Icon-->
+                                <i class="bi bi-pencil-fill fs-7"></i>
+                                <!--end::Icon-->
+                                <!--begin::Inputs-->
+                                <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
+                                <input type="hidden" name="avatar_remove" />
+                                <!--end::Inputs-->
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Cancel-->
+                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+                                <i class="bi bi-x fs-2"></i>
+                            </span>
+                            <!--end::Cancel-->
+                            <!--begin::Remove-->
+                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+                                <i class="bi bi-x fs-2"></i>
+                            </span>
+                            <!--end::Remove-->
+                        </div>
+                        <!--end::Image input-->
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7">Establezca la imagen en miniatura de la categoría. Sólo se aceptan archivos de imagen *.png, *.jpg y *.jpeg</div>
+                        <!--end::Description-->
+                    </div>
+                    <!--end::Card body-->
+                </div>
+                <!--end::Thumbnail settings-->
+                <!--begin::Status-->
+                <div class="card card-flush py-4">
+                    <!--begin::Card header-->
+                    <div class="card-header">
+                        <!--begin::Card title-->
+                        <div class="card-title">
+                            <h2>Estatus del Conductor</h2>
+                        </div>
+                        <!--end::Card title-->
+                        <!--begin::Card toolbar-->
+                        <div class="card-toolbar">
+                            <div class="rounded-circle bg-success w-15px h-15px" id="kt_ecommerce_add_category_status"></div>
+                        </div>
+                        <!--begin::Card toolbar-->
+                    </div>
+                    <!--end::Card header-->
+                    <!--begin::Card body-->
+                    <div class="card-body pt-0">
+                        <!--begin::Select2-->
+                        <select class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Select an option" id="kt_ecommerce_add_category_status_select">
+                            <option></option>
+                            <option value="Activo" selected="selected">Activo</option>
+                            <option value="Inactivo">Pendiente</option>
+                            <option value="Inactivo">Suspendido</option>
+                            <option value="Inactivo">Inactivo</option>
+                            <!-- <option value="unpublished">Unpublished</option> -->
+                        </select>
+                        <!--end::Select2-->
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7">Seleccione el estatus del usuario.</div>
+                        <!--end::Description-->
+                        <!--begin::Datepicker-->
+                        <div class="d-none mt-10">
+                            <label for="kt_ecommerce_add_category_status_datepicker" class="form-label">Seleccione el estatus del usuario</label>
+                            <input class="form-control" id="kt_ecommerce_add_category_status_datepicker" placeholder="Pick date &amp; time" />
+                        </div>
+                        <!--end::Datepicker-->
+                    </div>
+                    <!--end::Card body-->
+                </div>
+                <!--end::Status-->
+            </div>
+            <!--end::Aside column-->
+            <!--begin::Main column-->
+            <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                <!--begin::General options-->
+                <div class="card card-flush py-4">
+                    <!--begin::Card header-->
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h2>Registrar Conductor</h2>
+                        </div>
+                    </div>
+                    <!--end::Card header-->
+                    <!--begin::Card body-->
+                    <div class="card-body pt-0">
+                        <!--begin::Input group-->
+                        <div class="mb-8 fv-row">
+                            <!--begin::Label-->
+                            <label class="required form-label">Nombre del completo del conductor</label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input type="text" name="user_name" class="form-control mb-2" placeholder="nombre de usuario" value="" />
+                            <!--end::Input-->
+                            <!--begin::Description-->
+                            <div class="text-muted fs-7">El nombre de usuario es obligatorio.</div>
+                            <!--end::Description-->
+                        </div>
+                        <!--end::Input group-->
+                        <!--begin::Input group-->
+                        <div class="mb-8 fv-row">
+                            <!--begin::Label-->
+                            <label class="form-label">Correo electrónico</label>
+                            <!--end::Label-->
+                            <!--begin::Editor-->
+                            <input type="email" name="user_email" class="form-control mb-2" placeholder="email" value="" />
+                            <!--end::Editor-->
+                            <!--begin::Description-->
+                            <div class="text-muted fs-7">ingrese el correo electrónico del usuario</div>
+                            <!--end::Description-->
+                        </div>
+                        <div class="mb-8 fv-row">
+                            <!--begin::Label-->
+                            <label class="form-label">Rol de usuario</label>
+                            <!--end::Label-->
+                            <!--begin::Editor-->
+                            <select class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Select an option" aria-readonly="true" disabled>
+                                <option value="conductor" selected="selected">Conductor</option>
+                                <!-- <option value="unpublished">Unpublished</option> -->
+                            </select>
+                            <!--end::Editor-->
+                            <!--begin::Description-->
+                            <!--end::Description-->
+                        </div>
+                        <!--end::Input group-->
+                        <div class="mb-1 fv-row" >
+                            <!--begin::Label-->
+                            <label class="form-label">Teléfono del conductor</label>
+                            <!--end::Label-->
+                            <!--begin::Editor-->
+                            <input type="number" name="user_email" class="form-control mb-2" placeholder="" value="" />
+                            <!--end::Editor-->
+                            <!--begin::Description-->
+                            <div class="text-muted fs-7">ingrese el número teléfonico del conductor</div>
+                            <!--end::Description-->
+                        </div>
+                    </div>
+                    <!--end::Card header-->
+                </div>
+                <!--end::General options-->
+                <!--begin::Automation-->
+                <div class="d-flex justify-content-end">
+                    <!--begin::Button-->
+                    <a href="../../demo1/dist/apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancelar</a>
+                    <!--end::Button-->
+                    <!--begin::Button-->
+                    <button type="submit" id="kt_ecommerce_add_category_submit" class="btn btn-primary">
+                        <span class="indicator-label">Registrar usuario</span>
+                        <span class="indicator-progress">Please wait...
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                    </button>
+                    <!--end::Button-->
+                </div>
+            </div>
+            <!--end::Main column-->
+        </form>
+    </div>
+    <!--end::Container-->
+</div>
+{% endblock content %} 
+
+{% block extra_js %} 
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script src="{% static 'assets/plugins/custom/formrepeater/formrepeater.bundle.js' %}"></script>
+<!--end::Page Vendors Javascript-->
+<!--begin::Page Custom Javascript(used by this page)-->
+<script src="{% static 'assets/js/custom/apps/ecommerce/catalog/save-category.js' %}"></script>
+<script src="{% static 'assets/js/widgets.bundle.js' %}"></script>
+<script src="{% static 'assets/js/custom/widgets.js' %}"></script>
+<script src="{% static 'assets/js/custom/apps/chat/chat.js' %}"></script>
+<script src="{% static 'assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
+<script src="{% static 'ssets/js/custom/utilities/modals/create-app.js' %}"></script>
+<script src="{% static 'assets/js/custom/utilities/modals/users-search.js' %}"></script>
+<!--end::Page Custom Javascript-->
+{% endblock extra_js %}

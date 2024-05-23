@@ -1,0 +1,108 @@
+{% extends "loyal_ryde_system/base/base.html" %} 
+{% load static %} 
+
+{% block title %}Agregar Flota{% endblock title %}
+
+{% block extra_css %} 
+
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+        <form id="kt_ecommerce_add_category_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="../../demo1/dist/apps/ecommerce/catalog/categories.html">
+            <!--begin::Aside column-->
+            <!--end::Aside column-->
+            <!--begin::Main column-->
+            <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                <!--begin::General options-->
+                <div class="card card-flush py-4">
+                    <!--begin::Card header-->
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h2>Registrar Flota</h2>
+                        </div>
+                    </div>
+                    <!--end::Card header-->
+                    <!--begin::Card body-->
+                    <div class="card-body pt-0">
+                        <!--begin::Input group-->
+                        <div class="mb-10 fv-row">
+                            <!--begin::Label-->
+                            <label class="required form-label">Nro de placa</label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input type="text" name="user_name" class="form-control mb-2" placeholder="" value="" />
+                            <!--end::Input-->
+                            <!--begin::Description-->
+                            <div class="text-muted fs-7">El nro de placa es obligatorio.</div>
+                            <!--end::Description-->
+                        </div>
+                        <!--end::Input group-->
+                        <!--begin::Input group-->
+                        <div class="mb-10 fv-row">
+                            <!--begin::Label-->
+                            <label class="form-label">Modelo</label>
+                            <!--end::Label-->
+                            <!--begin::Editor-->
+                            <input type="email" name="user_email" class="form-control mb-2" placeholder="" value="" />
+                            <!--end::Editor-->
+                            <!--begin::Description-->
+                            <div class="text-muted fs-7">El modelo del vehiculo es obligatorio</div>
+                            <!--end::Description-->
+                        </div>
+                        <div>
+                            <!--begin::Label-->
+                            <label class="form-label">Capacidad</label>
+                            <!--end::Label-->
+                            <!--begin::Editor-->
+                            <input type="number" name="user_email" class="form-control mb-2" placeholder="10" value="" />
+                            <!--end::Editor-->
+                            <!--begin::Description-->
+                            <div class="text-muted fs-7">Indique la capacidad del vehiculo</div>
+                            <!--end::Description-->
+                        </div>
+                        <!--end::Input group-->
+                    </div>
+                    <!--end::Card header-->
+                </div>
+                <!--end::General options-->
+                <!--begin::Automation-->
+                <!--end::Automation-->
+                <div class="d-flex justify-content-end">
+                    <!--begin::Button-->
+                    <a href="../../demo1/dist/apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancelar</a>
+                    <!--end::Button-->
+                    <!--begin::Button-->
+                    <button type="submit" id="kt_ecommerce_add_category_submit" class="btn btn-primary">
+                        <span class="indicator-label">Registrar Flota</span>
+                        <span class="indicator-progress">Please wait...
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                    </button>
+                    <!--end::Button-->
+                </div>
+            </div>
+            <!--end::Main column-->
+        </form>
+    </div>
+    <!--end::Container-->
+</div>
+{% endblock content %} 
+
+{% block extra_js %} 
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script src="{% static 'assets/plugins/custom/formrepeater/formrepeater.bundle.js' %}"></script>
+<!--end::Page Vendors Javascript-->
+<!--begin::Page Custom Javascript(used by this page)-->
+<script src="{% static 'assets/js/custom/apps/ecommerce/catalog/save-category.js' %}"></script>
+<script src="{% static 'assets/js/widgets.bundle.js' %}"></script>
+<script src="{% static 'assets/js/custom/widgets.js' %}"></script>
+<script src="{% static 'assets/js/custom/apps/chat/chat.js' %}"></script>
+<script src="{% static 'assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
+<script src="{% static 'ssets/js/custom/utilities/modals/create-app.js' %}"></script>
+<script src="{% static 'assets/js/custom/utilities/modals/users-search.js' %}"></script>
+<!--end::Page Custom Javascript-->
+{% endblock extra_js %}
