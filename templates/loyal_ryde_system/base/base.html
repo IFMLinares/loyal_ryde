@@ -95,7 +95,7 @@
 		<script src="{% static 'assets/plugins/global/plugins.bundle.js' %}"></script>
 		<script src="{% static 'assets/js/scripts.bundle.js' %}"></script>
 		<script src="{% static 'assets/js/sweetalert2/sweet-alert-2-11.js'%}"></script>
-		<script>
+		<!-- <script>
 			{% if messages %}
 				var success_message = '';
 				{% for message in messages %}
@@ -109,7 +109,7 @@
 					heigth: 700
 				});
 			{% endif %}
-		</script>
+		</script> -->
 		{% block error_js %}
 		<script>
 			{% if form.errors %}
