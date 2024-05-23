@@ -55,7 +55,7 @@ class TransferRequest(models.Model):
         max_length=20,
         choices=STATUS_CHOICES,
         default='esperando validacion',
-        verbose_name="Estado", blank=True, null=True
+        verbose_name="Estado"
     )
 
     def __str__(self):
