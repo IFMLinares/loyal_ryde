@@ -13,7 +13,7 @@
 <div class="post d-flex flex-column-fluid" id="kt_post">
     <!--begin::Container-->
     <div id="kt_content_container" class="container-xxl">
-        <form id="kt_ecommerce_add_category_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="../../demo1/dist/apps/ecommerce/catalog/categories.html">
+        <form  class="form d-flex flex-column flex-lg-row" method="post">
             <!--begin::Aside column-->
             <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
                 <!--begin::Thumbnail settings-->
@@ -30,35 +30,19 @@
                     <!--begin::Card body-->
                     <div class="card-body text-center pt-0">
                         <!--begin::Image input-->
-                        <div class="image-input image-input-empty image-input-outline mb-3" data-kt-image-input="true" style="background-image: url({% static 'assets/media/svg/files/blank-image.svg'%})">
+                        <div class="image-input image-input-empty image-input-outline mb-3" data-kt-image-input="true" style="background-image: url({% static 'assets/media/svg/files/blank-image.svg'%})" id="image_company">
                             <!--begin::Preview existing avatar-->
                             <div class="image-input-wrapper w-150px h-150px"></div>
                             <!--end::Preview existing avatar-->
                             <!--begin::Label-->
-                            <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
-                                <!--begin::Icon-->
-                                <i class="bi bi-pencil-fill fs-7"></i>
-                                <!--end::Icon-->
-                                <!--begin::Inputs-->
-                                <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
-                                <input type="hidden" name="avatar_remove" />
-                                <!--end::Inputs-->
-                            </label>
                             <!--end::Label-->
                             <!--begin::Cancel-->
-                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
-                                <i class="bi bi-x fs-2"></i>
-                            </span>
                             <!--end::Cancel-->
                             <!--begin::Remove-->
-                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
-                                <i class="bi bi-x fs-2"></i>
-                            </span>
                             <!--end::Remove-->
                         </div>
                         <!--end::Image input-->
                         <!--begin::Description-->
-                        <div class="text-muted fs-7">Establezca la imagen en miniatura de la categoría. Sólo se aceptan archivos de imagen *.png, *.jpg y *.jpeg</div>
                         <!--end::Description-->
                     </div>
                     <!--end::Card body-->
@@ -83,12 +67,7 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Select2-->
-                        <select class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Select an option" id="">
-                            <option></option>
-                            <option value="Activo" selected="selected">loyal Ride</option>
-                            <option value="Inactivo">Empresa 1</option>
-                            <!-- <option value="unpublished">Unpublished</option> -->
-                        </select>
+                        {{ form.company }}
                         <!--end::Select2-->
                         <!--begin::Description-->
                         <div class="text-muted fs-7">Seleccione la empresa a la que pertenece el usuario.</div>
@@ -122,19 +101,47 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Select2-->
-                        <select class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Select an option" id="kt_ecommerce_add_category_status_select">
-                            <option></option>
-                            <option value="Activo" selected="selected">Activo</option>
-                            <option value="Inactivo">Inactivo</option>
-                            <!-- <option value="unpublished">Unpublished</option> -->
-                        </select>
+                        {{ form.status }}
                         <!--end::Select2-->
                         <!--begin::Description-->
                         <div class="text-muted fs-7">Seleccione el estatus del usuario.</div>
                         <!--end::Description-->
                         <!--begin::Datepicker-->
                         <div class="d-none mt-10">
-                            <label for="kt_ecommerce_add_category_status_datepicker" class="form-label">Seleccione el estatus del usuario</label>
+                            <label for="kt_ecommerce_add_category_status_datepicker" class="form-label">{{ form.status.label }}</label>
+                            <input class="form-control" id="kt_ecommerce_add_category_status_datepicker" placeholder="Pick date &amp; time" />
+                        </div>
+                        <!--end::Datepicker-->
+                    </div>
+                    <!--end::Card body-->
+                </div>
+                
+                <div class="card card-flush py-4">
+                    <!--begin::Card header-->
+                    <div class="card-header">
+                        <!--begin::Card title-->
+                        <div class="card-title">
+                            <h2>Rol del Usuario</h2>
+                        </div>
+                        <!--end::Card title-->
+                        <!--begin::Card toolbar-->
+                        <div class="card-toolbar">
+                            <div class="rounded-circle bg-success w-15px h-15px" id="kt_ecommerce_add_category_status"></div>
+                        </div>
+                        <!--begin::Card toolbar-->
+                    </div>
+                    <!--end::Card header-->
+                    <!--begin::Card body-->
+                    <div class="card-body pt-0">
+                        <!--begin::Select2-->
+                        {{ form.role }}
+                        <!--end::Select2-->
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7">Seleccione el rol del usuario.</div>
+                        <!--end::Description-->
+                        <!--begin::Datepicker-->
+                        <div class="d-none mt-10">
+                            <label for="kt_ecommerce_add_category_status_datepicker" class="form-label">{{ form.role.label }}</label>
                             <input class="form-control" id="kt_ecommerce_add_category_status_datepicker" placeholder="Pick date &amp; time" />
                         </div>
                         <!--end::Datepicker-->
@@ -158,46 +165,68 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Input group-->
-                        <div class="mb-10 fv-row">
-                            <!--begin::Label-->
-                            <label class="required form-label">Nombre de usuario</label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input type="text" name="user_name" class="form-control mb-2" placeholder="nombre de usuario" value="" />
-                            <!--end::Input-->
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">El nombre de usuario es obligatorio y debe ser único.</div>
-                            <!--end::Description-->
+                        {% csrf_token %}
+                        
+                        <div class="mb-3 fv-row">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.first_name.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.first_name }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.first_name.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.last_name.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.last_name }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.last_name.help_text }}
+                                    </div>
+                                </div>
+                            </div>
+                                <!--end::Description-->
+                            {% for field in form %}
+                                {% if field.name != 'status' and field.name != 'role' and field.name != 'first_name' and field.name != 'last_name' and field.name != 'travel_approval' and field.name != 'company' %}
+                                            <!--begin::Label-->
+                                            <div class="mb-3">
+                                            <label class="required form-label">{{ field.label }}</label>
+                                            <!--end::Label-->
+                                            <!--begin::Input-->
+                                            {{ field }}
+                                            {% if field.errors %}
+                                                {% for error in field.errors %}
+                                                    <div class="alert alert-danger" role="alert">
+                                                        {{ error }}
+                                                    </div>
+                                                {% endfor %}
+                                            {% endif %}
+                                            <!--end::Input-->
+                                            <!--begin::Description-->
+                                            <div class="text-muted fs-7">
+                                                {{ field.help_text }}
+                                            </div>
+                                            <!--end::Description-->
+                                        </div>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="mb-3 d-none" id="travel_approval_div">
+                            <label class="required form-label">¿{{ form.travel_approval.label }}?</label>
+                            {{ form.travel_approval }}
+                            <div class="text-muted fs-7">
+                                {{ form.travel_approval.help_text }}
+                            </div>
                         </div>
-                        <!--end::Input group-->
-                        <!--begin::Input group-->
-                        <div class="mb-10 fv-row">
-                            <!--begin::Label-->
-                            <label class="form-label">Correo electrónico</label>
-                            <!--end::Label-->
-                            <!--begin::Editor-->
-                            <input type="email" name="user_email" class="form-control mb-2" placeholder="email" value="" />
-                            <!--end::Editor-->
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">ingrese el correo electrónico del usuario</div>
-                            <!--end::Description-->
-                        </div>
-                        <div>
-                            <!--begin::Label-->
-                            <label class="form-label">Rol de usuario</label>
-                            <!--end::Label-->
-                            <!--begin::Editor-->
-                            <select class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Select an option">
-                                <option value="Activo" selected="selected">Administrador</option>
-                                <option value="Inactivo">Despachador</option>
-                                <option value="Inactivo">Supervisor</option>
-                                <option value="Inactivo">Operador</option>
-                                <!-- <option value="unpublished">Unpublished</option> -->
-                            </select>
-                            <!--end::Editor-->
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">Seleccione el rol del usuario</div>
-                            <!--end::Description-->
+                            
                         </div>
                         <!--end::Input group-->
                     </div>
@@ -205,110 +234,73 @@
                 </div>
                 <!--end::General options-->
                 <!--begin::Automation-->
-                <div class="card card-flush py-4">
-                    <!--begin::Card header-->
+                <!-- <div class="card card-flush py-4">
                     <div class="card-header">
                         <div class="card-title">
                             <h2>¿Empresa no registrada?</h2>
                         </div>
                     </div>
-                    <!--end::Card header-->
-                    <!--begin::Card body-->
+
+
                     <div class="card-body pt-0">
-                        <!--begin::Input group-->
                         <div>
-                            <!--begin::Label-->
                             <label class="form-label mb-5">Si la empresa no aparece en el listado puedes agregarla en este paso.</label>
-                            <!--end::Label-->
-                            <!--begin::Methods-->
-                            <!--begin::Input row-->
+
                             <div class="d-flex fv-row">
-                                <!--begin::Radio-->
                                 <div class="form-check form-check-custom form-check-solid">
-                                    <!--begin::Input-->
                                     <input class="form-check-input me-3" name="method" type="radio" value="0" id="kt_ecommerce_add_category_automation_0" checked='checked' />
-                                    <!--end::Input-->
-                                    <!--begin::Label-->
+
                                     <label class="form-check-label" for="kt_ecommerce_add_category_automation_0">
                                         <div class="fw-bolder text-gray-800">Si, ya está registrada la empresa</div>
                                         <div class="text-gray-600">la empresa aparece sin ningún problema en el listado.</div>
                                     </label>
-                                    <!--end::Label-->
                                 </div>
-                                <!--end::Radio-->
                             </div>
-                            <!--end::Input row-->
                             <div class='separator separator-dashed my-5'></div>
-                            <!--begin::Input row-->
                             <div class="d-flex fv-row">
-                                <!--begin::Radio-->
                                 <div class="form-check form-check-custom form-check-solid">
-                                    <!--begin::Input-->
                                     <input class="form-check-input me-3" name="method" type="radio" value="1" id="kt_ecommerce_add_category_automation_1" />
-                                    <!--end::Input-->
-                                    <!--begin::Label-->
+
                                     <label class="form-check-label" for="kt_ecommerce_add_category_automation_1">
                                         <div class="fw-bolder text-gray-800">No, no encuntro a la empresa en el listado</div>
                                         <div class="text-gray-600">Puedes añadir a la empresa desde esta opción.</div>
                                     </label>
-                                    <!--end::Label-->
                                 </div>
-                                <!--end::Radio-->
                             </div>
-                            <!--end::Input row-->
-                            <!--end::Methods-->
+                            
                         </div>
-                        <!--end::Input group-->
-                        <!--begin::Input group-->
                         <div class="d-none mt-10" data-kt-ecommerce-catalog-add-category="auto-options">
                             <div class="card-body pt-0">
-                                <!--begin::Input group-->
                                 <div class="mb-10 fv-row">
-                                    <!--begin::Label-->
                                     <label class="required form-label">Nombre de la empresa</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
                                     <input type="text" name="user_name" class="form-control mb-2" placeholder="nombre de usuario" value="" />
-                                    <!--end::Input-->
-                                    <!--begin::Description-->
+
                                     <div class="text-muted fs-7">El nombre de la empresa es obligatorio.</div>
-                                    <!--end::Description-->
                                 </div>
-                                <!--end::Input group-->
-                                <!--begin::Input group-->
                                 <div class="">
-                                    <!--begin::Label-->
                                     <label class="form-label">Correo electrónico</label>
-                                    <!--end::Label-->
-                                    <!--begin::Editor-->
                                     <input type="email" name="user_email" class="form-control mb-2" placeholder="email" value="" />
-                                    <!--end::Editor-->
-                                    <!--begin::Description-->
+
                                     <div class="text-muted fs-7">ingrese el correo electrónico del la empresa, este debe ser unico</div>
-                                    <!--end::Description-->
+
                                 </div>
-                                <!--end::Input group-->
                             </div>
                         </div>
-                        <!--end::Input group-->
                     </div>
-                    <!--end::Card header-->
-                </div>
-                <!--end::Automation-->
+                </div> -->
                 <div class="d-flex justify-content-end">
-                    <!--begin::Button-->
                     <a href="../../demo1/dist/apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancelar</a>
-                    <!--end::Button-->
-                    <!--begin::Button-->
-                    <button type="submit" id="kt_ecommerce_add_category_submit" class="btn btn-primary">
-                        <span class="indicator-label">Registrar usuario</span>
-                        <span class="indicator-progress">Please wait...
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="indicator-label">Registrar Empresa</span>
+                        <span class="indicator-progress">
                         <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                     </button>
-                    <!--end::Button-->
                 </div>
+
+
+
             </div>
-            <!--end::Main column-->
         </form>
     </div>
     <!--end::Container-->
@@ -327,5 +319,36 @@
 <script src="{% static 'assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
 <script src="{% static 'ssets/js/custom/utilities/modals/create-app.js' %}"></script>
 <script src="{% static 'assets/js/custom/utilities/modals/users-search.js' %}"></script>
+
+<script>
+    $('#id_role').change(function() {
+    if ($(this).val() == 'supervisor') {
+        $('#travel_approval_div').removeClass('d-none');
+    } else {
+        $('#travel_approval_div').addClass('d-none');
+    }
+});
+
+function getCompanyImage() {
+    var companyId = $('#id_company').val();  // El select tiene el id 'id_company'
+    $.ajax({
+        url: "{% url 'core:company_image' %}",  // La URL de tu vista en Django
+        data: {
+            'company_id': companyId
+        },
+        dataType: 'json',
+        success: function (data) {
+            console.log(data)
+            $('#image_company').css('background-image', "{% static 'assets/media/svg/files/blank-image.svg'%}");
+            $('#image_company').css('background-image', 'url(' + data.image_url + ')');
+            // $('#company_image').attr('src', data.image_url);  // Asumiendo que tienes un img con el id 'company_image'
+        }
+    });
+}
+
+// Asegúrate de llamar a getCompanyImage() cuando el select cambie
+$('#id_company').change(getCompanyImage);
+
+</script>
 <!--end::Page Custom Javascript-->
 {% endblock extra_js %}

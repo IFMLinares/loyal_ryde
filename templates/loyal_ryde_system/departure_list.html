@@ -1,7 +1,7 @@
 {% extends "loyal_ryde_system/base/base.html" %} 
 {% load static %} 
 
-{% block title %}Listado de Rutas{% endblock title %}
+{% block title %}Listado de Salidas{% endblock title %}
 
 {% block extra_css %} 
 
@@ -20,7 +20,7 @@
                 <!--begin::Card title-->
                 
                 <div class="col-md-12 text-center">
-                    <h1 class="">Listado de Rutas</h1>
+                    <h1 class="">Listado de Salidas</h1>
                 </div>
                 <div class="card-title">
                     <!--begin::Search-->
@@ -41,7 +41,7 @@
                 <!--begin::Card toolbar-->
                 <div class="card-toolbar">
                     <!--begin::Add customer-->
-                    <a href="{% url 'core:route_add' %}" class="btn btn-primary ">Añadir Ruta</a>
+                    <a href="{% url 'core:rates_departure_create' %}" class="btn btn-primary">Añadir salida</a>
                     <!--end::Add customer-->
                 </div>
                 <!--end::Card toolbar-->
@@ -60,8 +60,7 @@
                                     <input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_ecommerce_category_table .form-check-input" value="1" />
                                 </div>
                             </th>
-                            <th class="min-w-250px">Punto de Partida</th>
-                            <th class="min-w-150px">Punto de LLegada</th>
+                            <th class="min-w-250px">Punto de Salida</th>
                             <th class="min-w-150px">Fecha de registro</th>
                             <th class="text-end min-w-70px">Acciones</th>
                         </tr>
@@ -69,17 +68,16 @@
                     </thead>
                     
                     <tr>
-                        {% if routes %}
-                            {% for route in routes %}
+                        {% if departure %}
+                            {% for departure in departure %}
                             <tr>
                                 <td>
                                     <div class="form-check form-check-sm form-check-custom form-check-solid">
                                         <input class="form-check-input" type="checkbox" value="1" />
                                     </div>
                                 </td>   
-                                <td>{{ route.departure_point }}</td>
-                                <td>{{ route.arrival_point }}</td>
-                                <td>{{ route.date_created|date:"d/m/Y" }}</td>
+                                <td>{{ departure.name }}</td>
+                                <td>{{ departure.date_created|date:"d/m/Y" }}</td>
                                 <!--end::Role=-->
                                 <!--begin::Last login=-->
                                 <!--end::Last login=-->

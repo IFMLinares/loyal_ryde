@@ -1,0 +1,279 @@
+{% extends "loyal_ryde_system/base/base.html" %} 
+{% load static %} 
+
+{% block title %}Agregar Tarifas{% endblock title %}
+
+{% block extra_css %} 
+
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+        <form class="form d-flex flex-column flex-lg-row" method="post" >
+            {% csrf_token %}
+            <!--begin::Aside column-->
+            <!--end::Aside column-->
+            <!--begin::Main column-->
+            <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                <!--begin::General options-->
+                <div class="card card-flush py-4">
+                    <!--begin::Card header-->
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h2>Registrar Tarifa</h2>
+                        </div>
+                    </div>
+                    <!--end::Card header-->
+                    <!--begin::Card body-->
+                    <div class="card-body pt-0">
+                        <!--begin::Input group-->
+                        <div class="mb-10 fv-row">
+                            <!-- {{ form.as_p }} -->
+                            
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.route.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.route }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.route.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.price.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.price }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.price.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.price_round_trip.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.price_round_trip }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.price_round_trip.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.driver_gain.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.driver_gain }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.driver_gain.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.vehicle.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.vehicle }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.vehicle.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.daytime_waiting_time.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.daytime_waiting_time }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.daytime_waiting_time.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.nightly_waiting_time.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.nightly_waiting_time }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.nightly_waiting_time.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.detour_local.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.detour_local }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.detour_local.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.driver_price.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.driver_price }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.driver_price.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.driver_price_round_trip.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.driver_price_round_trip }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.driver_price_round_trip.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.gain_loyal_ride.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.gain_loyal_ride }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.gain_loyal_ride.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.gain_loyal_ride_round_trip.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.gain_loyal_ride_round_trip }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.gain_loyal_ride_round_trip.help_text }}
+                                    </div>
+                                </div>
+                            </div>
+                            <!--begin::Label-->
+                            <!-- <label class="required form-label">Punto de partida</label>
+                            <select class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Seleccione un punto de partida" id="">
+                                <option selected disabled></option>
+                                <option value="Caracas">Toda Caracas</option>
+                                <option value="Arrecife">Arrecife</option>
+                                <option value="Barcelona">Barcelona</option>
+                                <option value="Barquisimeto">Barquisimeto</option>
+                                <option value="Carayaca">Carayaca</option>
+                                <option value="Catia la Mar">Catia la Mar</option>
+                                <option value="Charallave">Charallave</option>
+                                <option value="Cua">Cua</option>
+                                <option value="Guanta">Guanta</option>
+                                <option value="Guarenas">Guarenas</option>
+                                <option value="Guatire">Guatire</option>
+                                <option value="La Guaira">La Guaira</option>
+                                <option value="Los Teques">Los Teques</option>
+                                <option value="Maracay">Maracay</option>
+                                <option value="Moron">Moron</option>
+                                <option value="Ocumare del Tuy">Ocumare del Tuy</option>
+                                <option value="Puerto Cabello">Puerto Cabello</option>
+                                <option value="Puerto La Cruz">Puerto La Cruz</option>
+                                <option value="San Antonio de los Altos">San Antonio de los Altos</option>
+                                <option value="Santa Lucia">Santa Lucia</option>
+                                <option value="Santa Teresa">Santa Teresa</option>
+                                <option value="Monay">Monay</option>
+                                <option value="Valencia">Valencia</option>
+                            </select> -->
+                        </div>
+                        <!-- <div class="mb-10 fv-row">
+                            <label class="form-label">Destino</label>
+                            <input type="text" name="" class="form-control mb-2" placeholder="" value="" />
+                        </div> -->
+                    </div>
+                    <!--end::Card header-->
+                </div>
+                <!--end::General options-->
+                <!--begin::Automation-->
+                <!--end::Automation-->
+                <div class="d-flex justify-content-end">
+                    <!--begin::Button-->
+                    <a href="../../demo1/dist/apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancelar</a>
+                    <!--end::Button-->
+                    <!--begin::Button-->
+                    <button type="submit" class="btn btn-primary">
+                        <span class="indicator-label">Registrar Tarifa</span>
+                        <span class="indicator-progress">Please wait...
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                    </button>
+                    <!--end::Button-->
+                </div>
+            </div>
+            <!--end::Main column-->
+        </form>
+    </div>
+    <!--end::Container-->
+</div>
+{% endblock content %} 
+
+{% block extra_js %} 
+<!--end::Page Vendors Javascript-->
+
+<script>
+    $(document).ready(function() {
+        // Escucha los cambios en los inputs
+        $('#id_price, #id_driver_gain').on('input', function() {
+            // Obtiene los valores de los inputs
+            var price = parseFloat($('#id_price').val());
+            var driverGain = parseFloat($('#id_driver_gain').val());
+    
+            // Calcula el precio del conductor
+            var driverPrice = (price * driverGain) / 100;
+    
+            // Muestra el resultado en el input id_driver_price
+            $('#id_driver_price').val(driverPrice.toFixed(2));
+            var gain = price - driverPrice
+            $('#id_gain_loyal_ride').val(gain.toFixed(2))
+        });
+        $('#id_price_round_trip, #id_driver_gain').on('input', function() {
+            // Obtiene los valores de los inputs
+            var price = parseFloat($('#id_price_round_trip').val());
+            var driverGain = parseFloat($('#id_driver_gain').val());
+    
+            // Calcula el precio del conductor
+            var driverPrice = (price * driverGain) / 100;
+    
+            // Muestra el resultado en el input id_driver_price
+            $('#id_driver_price_round_trip').val(driverPrice.toFixed(2));
+            var gain = price - driverPrice
+            $('#id_gain_loyal_ride_round_trip').val(gain.toFixed(2))
+        });
+    });
+    </script>
+<!--end::Page Custom Javascript-->
+{% endblock extra_js %}

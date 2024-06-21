@@ -13,7 +13,8 @@
 <div class="post d-flex flex-column-fluid" id="kt_post">
     <!--begin::Container-->
     <div id="kt_content_container" class="container-xxl">
-        <form id="kt_ecommerce_add_category_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="../../demo1/dist/apps/ecommerce/catalog/categories.html">
+        <form class="form d-flex flex-column flex-lg-row" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
             <!--begin::Aside column-->
             <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
                 <!--begin::Thumbnail settings-->
@@ -35,12 +36,12 @@
                             <div class="image-input-wrapper w-150px h-150px"></div>
                             <!--end::Preview existing avatar-->
                             <!--begin::Label-->
-                            <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+                            <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Seleccionar logo">
                                 <!--begin::Icon-->
                                 <i class="bi bi-pencil-fill fs-7"></i>
                                 <!--end::Icon-->
                                 <!--begin::Inputs-->
-                                <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
+                                <input type="file" name="image" id="id_image" accept=".png, .jpg, .jpeg" />
                                 <input type="hidden" name="avatar_remove" />
                                 <!--end::Inputs-->
                             </label>
@@ -80,30 +81,25 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Input group-->
-                        <div class="mb-10 fv-row">
-                            <!--begin::Label-->
-                            <label class="required form-label">Nombre de la empresa</label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input type="text" name="user_name" class="form-control mb-2" placeholder="nombre de usuario" value="" />
-                            <!--end::Input-->
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">El nombre de la empresa es obligatorio.</div>
-                            <!--end::Description-->
-                        </div>
+                        
+                        {% for field in form %}
+                            {% if field.name != 'image' %}
+                            <div class="mb-3 fv-row">
+                                <!--begin::Label-->
+                                    <label class="required form-label">{{ field.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <!-- <input type="text" name="user_name" class="form-control mb-2" placeholder="nombre de usuario" value="" /> -->
+                                    {{ field }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">{{ field.help_text }}</div>
+                                <!--end::Description-->
+                            </div>
+                            {% endif %}
+                        {% endfor %}
                         <!--end::Input group-->
                         <!--begin::Input group-->
-                        <div class="fv-row">
-                            <!--begin::Label-->
-                            <label class="form-label">Correo electrónico</label>
-                            <!--end::Label-->
-                            <!--begin::Editor-->
-                            <input type="email" name="user_email" class="form-control mb-2" placeholder="email" value="" />
-                            <!--end::Editor-->
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">ingrese el correo electrónico del la empresa, este debe ser unico</div>
-                            <!--end::Description-->
-                        </div>
                         <!--end::Input group-->
                     </div>
                     <!--end::Card header-->
@@ -116,7 +112,7 @@
                     <a href="../../demo1/dist/apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancelar</a>
                     <!--end::Button-->
                     <!--begin::Button-->
-                    <button type="submit" id="kt_ecommerce_add_category_submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary">
                         <span class="indicator-label">Registrar Empresa</span>
                         <span class="indicator-progress">Please wait...
                         <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>

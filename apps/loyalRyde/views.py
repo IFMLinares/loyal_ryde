@@ -2,12 +2,13 @@ from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView, ListView, DeleteView, DetailView, CreateView
+from django.views.generic import TemplateView, ListView, DeleteView, DetailView, CreateView, View
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
+from django.contrib.auth.models import Group
 
 from .forms import *
 from .models import *
@@ -17,6 +18,13 @@ from .models import *
 class Index(LoginRequiredMixin, TemplateView):
     template_name = 'loyal_ryde_system/index.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['latest_transfer_requests'] = TransferRequest.objects.all().order_by('-date_created')[:10]
+        context['in_progress_transfer_requests'] = TransferRequest.objects.filter(status='en proceso').order_by('-date_created')[:10]
+        context['total_transfer_requests'] = TransferRequest.objects.count()
+        return context
+
 # VISTAS DE USUARIOS (PARA ADMINISTRADORES)
 
 #  Agregar usuario
@@ -24,8 +32,28 @@ class UserAdd(LoginRequiredMixin, TemplateView):
     template_name = 'loyal_ryde_system/add_user.html'
 
 #  Agregar usuario (de las eempresas)
-class UserCompanyAdd(LoginRequiredMixin, TemplateView):
+class UserCompanyAdd(LoginRequiredMixin, View):
+    form_class = CustomUserCreationForm
     template_name = 'loyal_ryde_system/add_user_company.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            # Verifica el nombre de la compañía antes de guardar el usuario
+            if user.company.name != "Loyal ride":
+                # Asigna permisos de usuario normal
+                user.is_staff = False
+                # Puedes agregar el usuario a un grupo con permisos específicos si es necesario
+                # group = Group.objects.get(name='Normal Users')
+                # user.groups.add(group)
+            user.save()
+            return HttpResponseRedirect(reverse_lazy('core:user_list_supervisor'))
+        return render(request, self.template_name, {'form': form})
 
 # Agregar nuevo traslado
 class TransferRequestCreateView(LoginRequiredMixin, CreateView):
@@ -49,6 +77,13 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         # Actualiza la fecha en los datos del POST
         request.POST = request.POST.copy()
         request.POST['date'] = fecha
+        return super().post(request, *args, **kwargs)
+    
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        departure_points = DeparturePoint.objects.all()
+        context['departure'] = departure_points
+        return context
 
 
         return super().post(request, *args, **kwargs)
@@ -58,49 +93,131 @@ class DriverAdd(LoginRequiredMixin, TemplateView):
     template_name = 'loyal_ryde_system/add_driver.html'
 
 #  Agregar Flota
-class FleetAdd(LoginRequiredMixin, TemplateView):
+class FleetAdd(LoginRequiredMixin, CreateView):
+    model = Fleet
+    form_class = AddFleetForm
     template_name = 'loyal_ryde_system/add_fleet.html'
+    success_url = reverse_lazy('core:fleet_list')
+
+#  Agregar Salida
+class DeparturePointCreateView(LoginRequiredMixin, CreateView):
+    model = DeparturePoint
+    form_class = AddDepartureForm
+    # fields = '__all__'
+    template_name = 'loyal_ryde_system/add.html'
+    success_url = reverse_lazy('core:rates_departure_list')
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Registrar Salida"
+        return context
+    
+#  Agregar Destino
+class ArrivalPointCreateView(LoginRequiredMixin, CreateView):
+    model = ArrivalPoint
+    form_class = AddArrivalForm
+    # fields = '__all__'
+    template_name = 'loyal_ryde_system/add.html'
+    success_url = reverse_lazy('core:rates_arrival_list')
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Registrar Destino"
+        return context
 
 #  Agregar Ruta
-class RouteCreateView(LoginRequiredMixin, TemplateView):
+class RouteCreateView(LoginRequiredMixin, CreateView):
+    model = Route
+    form_class = AddRouteForm
     template_name = 'loyal_ryde_system/add_route.html'
+    success_url = reverse_lazy('core:route_list')
+
+#  Agregar tarifas
+class RatesCreateView(LoginRequiredMixin, CreateView):
+    model = Rates
+    form_class = AddRateForm
+    template_name = 'loyal_ryde_system/add_rate.html'
+    success_url = reverse_lazy('core:rates_list')
 
 #  Listado de conductores
 class DriverListView(LoginRequiredMixin, TemplateView):
     template_name = 'loyal_ryde_system/driver_list.html'
 
 #  Listado de Flotas
-class FleetListView(LoginRequiredMixin, TemplateView):
+class FleetListView(LoginRequiredMixin, ListView):
+    model = Fleet
+    context_object_name = 'fleets'
     template_name = 'loyal_ryde_system/fleet_list.html'
 
 #  Listado de Rutas
-class RouteListView(LoginRequiredMixin, TemplateView):
+class RouteListView(LoginRequiredMixin, ListView):
+    model = Route
+    context_object_name = 'routes'
     template_name = 'loyal_ryde_system/route_list.html'
 
 #  Listado de Viajes en progreso
-class TripsProgressListView(LoginRequiredMixin, TemplateView):
+class TripsProgressListView(LoginRequiredMixin, ListView):
+    model = TransferRequest
+    context_object_name = 'transfer'
     template_name = 'loyal_ryde_system/trips_progress.html'
 
+    def get_queryset(self):
+        return TransferRequest.objects.filter(status='en proceso')
+
 #  Listado de Viajes en completados
-class TripsCompletedListView(LoginRequiredMixin, TemplateView):
+class TripsCompletedListView(LoginRequiredMixin, ListView):
+    model = TransferRequest
+    context_object_name = 'transfer'
     template_name = 'loyal_ryde_system/trips_complete.html'
+    
+    def get_queryset(self):
+        return TransferRequest.objects.filter(status='finalizada')
 
 #  Listado de Viajes en en espera
-class TripsHoldListView(LoginRequiredMixin, TemplateView):
+class TripsHoldListView(LoginRequiredMixin, ListView):
+    model = TransferRequest
+    context_object_name = 'transfer'
     template_name = 'loyal_ryde_system/trips_on_hold.html'
+    
+    def get_queryset(self):
+        return TransferRequest.objects.filter(status='validada')
 
 #  Listado de Viajes programados
-class TripsProgramedListView(LoginRequiredMixin, TemplateView):
+class TripsProgramedListView(LoginRequiredMixin, ListView):
+    model = TransferRequest
+    context_object_name = 'transfer'
     template_name = 'loyal_ryde_system/trips_programed.html'
+    
+    def get_queryset(self):
+        return TransferRequest.objects.filter(status='validada')
 
 #  Listado de Viajes cancelados
-class TripsCancelledListView(LoginRequiredMixin, TemplateView):
+class TripsCancelledListView(LoginRequiredMixin, ListView):
+    model = TransferRequest
+    context_object_name = 'transfer'
     template_name = 'loyal_ryde_system/trips_canceled.html'
+    
+    def get_queryset(self):
+        return TransferRequest.objects.filter(status='cancelada')
 
 
 #  Listado de Tarifas
-class RatesListView(LoginRequiredMixin, TemplateView):
+class RatesListView(LoginRequiredMixin, ListView):
+    model = Rates
+    context_object_name = 'rates'
     template_name = 'loyal_ryde_system/rates.html'
+
+#  Listado de Destinos
+class DepartureListView(LoginRequiredMixin, ListView):
+    model = DeparturePoint
+    context_object_name = 'departure'
+    template_name = 'loyal_ryde_system/departure_list.html'
+
+#  Listado de Salidas
+class ArrivalListView(LoginRequiredMixin, ListView):
+    model = ArrivalPoint
+    context_object_name = 'arrival'
+    template_name = 'loyal_ryde_system/arrival_list.html'
 
 
 #  Listado de conductores Activos
@@ -129,20 +246,23 @@ class UserDispatchListView(LoginRequiredMixin, ListView):
 
 # Lista de Operadores (Usuarios del cliente)
 class UserOperatorListView(LoginRequiredMixin, ListView):
-    model = User
+    model = CustomUser
     template_name = 'loyal_ryde_system/user_list_view_operators.html'
+    context_object_name = 'users'
 
     def get_queryset(self):
-        return User.objects.filter(is_staff=True)
+        # Filtra el queryset para incluir solo usuarios con el rol 'operator'
+        return CustomUser.objects.filter(role='operator')
 
 # Lista de Supervisores (Usuarios del cliente)
 class UserSupervisorListView(LoginRequiredMixin, ListView):
-    model = User
+    model = CustomUser
     template_name = 'loyal_ryde_system/user_list_view_supervisors.html'
+    context_object_name = 'users'
 
     def get_queryset(self):
-        return User.objects.filter(is_staff=True)
-
+        # Filtra el queryset para incluir solo usuarios con el rol 'operator'
+        return CustomUser.objects.filter(role='supervisor')
 # listado de Traslados
 class TransferRequestListView(LoginRequiredMixin, ListView):
     model = TransferRequest
@@ -151,13 +271,21 @@ class TransferRequestListView(LoginRequiredMixin, ListView):
 
 # listado de Empresas
 class CompaniesListView(LoginRequiredMixin, ListView):
-    model = TransferRequest
+    model = Company
     template_name = 'loyal_ryde_system/companies_list.html'
-    context_object_name = 'transfer_requests'
+    context_object_name = 'companies'
 
 #  Agregar Empresa
-class CompnayAdd(LoginRequiredMixin, TemplateView):
+class CompnayAdd(LoginRequiredMixin, CreateView):
+    model = Company
+    form_class = AddCompanyForm
+    success_url =  reverse_lazy('core:companies_list')
     template_name = 'loyal_ryde_system/add_company.html'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Formulario guardado exitosamente!')
+        return response
 
 
 # AJAX FUNCTIONS
@@ -181,3 +309,55 @@ def approve_request(request):
         transfer_request.status = 'validada'
         transfer_request.save()
         return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido validada con éxito.'})
+
+def get_company_image(request):
+    company_id = request.GET.get('company_id')
+    company = Company.objects.get(id=company_id)
+    image_url = company.image.url  # Asumiendo que tu modelo Company tiene un campo de imagen
+    return JsonResponse({'image_url': image_url})
+
+def get_routes_by_departure(request):
+    if request.method == "GET":
+        departure_name = request.GET.get("departure")
+        routes = Route.objects.filter(departure_point__name=departure_name)
+        data = [{"id": route.id, "arrival_point": route.arrival_point.name} for route in routes]
+        return JsonResponse(data, safe=False)
+
+def get_rates(request):
+    if request.method == "GET":
+        departure_id = request.GET.get("departure_id")
+        arrival_id = request.GET.get("arrival_id")
+        nro = int(request.GET.get("nro"))
+
+        try:
+            # Buscar la ruta con los IDs de salida y destino
+            route = Route.objects.get(departure_point__name=departure_id, arrival_point__name=arrival_id)
+            # Luego, busca la tarifa asociada a esa ruta
+            rate = Rates.objects.filter(route=route)
+            rate_data = []
+            for n in rate:
+                if n.vehicle.passengers_numbers >= nro:
+                    rate_data.append({
+                    "rate_id": n.id,
+                    'rate_vehicle': f'{n.vehicle.brand} {n.vehicle.model} Max Pasajeros: {n.vehicle.passengers_numbers}',
+                    'rate_route': F'{n.route.route_name}: {n.route.departure_point}-{n.route.arrival_point}',
+                    'rate_price': n.price,
+                    'rate_price_round_trip': n.price_round_trip,
+                    'rate_driver_gain': n.driver_gain,
+                    'rate_driver_price': n.driver_price,
+                    'rate_driver_price_round_trip': n.driver_price_round_trip,
+                    'rate_gain_loyal_ride': n.gain_loyal_ride,
+                    'rate_gain_loyal_ride_round_trip': n.gain_loyal_ride_round_trip,
+                    'rate_daytime_waiting_time': n.daytime_waiting_time,
+                    'rate_nightly_waiting_time': n.nightly_waiting_time,
+                    'rate_detour_local': n.detour_local,
+                    # Agrega más campos según tus necesidades
+                })
+            response_data = {
+                "rates": rate_data
+            }
+            return JsonResponse(response_data)
+        except (Route.DoesNotExist, Rates.DoesNotExist):
+            return JsonResponse({"error": "No se encontró una tarifa para esta ruta."}, status=404)
+        
+        

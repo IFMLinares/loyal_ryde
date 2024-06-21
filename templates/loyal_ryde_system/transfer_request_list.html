@@ -34,8 +34,8 @@
                                     {% for transfer_request in transfer_requests %}
                                         <tr>
                                             <td class="text-center">{{ transfer_request.date|date:'d/m/Y'}}-{{ transfer_request.hour|date:'G:i' }}</td>
-                                            <td class="text-center">{{ transfer_request.departure_site }}</td>
-                                            <td class="text-center">{{ transfer_request.destination }}</td>
+                                            <td class="text-center">{{ transfer_request.departure_site_route }}</td>
+                                            <td class="text-center">{{ transfer_request.destination_route }}</td>
                                             <td class="text-center">{{ transfer_request.service_requested.username }}</td>
                                             <td class="text-center">{{ transfer_request.service_authorize }}</td>
                                             <td class="text-center">

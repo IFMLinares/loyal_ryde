@@ -153,3 +153,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 AXES_LOGIN_FAILURE_LIMIT = 30
 SITE_ID = 1
+AUTH_USER_MODEL = 'loyalRyde.CustomUser'

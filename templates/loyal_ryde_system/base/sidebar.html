@@ -94,148 +94,7 @@
 						<span class="menu-title">Inicio</span>
 					</a>
 				</div>
-				<!-- Usuarios -->
-				<div class="menu-item">
-					<div class="menu-content pt-8 pb-2">
-						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
-							>Usuarios del Sistema</span
-						>
-					</div>
-				</div>
-				<div
-					data-kt-menu-trigger="click"
-					class="menu-item menu-accordion"
-				>
-					<span class="menu-link">
-						<span class="menu-icon">
-							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<span class="svg-icon svg-icon-2">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-									fill="none"
-								>
-									<path
-										d="M6.28548 15.0861C7.34369 13.1814 9.35142 12 11.5304 12H12.4696C14.6486 12 16.6563 13.1814 17.7145 15.0861L19.3493 18.0287C20.0899 19.3618 19.1259 21 17.601 21H6.39903C4.87406 21 3.91012 19.3618 4.65071 18.0287L6.28548 15.0861Z"
-										fill="currentColor"
-									></path>
-									<rect
-										opacity="0.3"
-										x="8"
-										y="3"
-										width="8"
-										height="8"
-										rx="4"
-										fill="currentColor"
-									></rect>
-								</svg>
-							</span>
-							<!--end::Svg Icon-->
-						</span>
-						<span class="menu-title">Usuarios del sistema</span>
-						<span class="menu-arrow"></span>
-					</span>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:user_add' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Registrar usuario</span
-								>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:user_list_admin' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title">Administradores</span>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:user_list_dispatcher' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title">Despachadores</span>
-							</a>
-						</div>
-					</div>
-				</div>
-
 				
-				<!-- Traslado -->
-				<div class="menu-item">
-					<div class="menu-content pt-8 pb-2">
-						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
-							>Traslado</span
-						>
-					</div>
-				</div>
-				<div
-					data-kt-menu-trigger="click"
-					class="menu-item menu-accordion"
-				>
-					<span class="menu-link">
-						<span class="menu-icon">
-							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<i class="fas fa-solid fa-route"></i>
-							<!--end::Svg Icon-->
-						</span>
-						<span class="menu-title">Traslados</span>
-						<span class="menu-arrow"></span>
-					</span>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link"
-								href="{% url 'core:transfer_request_create' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Solicitar Traslado</span
-								>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link"
-								href="{% url 'core:transfer_request_list' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Listado de Traslados</span
-								>
-							</a>
-						</div>
-					</div>
-				</div>
-
 				<!-- Empresas -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
@@ -269,7 +128,7 @@
 									<span class="bullet bullet-dot"></span>
 								</span>
 								<span class="menu-title"
-									>Registrar usuario de empresa</span
+									>Registrar usuario</span
 								>
 							</a>
 						</div>
@@ -332,12 +191,12 @@
 					</div>
 				</div>
 
-				<!-- Conductores -->
+				<!-- Rutas -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
 						<span
 							class="menu-section text-muted text-uppercase fs-8 ls-1"
-							>Conductores</span
+							>Rutas</span
 						>
 					</div>
 				</div>
@@ -348,24 +207,22 @@
 					<span class="menu-link">
 						<span class="menu-icon">
 							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<i class="fas fa-solid fa-car"></i>
+							<i class="fas fa-solid fa-route"></i>
 							<!--end::Svg Icon-->
 						</span>
-						<span class="menu-title">Conductores</span>
+						<span class="menu-title">Rutas</span>
 						<span class="menu-arrow"></span>
 					</span>
 					<div class="menu-sub menu-sub-accordion menu-active-bg">
 						<div class="menu-item">
 							<a
 								class="menu-link py-3"
-								href="{% url 'core:driver_add' %}"
+								href="{% url 'core:route_add' %}"
 							>
 								<span class="menu-bullet">
 									<span class="bullet bullet-dot"></span>
 								</span>
-								<span class="menu-title"
-									>Registrar Conductor</span
-								>
+								<span class="menu-title">Registrar Ruta</span>
 							</a>
 						</div>
 					</div>
@@ -373,14 +230,12 @@
 						<div class="menu-item">
 							<a
 								class="menu-link py-3"
-								href="{% url 'core:driver_list' %}"
+								href="{% url 'core:route_list' %}"
 							>
 								<span class="menu-bullet">
 									<span class="bullet bullet-dot"></span>
 								</span>
-								<span class="menu-title"
-									>Listado de Conductores</span
-								>
+								<span class="menu-title">Listado de Rutas</span>
 							</a>
 						</div>
 					</div>
@@ -388,14 +243,12 @@
 						<div class="menu-item">
 							<a
 								class="menu-link py-3"
-								href="{% url 'core:driver_list_active' %}"
+								href="{% url 'core:rates_departure_create' %}"
 							>
 								<span class="menu-bullet">
 									<span class="bullet bullet-dot"></span>
 								</span>
-								<span class="menu-title"
-									>Conductores Aprobados</span
-								>
+								<span class="menu-title">Registrar Salidas</span>
 							</a>
 						</div>
 					</div>
@@ -403,34 +256,46 @@
 						<div class="menu-item">
 							<a
 								class="menu-link py-3"
-								href="{% url 'core:driver_list_pending' %}"
+								href="{% url 'core:rates_departure_list' %}"
 							>
 								<span class="menu-bullet">
 									<span class="bullet bullet-dot"></span>
 								</span>
-								<span class="menu-title"
-									>Conductores pendientes</span
-								>
+								<span class="menu-title">Listado de Salidas</span>
 							</a>
 						</div>
 					</div>
+					
 					<div class="menu-sub menu-sub-accordion menu-active-bg">
 						<div class="menu-item">
 							<a
 								class="menu-link py-3"
-								href="../../demo1/dist/account/overview.html"
+								href="{% url 'core:rates_arrival_create' %}"
 							>
 								<span class="menu-bullet">
 									<span class="bullet bullet-dot"></span>
 								</span>
-								<span class="menu-title"
-									>Ojo de dios</span
-								>
+								<span class="menu-title">Registrar Destino</span>
+							</a>
+						</div>
+					</div>
+					
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:rates_arrival_list' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">Listado de destinos</span>
 							</a>
 						</div>
 					</div>
 				</div>
 
+				
 				<!-- Flotas -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
@@ -483,56 +348,7 @@
 					</div>
 				</div>
 
-				<!-- Rutas -->
-				<div class="menu-item">
-					<div class="menu-content pt-8 pb-2">
-						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
-							>Rutas</span
-						>
-					</div>
-				</div>
-				<div
-					data-kt-menu-trigger="click"
-					class="menu-item menu-accordion"
-				>
-					<span class="menu-link">
-						<span class="menu-icon">
-							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<i class="fas fa-solid fa-route"></i>
-							<!--end::Svg Icon-->
-						</span>
-						<span class="menu-title">Rutas</span>
-						<span class="menu-arrow"></span>
-					</span>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:route_add' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title">Registrar Ruta</span>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:route_list' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title">Listado de Rutas</span>
-							</a>
-						</div>
-					</div>
-				</div>
-
+				
 				<!-- Tarifas -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
@@ -559,6 +375,17 @@
 						<div class="menu-item">
 							<a
 								class="menu-link py-3"
+								href="{% url 'core:rates_create' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">Registrar</span>
+							</a>
+						</div>
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
 								href="{% url 'core:rates_list' %}"
 							>
 								<span class="menu-bullet">
@@ -570,6 +397,61 @@
 					</div>
 				</div>
 
+				<!-- Traslado -->
+				<div class="menu-item">
+					<div class="menu-content pt-8 pb-2">
+						<span
+							class="menu-section text-muted text-uppercase fs-8 ls-1"
+							>Traslado</span
+						>
+					</div>
+				</div>
+				<div
+					data-kt-menu-trigger="click"
+					class="menu-item menu-accordion"
+				>
+					<span class="menu-link">
+						<span class="menu-icon">
+							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+							<i class="fas fa-solid fa-route"></i>
+							<!--end::Svg Icon-->
+						</span>
+						<span class="menu-title">Traslados</span>
+						<span class="menu-arrow"></span>
+					</span>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link"
+								href="{% url 'core:transfer_request_create' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Solicitar Traslado</span
+								>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link"
+								href="{% url 'core:transfer_request_list' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Listado de Traslados</span
+								>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				
 				<!-- Viajes -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
@@ -658,6 +540,179 @@
 						</div>
 					</div>
 				</div>
+
+				
+				<!-- Usuarios -->
+				<div class="menu-item">
+					<div class="menu-content pt-8 pb-2">
+						<span
+							class="menu-section text-muted text-uppercase fs-8 ls-1"
+							>Usuarios del Sistema</span
+						>
+					</div>
+				</div>
+				<div
+					data-kt-menu-trigger="click"
+					class="menu-item menu-accordion"
+				>
+					<span class="menu-link">
+						<span class="menu-icon">
+							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+							<span class="svg-icon svg-icon-2">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="24"
+									height="24"
+									viewBox="0 0 24 24"
+									fill="none"
+								>
+									<path
+										d="M6.28548 15.0861C7.34369 13.1814 9.35142 12 11.5304 12H12.4696C14.6486 12 16.6563 13.1814 17.7145 15.0861L19.3493 18.0287C20.0899 19.3618 19.1259 21 17.601 21H6.39903C4.87406 21 3.91012 19.3618 4.65071 18.0287L6.28548 15.0861Z"
+										fill="currentColor"
+									></path>
+									<rect
+										opacity="0.3"
+										x="8"
+										y="3"
+										width="8"
+										height="8"
+										rx="4"
+										fill="currentColor"
+									></rect>
+								</svg>
+							</span>
+							<!--end::Svg Icon-->
+						</span>
+						<span class="menu-title">Usuarios del sistema</span>
+						<span class="menu-arrow"></span>
+					</span>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:user_add' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Registrar usuario</span
+								>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:user_list_admin' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">Administradores</span>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:user_list_dispatcher' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">Despachadores</span>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<!-- Conductores -->
+				<div class="menu-item">
+					<div class="menu-content pt-8 pb-2">
+						<span
+							class="menu-section text-muted text-uppercase fs-8 ls-1"
+							>Conductores</span
+						>
+					</div>
+				</div>
+				<div
+					data-kt-menu-trigger="click"
+					class="menu-item menu-accordion"
+				>
+					<span class="menu-link">
+						<span class="menu-icon">
+							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+							<i class="fas fa-solid fa-car"></i>
+							<!--end::Svg Icon-->
+						</span>
+						<span class="menu-title">Conductores</span>
+						<span class="menu-arrow"></span>
+					</span>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:driver_add' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Registrar Conductor</span
+								>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:driver_list' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Listado de Conductores</span
+								>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:driver_list_active' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Conductores Aprobados</span
+								>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:driver_list_pending' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Conductores pendientes</span
+								>
+							</a>
+						</div>
+					</div>
+				</div>
+
 
 				<!-- Cupones -->
 				<div class="menu-item">

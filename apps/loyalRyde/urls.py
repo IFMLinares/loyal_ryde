@@ -22,6 +22,10 @@ urlpatterns = [
     path('fleet/create/', FleetAdd.as_view(), name='fleet_add'),
     path('fleet/list/', FleetListView.as_view(), name='fleet_list'),
     path('route/create/', RouteCreateView.as_view(), name='route_add'),
+    path('route/departure/create', DeparturePointCreateView.as_view(), name='rates_departure_create'),
+    path('route/departure/list', DepartureListView.as_view(), name='rates_departure_list'),
+    path('route/arrival/create', ArrivalPointCreateView.as_view(), name='rates_arrival_create'),
+    path('route/arrival/list', ArrivalListView.as_view(), name='rates_arrival_list'),
     path('route/list/', RouteListView.as_view(), name='route_list'),
     path('trips/progress/', TripsProgressListView.as_view(), name='trips_progress'),
     path('trips/completed/', TripsCompletedListView.as_view(), name='trips_completed'),
@@ -29,15 +33,16 @@ urlpatterns = [
     path('trips/programed/', TripsProgramedListView.as_view(), name='trips_programed'),
     path('trips/cancelled/', TripsCancelledListView.as_view(), name='trips_cancelled'),
     path('rates/list/', RatesListView.as_view(), name='rates_list'),
-
-
-
-
-
+    path('rates/create/', RatesCreateView.as_view(), name='rates_create'),
+    
     
     
     # AJAX VIEWS
     path('transfer-request/people/create', get_people_transfer, name='transfer_request_people_create'),
     path('transfer-request/approve', approve_request, name='transfer_request_approve'),
+    path('company/image', get_company_image, name='company_image'),
+    path("transfer-request/routes", get_routes_by_departure, name="routes_ajax"),
+    path("transfer-request/rates", get_rates, name="rates_ajax"),
+    
     
 ]

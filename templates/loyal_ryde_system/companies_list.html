@@ -37,7 +37,7 @@
                 <!--begin::Card toolbar-->
                 <div class="card-toolbar">
                     <!--begin::Add customer-->
-                    <a href="../../demo1/dist/apps/ecommerce/catalog/add-category.html" class="btn btn-primary">Añadir compañía</a>
+                    <a href="{% url 'core:companies_create' %}" class="btn btn-primary">Añadir compañía</a>
                     <!--end::Add customer-->
                 </div>
                 <!--end::Card toolbar-->
@@ -57,7 +57,9 @@
                                 </div>
                             </th>
                             <th class="min-w-250px">Nombre de la compaía</th>
-                            <th class="min-w-150px">Estatus</th>
+                            <th class="min-w-150px">Rif</th>
+                            <th class="min-w-150px">Email</th>
+                            <th class="min-w-150px">Teléfono</th>
                             <th class="text-end min-w-70px">Acciones</th>
                         </tr>
                         <!--end::Table row-->
@@ -66,6 +68,7 @@
                     <!--begin::Table body-->
                     <tbody class="fw-bold text-gray-600">
                         <!--begin::Table row-->
+                        {% for companie in companies %}
                         <tr>
                             <!--begin::Checkbox-->
                             <td>
@@ -78,16 +81,20 @@
                             <td>
                                 <div class="d-flex">
                                     <!--begin::Thumbnail-->
-                                    <a href="../../demo1/dist/apps/ecommerce/catalog/edit-category.html" class="symbol symbol-50px">
+                                    <a href="" class="symbol symbol-50px">
+                                        {% if companie.image %}
+                                        <span class="symbol-label" style="background-image:url({{ companie.image.url }});"></span>
+                                        {% else %}
                                         <span class="symbol-label" style="background-image:url({% static 'assets/media/svg/files/blank-image.svg'%});"></span>
+                                        {% endif %}
                                     </a>
                                     <!--end::Thumbnail-->
                                     <div class="ms-5">
                                         <!--begin::Title-->
-                                        <a href="../../demo1/dist/apps/ecommerce/catalog/edit-category.html" class="text-gray-800 text-hover-primary fs-5 fw-bolder mb-1" data-kt-ecommerce-category-filter="category_name">Computers</a>
+                                        <a href="" class="text-gray-800 text-hover-primary fs-5 fw-bolder mb-1" data-kt-ecommerce-category-filter="category_name">{{ companie.name }}</a>
                                         <!--end::Title-->
                                         <!--begin::Description-->
-                                        <div class="text-muted fs-7 fw-bolder">Our computers and tablets include all the big brands.</div>
+                                        <div class="text-muted fs-7 fw-bolder">{{ companie.address }}.</div>
                                         <!--end::Description-->
                                     </div>
                                 </div>
@@ -96,7 +103,17 @@
                             <!--begin::Type=-->
                             <td>
                                 <!--begin::Badges-->
-                                <div class="badge badge-light-success">Automated</div>
+                                {{ companie.rif }}
+                                <!--end::Badges-->
+                            </td>
+                            <td>
+                                <!--begin::Badges-->
+                                {{ companie.email }}
+                                <!--end::Badges-->
+                            </td>
+                            <td>
+                                <!--begin::Badges-->
+                                {{ companie.phone }}
                                 <!--end::Badges-->
                             </td>
                             <!--end::Type=-->
@@ -127,258 +144,9 @@
                             </td>
                             <!--end::Action=-->
                         </tr>
+                        {% endfor %}
                         <!--end::Table row-->
                         <!--begin::Table row-->
-                        <tr>
-                            <!--begin::Checkbox-->
-                            <td>
-                                <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="checkbox" value="1" />
-                                </div>
-                            </td>
-                            <!--end::Checkbox-->
-                            <!--begin::Category=-->
-                            <td>
-                                <div class="d-flex">
-                                    <!--begin::Thumbnail-->
-                                    <a href="../../demo1/dist/apps/ecommerce/catalog/edit-category.html" class="symbol symbol-50px">
-                                        <span class="symbol-label" style="background-image:url({% static 'assets/media/svg/files/blank-image.svg'%});"></span>
-                                    </a>
-                                    <!--end::Thumbnail-->
-                                    <div class="ms-5">
-                                        <!--begin::Title-->
-                                        <a href="../../demo1/dist/apps/ecommerce/catalog/edit-category.html" class="text-gray-800 text-hover-primary fs-5 fw-bolder mb-1" data-kt-ecommerce-category-filter="category_name">Watches</a>
-                                        <!--end::Title-->
-                                        <!--begin::Description-->
-                                        <div class="text-muted fs-7 fw-bolder">Our range of watches are perfect whether you’re looking to upgrade</div>
-                                        <!--end::Description-->
-                                    </div>
-                                </div>
-                            </td>
-                            <!--end::Category=-->
-                            <!--begin::Type=-->
-                            <td>
-                                <!--begin::Badges-->
-                                <div class="badge badge-light-success">Automated</div>
-                                <!--end::Badges-->
-                            </td>
-                            <!--end::Type=-->
-                            <!--begin::Action=-->
-                            <td class="text-end">
-                                <a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Acciones
-                                <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
-                                <span class="svg-icon svg-icon-5 m-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                        <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor" />
-                                    </svg>
-                                </span>
-                                <!--end::Svg Icon--></a>
-                                <!--begin::Menu-->
-                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
-                                    <!--begin::Menu item-->
-                                    <div class="menu-item px-3">
-                                        <a href="../../demo1/dist/apps/user-management/users/view.html" class="menu-link px-3">Editar</a>
-                                    </div>
-                                    <!--end::Menu item-->
-                                    <!--begin::Menu item-->
-                                    <div class="menu-item px-3">
-                                        <a href="#" class="menu-link px-3" data-kt-users-table-filter="delete_row">Eliminar</a>
-                                    </div>
-                                    <!--end::Menu item-->
-                                </div>
-                                <!--end::Menu-->
-                            </td>
-                            <!--end::Action=-->
-                        </tr>
-                        <!--end::Table row-->
-                        <!--begin::Table row-->
-                        <tr>
-                            <!--begin::Checkbox-->
-                            <td>
-                                <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="checkbox" value="1" />
-                                </div>
-                            </td>
-                            <!--end::Checkbox-->
-                            <!--begin::Category=-->
-                            <td>
-                                <div class="d-flex">
-                                    <!--begin::Thumbnail-->
-                                    <a href="../../demo1/dist/apps/ecommerce/catalog/edit-category.html" class="symbol symbol-50px">
-                                        <span class="symbol-label" style="background-image:url({% static 'assets/media/svg/files/blank-image.svg'%});"></span>
-                                    </a>
-                                    <!--end::Thumbnail-->
-                                    <div class="ms-5">
-                                        <!--begin::Title-->
-                                        <a href="../../demo1/dist/apps/ecommerce/catalog/edit-category.html" class="text-gray-800 text-hover-primary fs-5 fw-bolder mb-1" data-kt-ecommerce-category-filter="category_name">Headphones</a>
-                                        <!--end::Title-->
-                                        <!--begin::Description-->
-                                        <div class="text-muted fs-7 fw-bolder">Our big range of headphones makes it easy to upgrade your device at a great price.</div>
-                                        <!--end::Description-->
-                                    </div>
-                                </div>
-                            </td>
-                            <!--end::Category=-->
-                            <!--begin::Type=-->
-                            <td>
-                                <!--begin::Badges-->
-                                <div class="badge badge-light-primary">Manual</div>
-                                <!--end::Badges-->
-                            </td>
-                            <!--end::Type=-->
-                            <!--begin::Action=-->
-                            <td class="text-end">
-                                <a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Acciones
-                                <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
-                                <span class="svg-icon svg-icon-5 m-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                        <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor" />
-                                    </svg>
-                                </span>
-                                <!--end::Svg Icon--></a>
-                                <!--begin::Menu-->
-                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
-                                    <!--begin::Menu item-->
-                                    <div class="menu-item px-3">
-                                        <a href="../../demo1/dist/apps/user-management/users/view.html" class="menu-link px-3">Editar</a>
-                                    </div>
-                                    <!--end::Menu item-->
-                                    <!--begin::Menu item-->
-                                    <div class="menu-item px-3">
-                                        <a href="#" class="menu-link px-3" data-kt-users-table-filter="delete_row">Eliminar</a>
-                                    </div>
-                                    <!--end::Menu item-->
-                                </div>
-                                <!--end::Menu-->
-                            </td>
-                            <!--end::Action=-->
-                        </tr>
-                        <!--end::Table row-->
-                        <!--begin::Table row-->
-                        <tr>
-                            <!--begin::Checkbox-->
-                            <td>
-                                <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="checkbox" value="1" />
-                                </div>
-                            </td>
-                            <!--end::Checkbox-->
-                            <!--begin::Category=-->
-                            <td>
-                                <div class="d-flex">
-                                    <!--begin::Thumbnail-->
-                                    <a href="../../demo1/dist/apps/ecommerce/catalog/edit-category.html" class="symbol symbol-50px">
-                                        <span class="symbol-label" style="background-image:url({% static 'assets/media/svg/files/blank-image.svg'%});"></span>
-                                    </a>
-                                    <!--end::Thumbnail-->
-                                    <div class="ms-5">
-                                        <!--begin::Title-->
-                                        <a href="../../demo1/dist/apps/ecommerce/catalog/edit-category.html" class="text-gray-800 text-hover-primary fs-5 fw-bolder mb-1" data-kt-ecommerce-category-filter="category_name">Footwear</a>
-                                        <!--end::Title-->
-                                        <!--begin::Description-->
-                                        <div class="text-muted fs-7 fw-bolder">Whatever your activity needs are, we’ve got you covered.</div>
-                                        <!--end::Description-->
-                                    </div>
-                                </div>
-                            </td>
-                            <!--end::Category=-->
-                            <!--begin::Type=-->
-                            <td>
-                                <!--begin::Badges-->
-                                <div class="badge badge-light-success">Automated</div>
-                                <!--end::Badges-->
-                            </td>
-                            <!--end::Type=-->
-                            <!--begin::Action=-->
-                            <td class="text-end">
-                                <a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Acciones
-                                <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
-                                <span class="svg-icon svg-icon-5 m-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                        <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor" />
-                                    </svg>
-                                </span>
-                                <!--end::Svg Icon--></a>
-                                <!--begin::Menu-->
-                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
-                                    <!--begin::Menu item-->
-                                    <div class="menu-item px-3">
-                                        <a href="../../demo1/dist/apps/user-management/users/view.html" class="menu-link px-3">Editar</a>
-                                    </div>
-                                    <!--end::Menu item-->
-                                    <!--begin::Menu item-->
-                                    <div class="menu-item px-3">
-                                        <a href="#" class="menu-link px-3" data-kt-users-table-filter="delete_row">Eliminar</a>
-                                    </div>
-                                    <!--end::Menu item-->
-                                </div>
-                                <!--end::Menu-->
-                            </td>
-                            <!--end::Action=-->
-                        </tr>
-                        <!--end::Table row-->
-                        <!--begin::Table row-->
-                        <tr>
-                            <!--begin::Checkbox-->
-                            <td>
-                                <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="checkbox" value="1" />
-                                </div>
-                            </td>
-                            <!--end::Checkbox-->
-                            <!--begin::Category=-->
-                            <td>
-                                <div class="d-flex">
-                                    <!--begin::Thumbnail-->
-                                    <a href="../../demo1/dist/apps/ecommerce/catalog/edit-category.html" class="symbol symbol-50px">
-                                        <span class="symbol-label" style="background-image:url({% static 'assets/media/svg/files/blank-image.svg'%});"></span>
-                                    </a>
-                                    <!--end::Thumbnail-->
-                                    <div class="ms-5">
-                                        <!--begin::Title-->
-                                        <a href="../../demo1/dist/apps/ecommerce/catalog/edit-category.html" class="text-gray-800 text-hover-primary fs-5 fw-bolder mb-1" data-kt-ecommerce-category-filter="category_name">Cameras</a>
-                                        <!--end::Title-->
-                                        <!--begin::Description-->
-                                        <div class="text-muted fs-7 fw-bolder">You’ll find exactly what you’re looking for with our huge range of cameras.</div>
-                                        <!--end::Description-->
-                                    </div>
-                                </div>
-                            </td>
-                            <!--end::Category=-->
-                            <!--begin::Type=-->
-                            <td>
-                                <!--begin::Badges-->
-                                <div class="badge badge-light-primary">Manual</div>
-                                <!--end::Badges-->
-                            </td>
-                            <!--end::Type=-->
-                            <!--begin::Action=-->
-                            <td class="text-end">
-                                <a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Acciones
-                                <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
-                                <span class="svg-icon svg-icon-5 m-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                        <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor" />
-                                    </svg>
-                                </span>
-                                <!--end::Svg Icon--></a>
-                                <!--begin::Menu-->
-                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
-                                    <!--begin::Menu item-->
-                                    <div class="menu-item px-3">
-                                        <a href="../../demo1/dist/apps/user-management/users/view.html" class="menu-link px-3">Editar</a>
-                                    </div>
-                                    <!--end::Menu item-->
-                                    <!--begin::Menu item-->
-                                    <div class="menu-item px-3">
-                                        <a href="#" class="menu-link px-3" data-kt-users-table-filter="delete_row">Eliminar</a>
-                                    </div>
-                                    <!--end::Menu item-->
-                                </div>
-                                <!--end::Menu-->
-                            </td>
-                            <!--end::Action=-->
-                        </tr>
                         <!--end::Table row-->
                     </tbody>
                     <!--end::Table body-->
@@ -405,4 +173,19 @@
 		<script src="{% static 'assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
 		<script src="{% static 'assets/js/custom/utilities/modals/create-app.js' %}"></script>
 		<script src="{% static 'ssets/js/custom/utilities/modals/users-search.js' %}"></script>
+        <script>
+			{% if messages %}
+				var success_message = '';
+				{% for message in messages %}
+					success_message += '<p style="margin-top: 7px; margin-bottom: 7px;">{{ message }}</p>';
+				{% endfor %}
+				Swal.fire({
+					title: 'Éxito!',
+					html: success_message, // Cambia 'text' por 'html'
+					icon: "success",
+					width: 500,
+					heigth: 700
+				});
+			{% endif %}
+		</script>
 {% endblock extra_js %}

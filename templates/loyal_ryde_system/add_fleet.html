@@ -13,7 +13,8 @@
 <div class="post d-flex flex-column-fluid" id="kt_post">
     <!--begin::Container-->
     <div id="kt_content_container" class="container-xxl">
-        <form id="kt_ecommerce_add_category_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="../../demo1/dist/apps/ecommerce/catalog/categories.html">
+        <form method="post">
+            {% csrf_token %}
             <!--begin::Aside column-->
             <!--end::Aside column-->
             <!--begin::Main column-->
@@ -30,40 +31,67 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Input group-->
-                        <div class="mb-10 fv-row">
-                            <!--begin::Label-->
-                            <label class="required form-label">Nro de placa</label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input type="text" name="user_name" class="form-control mb-2" placeholder="" value="" />
-                            <!--end::Input-->
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">El nro de placa es obligatorio.</div>
-                            <!--end::Description-->
-                        </div>
-                        <!--end::Input group-->
-                        <!--begin::Input group-->
-                        <div class="mb-10 fv-row">
-                            <!--begin::Label-->
-                            <label class="form-label">Modelo</label>
-                            <!--end::Label-->
-                            <!--begin::Editor-->
-                            <input type="email" name="user_email" class="form-control mb-2" placeholder="" value="" />
-                            <!--end::Editor-->
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">El modelo del vehiculo es obligatorio</div>
-                            <!--end::Description-->
-                        </div>
-                        <div>
-                            <!--begin::Label-->
-                            <label class="form-label">Capacidad</label>
-                            <!--end::Label-->
-                            <!--begin::Editor-->
-                            <input type="number" name="user_email" class="form-control mb-2" placeholder="10" value="" />
-                            <!--end::Editor-->
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">Indique la capacidad del vehiculo</div>
-                            <!--end::Description-->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <!--begin::Label-->
+                                <label class="required form-label">{{ form.brand.label }}</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ form.brand }}
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">
+                                    {{ form.brand.help_text }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <!--begin::Label-->
+                                <label class="required form-label">{{ form.model.label }}</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ form.model }}
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">
+                                    {{ form.model.help_text }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <!--begin::Label-->
+                                <label class="required form-label">{{ form.color.label }}</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ form.color }}
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">
+                                    {{ form.color.help_text }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <!--begin::Label-->
+                                <label class="required form-label">{{ form.plaque.label }}</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ form.plaque }}
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">
+                                    {{ form.plaque.help_text }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <!--begin::Label-->
+                                <label class="required form-label">{{ form.passengers_numbers.label }}</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ form.passengers_numbers }}
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">
+                                    {{ form.passengers_numbers.help_text }}
+                                </div>
+                            </div>
                         </div>
                         <!--end::Input group-->
                     </div>
