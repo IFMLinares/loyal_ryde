@@ -8,6 +8,7 @@ $(document).ready(function () {
 	$("#id_in_town").change(function () {
 		if ($(this).prop("checked")) {
 			$("#id_outside_town").prop("checked", false);
+			
 		}
 	});
 
@@ -71,6 +72,23 @@ $(document).ready(function () {
 		$(this).css("border-color", "");
 	});
 
+	$("#id_in_town").change(function () {
+		if (this.checked) {
+			// Si el checkbox está seleccionado, quitamos la clase 'd-none' del div
+			$("#local_traslade").removeClass("d-none");
+		} else {
+			// Si el checkbox no está seleccionado, agregamos la clase 'd-none' al div
+			$("#local_traslade").addClass("d-none");
+		}
+	});
+	$("#id_outside_town").change(function () {
+		if (this.checked) {
+			// Si el checkbox está seleccionado, quitamos la clase 'd-none' del div
+			$("#local_traslade").addClass("d-none");
+		} else {
+		}
+	});
+
 	$("#id_executive_transfer").change(function () {
 		if (this.checked) {
 			// Si el checkbox está seleccionado, quitamos la clase 'd-none' del div
@@ -104,5 +122,43 @@ $(document).ready(function () {
             $('#data_required').addClass('d-none');
         }
     });
+
+
+	const $idInTownCheckbox = $("#id_in_town");
+        const $idOutsideTownCheckbox = $("#id_outside_town");
+        const $idFullDayCheckbox = $("#id_full_day");
+        const $idHalfDayCheckbox = $("#id_half_day");
+
+        // Función para habilitar/deshabilitar los checkboxes
+        function updateCheckboxes() {
+            if ($idInTownCheckbox.is(":checked")) {
+                $idFullDayCheckbox.prop("disabled", false);
+                $idHalfDayCheckbox.prop("disabled", false);
+            } else {
+                $idFullDayCheckbox.prop("disabled", true);
+                $idHalfDayCheckbox.prop("disabled", true);
+            }
+
+            if ($idOutsideTownCheckbox.is(":checked")) {
+                $idFullDayCheckbox.prop("disabled", true);
+                $idHalfDayCheckbox.prop("disabled", true);
+            }
+
+            // Verificamos si ambos checkboxes están seleccionados
+            if ($idFullDayCheckbox.is(":checked") && $idHalfDayCheckbox.is(":checked")) {
+                // Si ambos están seleccionados, deseleccionamos uno de ellos
+                $idFullDayCheckbox.prop("checked", false);
+                $idHalfDayCheckbox.prop("checked", false);
+            }
+        }
+
+        // Escuchamos los cambios en los checkboxes
+        $idInTownCheckbox.on("change", updateCheckboxes);
+        $idOutsideTownCheckbox.on("change", updateCheckboxes);
+        $idFullDayCheckbox.on("change", updateCheckboxes);
+        $idHalfDayCheckbox.on("change", updateCheckboxes);
+
+        // Llamamos a la función inicialmente para establecer el estado correcto
+        updateCheckboxes();
 
 });

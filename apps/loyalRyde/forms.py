@@ -3,9 +3,26 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import *
 
 class TransferRequestForm(ModelForm):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        for form in  self.visible_fields():
+            if form.name == 'executive_transfer' or form.name == 'encomienda' or form.name == 'driver' or form.name == 'id_fly_checkbox':
+                form.field.widget.attrs['class'] = 'form-check-input'
+            elif form.name == 'person_to_transfer':
+                form.field.widget.attrs['class'] = 'form-select'
+            else:
+                form.field.widget.attrs['class'] = 'form-control'
+
     class Meta:
         model = TransferRequest
         fields = '__all__'
+        widgets = {
+            'executive_transfer': CheckboxInput(),
+            'encomienda': CheckboxInput(),
+            'driver': CheckboxInput(),
+            'id_fly_checkbox': CheckboxInput(),
+            'person_to_transfer': SelectMultiple()
+        }
 
 class AddCompanyForm(ModelForm):
 

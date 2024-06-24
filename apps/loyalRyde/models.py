@@ -7,7 +7,6 @@ payment_method_choices = [
         (1, 'CECO/GRAFO/PEDIDO'),
         (2, 'EFECTIVO'),
         (3, 'TARJETA DE CRÉDITO'),
-        (4, 'PAGO AL FINALIZAR'),
     ]
 
 STATUS_CHOICES = [
@@ -89,6 +88,11 @@ class PeopleTransfer(models.Model):
     phone = models.CharField(max_length=255, verbose_name='teléfono')
     company = models.CharField(max_length=255, verbose_name='empresa')
 
+
+    def __str__(self):
+        return f"{self.name} - {self.company}"
+
+
     class Meta:
         verbose_name = 'Persona a transferir'
         verbose_name_plural = 'Personas a transferir'
@@ -157,7 +161,7 @@ class Rates(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Tarifa para {self.route} - Precio: {self.price} - Ganancia del conductor: {self.driver_gain}%"
+        return f"Tarifa para {self.route} - Precio base: {self.price}$"
 
     class Meta:
         verbose_name_plural = "Tarifas"
@@ -171,6 +175,7 @@ class TransferRequest(models.Model):
     division = models.CharField(max_length=255, verbose_name="División", blank=True, null=True)
     in_town = models.BooleanField(verbose_name="Dentro de la localidad")
     outside_town = models.BooleanField(verbose_name="Fuera de la localidad") 
+    fly_checkbox = models.BooleanField(default=False, blank=True, null=True, verbose_name="Aeropuesto?")
     airline = models.CharField(max_length=255, verbose_name="Aerolínea", blank=True, null=True)
     flight = models.CharField(max_length=255, verbose_name="Vuelo", blank=True, null=True)
     route_fly = models.CharField(max_length=255, verbose_name="Ruta de vuelo", blank=True, null=True)
@@ -180,14 +185,17 @@ class TransferRequest(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Estado", blank=True, null=True, default='esperando validación' )
     executive_transfer = models.BooleanField(default=False, blank=True, null=True, verbose_name="Traslado ejecutivo")
     encomienda = models.BooleanField(default=False, blank=True, null=True, verbose_name="Encomienda")
-    driver = models.BooleanField(default=False, blank=True, null=True, verbose_name="Condcutor")
-    destination_route = models.CharField(max_length=256, verbose_name="Destino", blank=True, null=True)
+    driver = models.BooleanField(default=False, blank=True, null=True, verbose_name="Conductor")
+    destination_route = models.CharField(max_length=256, verbose_name="Destino")
+    full_day = models.BooleanField(default=False, blank=True, null=True, verbose_name="full day")
+    half_day = models.BooleanField(default=False, blank=True, null=True, verbose_name="full day")
+    destination_route = models.CharField(max_length=256, verbose_name="Destino")
     destination_direc = models.CharField(max_length=255, verbose_name="Dirección destino exacta", blank=True, null=True)
     destination_landmark = models.CharField(max_length=255, verbose_name="Punto de referencia", blank=True, null=True)
-    departure_site_route = models.CharField(max_length=256, verbose_name="Salida", blank=True, null=True)
+    departure_site_route = models.CharField(max_length=256, verbose_name="Salida")
     departure_direc = models.CharField(max_length=255, verbose_name="Dirección salida exacta", blank=True, null=True)
     departure_landmark = models.CharField(max_length=255, verbose_name="Punto de referencia", blank=True, null=True)
-    rate = models.ForeignKey(Rates, on_delete=models.CASCADE, verbose_name="Tarifa", blank=True, null=True)
+    rate = models.ForeignKey(Rates, on_delete=models.CASCADE, verbose_name="Tarifa")
 
     
     def __str__(self):

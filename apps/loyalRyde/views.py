@@ -2,7 +2,7 @@ from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView, ListView, DeleteView, DetailView, CreateView, View
+from django.views.generic import TemplateView, ListView, DeleteView, DetailView, CreateView, View, UpdateView
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.http import JsonResponse, HttpResponseRedirect
@@ -85,6 +85,44 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         context['departure'] = departure_points
         return context
 
+        return super().post(request, *args, **kwargs)
+
+# Detalles del traslado
+class TransferRequestDetailview(LoginRequiredMixin, DetailView):
+    model = TransferRequest
+    form_class = TransferRequestForm
+    template_name = 'loyal_ryde_system/transfer_rerquest_detail.html'
+    context_object_name = 'detail'
+
+class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
+    model = TransferRequest
+    template_name = 'loyal_ryde_system/transfer_rerquest_update.html'
+    form_class = TransferRequestForm
+    success_url = reverse_lazy('core:transfer_request_list')
+
+    def form_valid(self, form):
+        form.instance.service_requested = self.request.user
+        messages.success(self.request, 'Formulario guardado exitosamente!')
+        return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        # Obtén la fecha directamente del POST
+        fecha = request.POST.get('date')
+
+        # Convierte la fecha al formato que Django espera
+        print(fecha)
+        # fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
+
+        # Actualiza la fecha en los datos del POST
+        request.POST = request.POST.copy()
+        request.POST['date'] = fecha
+        return super().post(request, *args, **kwargs)
+    
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        departure_points = DeparturePoint.objects.all()
+        context['departure'] = departure_points
+        return context
 
         return super().post(request, *args, **kwargs)
 
@@ -180,7 +218,7 @@ class TripsHoldListView(LoginRequiredMixin, ListView):
     template_name = 'loyal_ryde_system/trips_on_hold.html'
     
     def get_queryset(self):
-        return TransferRequest.objects.filter(status='validada')
+        return TransferRequest.objects.filter(status='esperando validación')
 
 #  Listado de Viajes programados
 class TripsProgramedListView(LoginRequiredMixin, ListView):
@@ -199,7 +237,6 @@ class TripsCancelledListView(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         return TransferRequest.objects.filter(status='cancelada')
-
 
 #  Listado de Tarifas
 class RatesListView(LoginRequiredMixin, ListView):
@@ -287,7 +324,6 @@ class CompnayAdd(LoginRequiredMixin, CreateView):
         messages.success(self.request, 'Formulario guardado exitosamente!')
         return response
 
-
 # AJAX FUNCTIONS
 @csrf_exempt
 def get_people_transfer(request):
@@ -300,7 +336,7 @@ def get_people_transfer(request):
         data = serializers.serialize('json', [person])
 
         return JsonResponse({'people_transfer': data}, status=200)
-    
+
 @csrf_exempt
 def approve_request(request):
     if request.method == 'POST':
@@ -336,10 +372,10 @@ def get_rates(request):
             rate = Rates.objects.filter(route=route)
             rate_data = []
             for n in rate:
-                if n.vehicle.passengers_numbers >= nro:
-                    rate_data.append({
+                # if n.vehicle.passengers_numbers >= nro:
+                rate_data.append({
                     "rate_id": n.id,
-                    'rate_vehicle': f'{n.vehicle.brand} {n.vehicle.model} Max Pasajeros: {n.vehicle.passengers_numbers}',
+                    # 'rate_vehicle': f'{n.vehicle.brand} {n.vehicle.model} Max Pasajeros: {n.vehicle.passengers_numbers}',
                     'rate_route': F'{n.route.route_name}: {n.route.departure_point}-{n.route.arrival_point}',
                     'rate_price': n.price,
                     'rate_price_round_trip': n.price_round_trip,
@@ -359,5 +395,4 @@ def get_rates(request):
             return JsonResponse(response_data)
         except (Route.DoesNotExist, Rates.DoesNotExist):
             return JsonResponse({"error": "No se encontró una tarifa para esta ruta."}, status=404)
-        
-        
+

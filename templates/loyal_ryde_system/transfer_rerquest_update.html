@@ -38,11 +38,7 @@
                                 </div>
                                 <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_date">Fecha del traslado:</label>
-                                    {% if form.date.value %}
                                     <input class="form-control" type="date" placeholder="Selecciona una fecha" id="" name="date" required value='{{ form.date.value|date:"Y-m-d" }}'/> 
-                                    {% else %}
-                                    <input class="form-control" placeholder="Selecciona una fecha" id="id_date" name="date" required /> 
-                                    {% endif %}
                                 </div>
                                 <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_hour">Hora del traslado:</label>
@@ -149,10 +145,7 @@
                                 <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_person_to_transfer">Persona(s):</label>
                                     <!-- <input type="text" class="form-control" id="id_person_to_transfer" name="person_to_transfer"/> -->
-                                     <!-- {{ form.person_to_transfer }} -->
-                                    <select class="form-select" aria-label="seleccione" multiple  id="id_person_to_transfer" name="person_to_transfer" required>
-                                        <option disabled>Lista de personas añadidas</option>
-                                    </select>
+                                     {{ form.person_to_transfer }}
                                 </div>
                                 <div class="mt-5 col-md-6">
                                 </div>
@@ -212,9 +205,9 @@
                                 <div class="mt-5 col-md-4">
                                     <label class="form-label" for="id_departure_site_route">Seleccione punto de salida:</label>
                                     <select class="form-select" aria-label="Seleccione un punto de origen" name="departure_site_route" id="id_departure_site_route" required>
-                                        <option disabled selected>Seleccione un punto de origen</option>
+                                        <option disabled>Seleccione un punto de origen</option>
                                         {% for opcion in departure %}
-                                            <option value="{{ opcion.name }}">{{ opcion.name }}</option>
+                                            <option value="{{ opcion.name }}" {% if opcion == form.departure_site_route.value %} selected{% endif %}>{{ opcion.name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -235,6 +228,7 @@
                                     <label class="form-label" for="id_destination_route">Destino:</label>
                                     <select class="form-select" aria-label="Seleccione un punto de origen" name="destination_route" id="id_destination_route" required>
                                         <option disabled selected>Seleccione un punto de Destino</option>
+                                        <option value="{{ form.departure_site_route.value }}" selected>{{ form.departure_site_route.value }}</option>
                                     </select>
                                 </div>
                                 <div class="mt-5 col-md-4">
@@ -251,12 +245,6 @@
                                 <div class="mt-5 col-md-12">
                                     <label class="form-label" for="id_payment_method">Método de Pago:</label>
                                     {{ form.payment_method }}
-                                    <!-- <select class="form-select" id="id_payment_method" name="payment_method" required>
-                                        <option disabled selected>Seleccione una opción</option>
-                                        <option value="1">CECO/GRAFO/PEDIDO</option>
-                                        <option value="2">EFECTIVO</option>
-                                        <option value="3">TARJETA DE CRÉDITO</option>
-                                    </select> -->
                                 </div>
 
                                 <div class="row d-none" id="data_required">
@@ -275,6 +263,11 @@
                                     </div>
                                 </div>
                                 <div id="rates_div" class="row">
+                                    
+                                    <div class="mt-5 col-md-12">
+                                        <label class="form-label" for="id_payment_method">Tarifas:</label>
+                                        {{ form.rate }}
+                                    </div>
                                 </div>
                                 
                                 <input type="hidden" name="status" id="status" value="{{form.instance.status}}">
