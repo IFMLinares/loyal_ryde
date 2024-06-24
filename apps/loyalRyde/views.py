@@ -64,7 +64,7 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.service_requested = self.request.user
-        messages.success(self.request, 'Formulario guardado exitosamente!')
+        messages.success(self.request, 'Su solictud de trasslado ha sido registrada exitosamente. Por favor espere la aprobación para iniciar su servicio')
         return super().form_valid(form)
 
     def post(self, request, *args, **kwargs):
