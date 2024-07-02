@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import TransferRequest, Company, AbstractUser
+from .models import TransferRequest, Company, AbstractUser, CustomUser
 # Register your models here.
 
-
+admin.site.register(CustomUser)
 admin.site.register(Company)
 @admin.register(TransferRequest)
 class TransferRequestAdmin(admin.ModelAdmin):

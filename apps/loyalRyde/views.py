@@ -9,6 +9,12 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 from django.contrib.auth.models import Group
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
 
 from .forms import *
 from .models import *
@@ -38,6 +44,7 @@ class UserCompanyAdd(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
+
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
@@ -51,7 +58,11 @@ class UserCompanyAdd(LoginRequiredMixin, View):
                 # Puedes agregar el usuario a un grupo con permisos específicos si es necesario
                 # group = Group.objects.get(name='Normal Users')
                 # user.groups.add(group)
+
+            random_password = get_random_string(length=10)
+            user.set_password(random_password)
             user.save()
+            send_styled_email(user,random_password)
             return HttpResponseRedirect(reverse_lazy('core:user_list_supervisor'))
         return render(request, self.template_name, {'form': form})
 
@@ -137,6 +148,13 @@ class FleetAdd(LoginRequiredMixin, CreateView):
     template_name = 'loyal_ryde_system/add_fleet.html'
     success_url = reverse_lazy('core:fleet_list')
 
+#  Agregar Tipo de flota
+class FleetTypeAdd(LoginRequiredMixin, CreateView):
+    model = FleetType
+    form_class = AddFleetTypeForm
+    template_name = 'loyal_ryde_system/add_fleet_type.html'
+    success_url = reverse_lazy('core:fleet_list_type')
+
 #  Agregar Salida
 class DeparturePointCreateView(LoginRequiredMixin, CreateView):
     model = DeparturePoint
@@ -186,6 +204,12 @@ class FleetListView(LoginRequiredMixin, ListView):
     model = Fleet
     context_object_name = 'fleets'
     template_name = 'loyal_ryde_system/fleet_list.html'
+
+#  Listado de Flotas
+class FleeTypetListView(LoginRequiredMixin, ListView):
+    model = FleetType
+    context_object_name = 'fleets'
+    template_name = 'loyal_ryde_system/fleet_list_type.html'
 
 #  Listado de Rutas
 class RouteListView(LoginRequiredMixin, ListView):
@@ -375,7 +399,7 @@ def get_rates(request):
                 # if n.vehicle.passengers_numbers >= nro:
                 rate_data.append({
                     "rate_id": n.id,
-                    # 'rate_vehicle': f'{n.vehicle.brand} {n.vehicle.model} Max Pasajeros: {n.vehicle.passengers_numbers}',
+                    'rate_vehicle': f'{n.type_vehicle}',
                     'rate_route': F'{n.route.route_name}: {n.route.departure_point}-{n.route.arrival_point}',
                     'rate_price': n.price,
                     'rate_price_round_trip': n.price_round_trip,
@@ -396,3 +420,13 @@ def get_rates(request):
         except (Route.DoesNotExist, Rates.DoesNotExist):
             return JsonResponse({"error": "No se encontró una tarifa para esta ruta."}, status=404)
 
+# Email fuinctions
+
+def send_styled_email(user, password):
+    subject = 'Credenciales del sistema loyal Ride'
+    html_content = render_to_string('account/email/email_send.html', {'user': user, 'login': reverse_lazy('core:index'), 'pass': password})
+    text_content = strip_tags(html_content)  # Elimina las etiquetas HTML para el contenido de texto plano
+
+    email = EmailMultiAlternatives(subject, text_content, 'loyalride.test@gmail.com', [user.email])
+    email.attach_alternative(html_content, 'text/html')  # Adjunta el contenido HTML
+    email.send()

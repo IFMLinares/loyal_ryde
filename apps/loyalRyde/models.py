@@ -71,7 +71,7 @@ class Company(models.Model):
 class CustomUser(AbstractUser):
     # Añade campos adicionales aquí
     phone = models.CharField(max_length=20, blank=True, verbose_name='Teléfono')
-    role = models.CharField(max_length=20, choices=[('supervisor', 'Supervisor'), ('operator', 'Operador')], verbose_name='Rol')
+    role = models.CharField(max_length=20, choices=[('supervisor', 'Supervisor'), ('operator', 'Operador'), ('conductor', 'Conductor')], verbose_name='Rol')
     department = models.CharField(max_length=100, blank=True, verbose_name='Departamento')
     travel_approval = models.BooleanField(default=False, verbose_name='Código de aprobación')
     status = models.CharField(verbose_name="Status",max_length=20, default='inactive', choices=[('inactive', 'Inactivo'), ('active', 'Activo'), ('suspended', 'Suspendido')])
@@ -115,14 +115,20 @@ class ArrivalPoint(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+class FleetType(models.Model):
+    type = models.CharField(max_length=255, verbose_name="Tipo de Vehiculo", blank=True, null=True,)
+    def __str__(self):
+        return f"{self.type}"
+
 class Fleet(models.Model):
     brand = models.CharField(max_length=256, verbose_name="Marca del Vehiculo", blank=True, null=True)
     model = models.CharField(max_length=256, verbose_name="Modelo del vehiculo", blank=True, null=True)
     color = models.CharField(max_length=256, verbose_name="Color del vehiculo", blank=True, null=True)
     plaque = models.CharField(max_length=256, verbose_name="Nro de placa",)
     passengers_numbers = models.IntegerField(verbose_name="Número maximo de Pasajeros", blank=True, null=True)
+    type = models.ForeignKey(FleetType, on_delete=models.CASCADE, verbose_name="Tipo de vehiculo")
     def __str__(self):
-        return f"{self.brand} {self.model}. Color: {self.color}. Placa: {self.plaque}. Max. Pasajeros: {self.passengers_numbers}"
+        return f"{self.type}: {self.brand} {self.model}. Color: {self.color}. Placa: {self.plaque}. Max. Pasajeros: {self.passengers_numbers}"
 
 class Route(models.Model):
     # route_name = models.CharField(max_length=255, verbose_name="Ruta", blank=True, null=True)
@@ -136,7 +142,8 @@ class Route(models.Model):
         return f"{self.route_name}: {self.departure_point}-{self.arrival_point}"
     
 class Rates(models.Model):
-    vehicle = models.ForeignKey(Fleet, on_delete=models.CASCADE, verbose_name="Vehiculo", null=True, blank=True)
+    # vehicle = models.ForeignKey(Fleet, on_delete=models.CASCADE, verbose_name="Vehiculo", null=True, blank=True)
+    type_vehicle = models.ForeignKey(FleetType, on_delete=models.CASCADE, verbose_name="Tipo de vehiculo", null=True, blank=True)
     route = models.ForeignKey(Route, on_delete=models.CASCADE, verbose_name="Ruta", blank=True, null=True)
     price = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Precio Ida")
     price_round_trip  = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Precio Ida y vuelta")

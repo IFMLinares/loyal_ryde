@@ -318,7 +318,7 @@
 								<span class="menu-bullet">
 									<span class="bullet bullet-dot"></span>
 								</span>
-								<span class="menu-title">En espera</span>
+								<span class="menu-title">Por Aprobar</span>
 							</a>
 						</div>
 					</div>
@@ -606,6 +606,19 @@
 						<div class="menu-item">
 							<a
 								class="menu-link py-3"
+								href="{% url 'core:fleet_add_type' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">Registrar tipo de Flota</span>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
 								href="{% url 'core:fleet_add' %}"
 							>
 								<span class="menu-bullet">
@@ -626,6 +639,21 @@
 								</span>
 								<span class="menu-title"
 									>Lista de Flotas</span
+								>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:fleet_list_type' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Lista de tipos Flotas</span
 								>
 							</a>
 						</div>

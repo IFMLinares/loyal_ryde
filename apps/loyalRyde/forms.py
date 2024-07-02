@@ -1,5 +1,7 @@
 from django.forms import *
 from django.contrib.auth.forms import UserCreationForm
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail, EmailMessage
 from .models import *
 
 class TransferRequestForm(ModelForm):
@@ -59,8 +61,8 @@ class CustomUserCreationForm(UserCreationForm):
     
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        fields = UserCreationForm.Meta.fields + ('first_name', 'last_name', 'email' ,'phone', 'role', 'department', 'status','company', 'travel_approval')
-        
+        fields = UserCreationForm.Meta.fields + ('first_name', 'last_name', 'email', 'phone', 'role', 'department', 'status', 'company', 'travel_approval')
+        exclude = ['password']
         widgets = {
             'role': Select(
                 attrs={
@@ -160,4 +162,14 @@ class AddFleetForm(ModelForm):
 
     class Meta:
         model = Fleet
+        fields = '__all__'
+
+class AddFleetTypeForm(ModelForm):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        for form in self.visible_fields():
+            form.field.widget.attrs['class'] = 'form-control mb-2'
+
+    class Meta:
+        model = FleetType
         fields = '__all__'

@@ -22,5 +22,6 @@ from django.conf import settings
 urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
+    path('api/v1.0/',include('apps.api_app.urls')),
     path('', include('apps.loyalRyde.urls', namespace='core')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

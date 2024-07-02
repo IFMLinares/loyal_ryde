@@ -195,7 +195,7 @@
                                 </div>
                             </div>
                                 <!--end::Description-->
-                            {% for field in form %}
+                            {% for field in form.visible_fields %}
                                 {% if field.name != 'status' and field.name != 'role' and field.name != 'first_name' and field.name != 'last_name' and field.name != 'travel_approval' and field.name != 'company' %}
                                             <!--begin::Label-->
                                             <div class="mb-3">

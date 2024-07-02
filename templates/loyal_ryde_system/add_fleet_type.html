@@ -1,7 +1,7 @@
 {% extends "loyal_ryde_system/base/base.html" %} 
 {% load static %} 
 
-{% block title %}Agregar Flota{% endblock title %}
+{% block title %}Agregar Tipo Flota{% endblock title %}
 
 {% block extra_css %} 
 
@@ -32,66 +32,6 @@
                     <div class="card-body pt-0">
                         <!--begin::Input group-->
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <!--begin::Label-->
-                                <label class="required form-label">{{ form.brand.label }}</label>
-                                <!--end::Label-->
-                                <!--begin::Input-->
-                                {{ form.brand }}
-                                <!--end::Input-->
-                                <!--begin::Description-->
-                                <div class="text-muted fs-7">
-                                    {{ form.brand.help_text }}
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <!--begin::Label-->
-                                <label class="required form-label">{{ form.model.label }}</label>
-                                <!--end::Label-->
-                                <!--begin::Input-->
-                                {{ form.model }}
-                                <!--end::Input-->
-                                <!--begin::Description-->
-                                <div class="text-muted fs-7">
-                                    {{ form.model.help_text }}
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <!--begin::Label-->
-                                <label class="required form-label">{{ form.color.label }}</label>
-                                <!--end::Label-->
-                                <!--begin::Input-->
-                                {{ form.color }}
-                                <!--end::Input-->
-                                <!--begin::Description-->
-                                <div class="text-muted fs-7">
-                                    {{ form.color.help_text }}
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <!--begin::Label-->
-                                <label class="required form-label">{{ form.plaque.label }}</label>
-                                <!--end::Label-->
-                                <!--begin::Input-->
-                                {{ form.plaque }}
-                                <!--end::Input-->
-                                <!--begin::Description-->
-                                <div class="text-muted fs-7">
-                                    {{ form.plaque.help_text }}
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <!--begin::Label-->
-                                <label class="required form-label">{{ form.passengers_numbers.label }}</label>
-                                <!--end::Label-->
-                                <!--begin::Input-->
-                                {{ form.passengers_numbers }}
-                                <!--end::Input-->
-                                <!--begin::Description-->
-                                <div class="text-muted fs-7">
-                                    {{ form.passengers_numbers.help_text }}
-                                </div>
-                            </div>
                             <div class="col-md-6 mb-3">
                                 <!--begin::Label-->
                                 <label class="required form-label">{{ form.type.label }}</label>
