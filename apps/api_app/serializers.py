@@ -13,30 +13,6 @@ class UserSerializers(serializers.ModelSerializer):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }
-    email = serializers.EmailField(required=True, validators=[UniqueValidator(queryset=CustomUser.objects.all())])
-
-    username = serializers.CharField(
-        required=True,
-        max_length = 32,
-        validators = [UniqueValidator(queryset=CustomUser.objects.all())]
-    )
-
-    first_name = serializers.CharField(
-        required=True,
-        max_length = 32,
-    )
-
-    last_name = serializers.CharField(
-        required=True,
-        max_length = 32,
-    )
-
-    password = serializers.CharField(
-        required=True,
-        min_length=8,
-        write_only=True,
-    )
-    
     class Meta:
         model = CustomUser
         fields = '__all__' 

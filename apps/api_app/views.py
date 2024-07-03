@@ -2,17 +2,11 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 
 from ..loyalRyde.models import CustomUser, CustomUserDriver
 from .serializers import UserSerializers, CustomUserDriverSerializer
 
-# Create your views here.
-class TestView(APIView):
-    def get(self, request, fornmat=None):
-        print("Funcionado")
-        return Response("You made it", status=200)
-    
 class UserView(APIView):
 
     def post(self, request, format=None):
@@ -39,7 +33,9 @@ class UserLoginView(APIView):
         
     def post(self, request, format=None):
         user_obj = CustomUser.objects.filter(email=request.data['username']).first() or CustomUser.objects.filter(username=request.data['username']).first()
-        user_driver = CustomUserDriver.objects.get(user=user_obj)
+        user_driver = get_object_or_404(CustomUserDriver, user=user_obj)
+        # CustomUserDriver.objects.get(user=user_obj)
+
 
         if user_obj is not None:
             credentials = {
@@ -49,7 +45,7 @@ class UserLoginView(APIView):
 
             user = authenticate(**credentials)
 
-            if user and user.is_active and user_obj.role == 'conductor':
+            if user and user.is_active:
                 user_serializar = UserSerializers(user)
                 driver_serializers = CustomUserDriverSerializer(user_driver)
 

@@ -4,6 +4,7 @@ var directionsRenderer;
 var startMarker;
 var endMarker;
 
+    directionsService = new google.maps.DirectionsService();
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 6.42375, lng: -66.58973 },
@@ -25,23 +26,19 @@ function initMap() {
         calculateRoute();
         updateMarkers();
     });
-
-    // Crear marcadores arrastrables
     startMarker = new google.maps.Marker({
-        position: { lat: 0, lng: 0 }, // Posición de inicio (placeholder)
+        position: { lat: 0, lng: 0 },
         map: map,
         icon: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-        draggable: true, // Habilita la opción de arrastrar
+        draggable: true,
     });
 
     endMarker = new google.maps.Marker({
-        position: { lat: 0, lng: 0 }, // Posición de fin (placeholder)
-        map: map,
+        position: { lat: 0, lng: 0 },
         icon: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
-        draggable: true, // Habilita la opción de arrastrar
+        draggable: true,
     });
 
-    // Escuchar eventos de arrastre
     startMarker.addListener('dragend', function () {
         updateMarkers();
         calculateRoute();
@@ -52,33 +49,40 @@ function initMap() {
         calculateRoute();
     });
 }
-
 function updateMarkers() {
     var startAddress = document.getElementById('id_destination_direc').value;
     var endAddress = document.getElementById('id_departure_direc').value;
 
-    // Actualizar la posición de los marcadores según las direcciones ingresadas
     if (startAddress) {
         geocodeAddress(startAddress, function (latLng) {
             startMarker.setPosition(latLng);
-            startMarker.setVisible(true); // Mostrar el marcador de inicio
+            startMarker.setVisible(true);
             calculateRoute();
+            console.log('Latitud de inicio:', latLng.lat());
+            console.log('Longitud de inicio:', latLng.lng());
+            $('#id_lat_1').val(latLng.lat())
+            $('#id_long_1').val(latLng.lng())
+            
+            
         });
     } else {
-        startMarker.setVisible(false); // Ocultar el marcador de inicio si no hay dirección
+        startMarker.setVisible(false);
     }
 
     if (endAddress) {
         geocodeAddress(endAddress, function (latLng) {
             endMarker.setPosition(latLng);
-            endMarker.setVisible(true); // Mostrar el marcador de fin
+            endMarker.setVisible(true);
             calculateRoute();
+            console.log('Latitud de destino:', latLng.lat());
+            console.log('Longitud de destino:', latLng.lng());
+            $('#id_lat_2').val(latLng.lat())
+            $('#id_long_2').val(latLng.lng())
         });
     } else {
-        endMarker.setVisible(false); // Ocultar el marcador de fin si no hay dirección
+        endMarker.setVisible(false);
     }
 }
-
 function geocodeAddress(address, callback) {
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode({ address: address }, function (results, status) {
@@ -87,11 +91,11 @@ function geocodeAddress(address, callback) {
         }
     });
 }
-
-
 function calculateRoute() {
     var start = document.getElementById('id_destination_direc').value;
     var end = document.getElementById('id_departure_direc').value;
+    console.log(start)
+    console.log(end)
 
     if (start && end) {
         var request = {

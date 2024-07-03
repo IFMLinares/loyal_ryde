@@ -223,6 +223,10 @@ class TransferRequest(models.Model):
     departure_direc = models.CharField(max_length=255, verbose_name="Dirección salida exacta", blank=True, null=True)
     departure_landmark = models.CharField(max_length=255, verbose_name="Punto de referencia", blank=True, null=True)
     rate = models.ForeignKey(Rates, on_delete=models.CASCADE, verbose_name="Tarifa")
+    lat_1 = models.CharField(max_length=255, verbose_name="Latitud", blank=True, null=True)
+    long_1= models.CharField(max_length=255, verbose_name="Longitud", blank=True, null=True)
+    lat_2 = models.CharField(max_length=255, verbose_name="Latitud", blank=True, null=True)
+    long_2= models.CharField(max_length=255, verbose_name="Longitud", blank=True, null=True)
 
     
     def __str__(self):

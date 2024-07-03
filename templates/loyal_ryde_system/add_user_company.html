@@ -309,6 +309,8 @@
 <script>
     $('#password1, #password2').val('asdjhsdjhsdjhsjdh')
     $('#id_role option[value="conductor"]').prop('disabled', true);
+    $('#id_role option[value="administrador"]').prop('disabled', true);
+    $('#id_role option[value="despachador"]').prop('disabled', true);
     
     $('#id_role').change(function() {
     if ($(this).val() == 'supervisor') {

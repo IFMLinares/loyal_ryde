@@ -176,6 +176,11 @@
                                     <input class="form-control" type="text" name="destination_landmark" id="id_destination_landmark" value="{{ detail.destination_landmark }}" disabled>
                                 </div>
 
+                                
+                                <div id="map" style="height: 400px;" class="mt-xl-4">
+
+                                </div>
+
                                 <div class="mt-5 col-md-12">
                                     <label class="form-label" for="id_payment_method">Método de Pago:</label>
                                     
@@ -237,8 +242,15 @@
 {% endblock content %} 
 
 {% block extra_js %} 
+
+<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
+<script src="{% static 'ruta.js' %}"></script>
 <script>
 
+$( document ).ready(function() {
+    updateMarkers();
+    calculateRoute();
+});
 let executive_transfer = '{{ detail.executive_transfer }}'
 let encomienda = '{{ detail.encomienda }}'
 let driver = '{{ detail.driver }}'
