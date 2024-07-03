@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import TransferRequest, Company, AbstractUser, CustomUser
+from .models import TransferRequest, Company, AbstractUser, CustomUser, CustomUserDriver
 # Register your models here.
 
 admin.site.register(CustomUser)
 admin.site.register(Company)
+admin.site.register(CustomUserDriver)
 @admin.register(TransferRequest)
 class TransferRequestAdmin(admin.ModelAdmin):
     list_display = ('id', 'date', 'hour', 'payment_method',)

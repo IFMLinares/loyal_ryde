@@ -83,38 +83,24 @@
                 </div>
                 <!--end::Status-->
                 <!--begin::Status-->
-                <div class="card card-flush py-4">
-                    <!--begin::Card header-->
+                <!-- <div class="card card-flush py-4">
                     <div class="card-header">
-                        <!--begin::Card title-->
                         <div class="card-title">
                             <h2>Estatus del Usuario</h2>
                         </div>
-                        <!--end::Card title-->
-                        <!--begin::Card toolbar-->
                         <div class="card-toolbar">
                             <div class="rounded-circle bg-success w-15px h-15px" id="kt_ecommerce_add_category_status"></div>
                         </div>
-                        <!--begin::Card toolbar-->
                     </div>
-                    <!--end::Card header-->
-                    <!--begin::Card body-->
                     <div class="card-body pt-0">
-                        <!--begin::Select2-->
                         {{ form.status }}
-                        <!--end::Select2-->
-                        <!--begin::Description-->
                         <div class="text-muted fs-7">Seleccione el estatus del usuario.</div>
-                        <!--end::Description-->
-                        <!--begin::Datepicker-->
                         <div class="d-none mt-10">
                             <label for="kt_ecommerce_add_category_status_datepicker" class="form-label">{{ form.status.label }}</label>
                             <input class="form-control" id="kt_ecommerce_add_category_status_datepicker" placeholder="Pick date &amp; time" />
                         </div>
-                        <!--end::Datepicker-->
                     </div>
-                    <!--end::Card body-->
-                </div>
+                </div> -->
                 
                 <div class="card card-flush py-4">
                     <!--begin::Card header-->
@@ -158,7 +144,7 @@
                     <!--begin::Card header-->
                     <div class="card-header">
                         <div class="card-title">
-                            <h2>Registrar Usuario</h2>
+                            <h2>Registrar Usuario: Empresas</h2>
                         </div>
                     </div>
                     <!--end::Card header-->
@@ -196,9 +182,9 @@
                             </div>
                                 <!--end::Description-->
                             {% for field in form.visible_fields %}
-                                {% if field.name != 'status' and field.name != 'role' and field.name != 'first_name' and field.name != 'last_name' and field.name != 'travel_approval' and field.name != 'company' %}
+                                {% if  field.name != 'role' and field.name != 'first_name' and field.name != 'last_name' and field.name != 'travel_approval' and field.name != 'company' %}
                                             <!--begin::Label-->
-                                            <div class="mb-3">
+                                            <div class="mb-3  {% if field.name == 'password1' or field.name == 'password2' %} d-none {% endif %}">
                                             <label class="required form-label">{{ field.label }}</label>
                                             <!--end::Label-->
                                             <!--begin::Input-->
@@ -321,6 +307,9 @@
 <script src="{% static 'assets/js/custom/utilities/modals/users-search.js' %}"></script>
 
 <script>
+    $('#password1, #password2').val('asdjhsdjhsdjhsjdh')
+    $('#id_role option[value="conductor"]').prop('disabled', true);
+    
     $('#id_role').change(function() {
     if ($(this).val() == 'supervisor') {
         $('#travel_approval_div').removeClass('d-none');

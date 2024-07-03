@@ -1,7 +1,7 @@
 {% extends "loyal_ryde_system/base/base.html" %} 
 {% load static %} 
 
-{% block title %}Agregar conductorrs{% endblock title %}
+{% block title %}Agregar usuario de emprersas{% endblock title %}
 
 {% block extra_css %} 
 
@@ -13,10 +13,11 @@
 <div class="post d-flex flex-column-fluid" id="kt_post">
     <!--begin::Container-->
     <div id="kt_content_container" class="container-xxl">
-        <form id="kt_ecommerce_add_category_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="../../demo1/dist/apps/ecommerce/catalog/categories.html">
+        <form  class="form d-flex flex-column flex-lg-row" method="post">
             <!--begin::Aside column-->
             <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
                 <!--begin::Thumbnail settings-->
+                
                 <div class="card card-flush py-4">
                     <!--begin::Card header-->
                     <div class="card-header">
@@ -65,12 +66,33 @@
                 </div>
                 <!--end::Thumbnail settings-->
                 <!--begin::Status-->
+                <!--end::Status-->
+                <!--begin::Status-->
                 <div class="card card-flush py-4">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h2>Estatus del Usuario</h2>
+                        </div>
+                        <div class="card-toolbar">
+                            <div class="rounded-circle bg-success w-15px h-15px" id="kt_ecommerce_add_category_status"></div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-0">
+                        {{ form.status }}
+                        <div class="text-muted fs-7">Seleccione el estatus del usuario.</div>
+                        <div class="d-none mt-10">
+                            <label for="kt_ecommerce_add_category_status_datepicker" class="form-label">{{ form.status.label }}</label>
+                            <input class="form-control" id="kt_ecommerce_add_category_status_datepicker" placeholder="Pick date &amp; time" />
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card card-flush py-4 d-none">
                     <!--begin::Card header-->
                     <div class="card-header">
                         <!--begin::Card title-->
                         <div class="card-title">
-                            <h2>Estatus del Conductor</h2>
+                            <h2>Rol del Usuario</h2>
                         </div>
                         <!--end::Card title-->
                         <!--begin::Card toolbar-->
@@ -81,23 +103,16 @@
                     </div>
                     <!--end::Card header-->
                     <!--begin::Card body-->
-                    <div class="card-body pt-0">
+                    <div class="card-body pt-0 d-none">
                         <!--begin::Select2-->
-                        <select class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Select an option" id="kt_ecommerce_add_category_status_select">
-                            <option></option>
-                            <option value="Activo" selected="selected">Activo</option>
-                            <option value="Inactivo">Pendiente</option>
-                            <option value="Inactivo">Suspendido</option>
-                            <option value="Inactivo">Inactivo</option>
-                            <!-- <option value="unpublished">Unpublished</option> -->
-                        </select>
+                        {{ form.role }}
                         <!--end::Select2-->
                         <!--begin::Description-->
-                        <div class="text-muted fs-7">Seleccione el estatus del usuario.</div>
+                        <div class="text-muted fs-7">Seleccione el rol del usuario.</div>
                         <!--end::Description-->
                         <!--begin::Datepicker-->
                         <div class="d-none mt-10">
-                            <label for="kt_ecommerce_add_category_status_datepicker" class="form-label">Seleccione el estatus del usuario</label>
+                            <label for="kt_ecommerce_add_category_status_datepicker" class="form-label">{{ form.role.label }}</label>
                             <input class="form-control" id="kt_ecommerce_add_category_status_datepicker" placeholder="Pick date &amp; time" />
                         </div>
                         <!--end::Datepicker-->
@@ -114,81 +129,180 @@
                     <!--begin::Card header-->
                     <div class="card-header">
                         <div class="card-title">
-                            <h2>Registrar Conductor</h2>
+                            <h2>Registrar Usuario Conductor</h2>
                         </div>
                     </div>
                     <!--end::Card header-->
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Input group-->
-                        <div class="mb-8 fv-row">
-                            <!--begin::Label-->
-                            <label class="required form-label">Nombre del completo del conductor</label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input type="text" name="user_name" class="form-control mb-2" placeholder="nombre de usuario" value="" />
-                            <!--end::Input-->
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">El nombre de usuario es obligatorio.</div>
-                            <!--end::Description-->
+                        {% csrf_token %}
+                        
+                        <div class="mb-3 fv-row">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.first_name.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.first_name }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.first_name.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.last_name.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.last_name }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.last_name.help_text }}
+                                    </div>
+                                </div>
+                            </div>
+                                <!--end::Description-->
+                            {% for field in form.visible_fields %}
+                                {% if  field.name != 'status' and field.name != 'department' and field.name != 'role' and field.name != 'first_name' and field.name != 'last_name' and field.name != 'travel_approval' and field.name != 'company' %}
+                                            <!--begin::Label-->
+                                            <div class="mb-3  {% if field.name == 'password1' or field.name == 'password2' %} d-none {% endif %}">
+                                                <label class="required form-label">{{ field.label }}</label>
+                                                <!--end::Label-->
+                                                <!--begin::Input-->
+                                                {{ field }}
+                                                {% if field.errors %}
+                                                    {% for error in field.errors %}
+                                                        <div class="alert alert-danger" role="alert">
+                                                            {{ error }}
+                                                        </div>
+                                                    {% endfor %}
+                                                {% endif %}
+                                                <!--end::Input-->
+                                                <!--begin::Description-->
+                                                <div class="text-muted fs-7">
+                                                    {{ field.help_text }}
+                                                </div>
+                                                <!--end::Description-->
+                                            </div>
+                                {% endif %}
+                            {% endfor %}
+                                <div class="pt-xl-4 pb-xl-4">
+                                    <h2>Datos del Vehiculo:</h2>
+                                </div>
+                                <div class="">
+                                    <label class="required form-label">Marca:</label>
+                                    <input type="text" name="marca" class="form-control mb-2" placeholder="Marca del Vehiculo" required value="" />
+                                    <div class="text-muted fs-7">.</div>
+                                </div>
+                                <div class="">
+                                    <label class="form-label">Modelo</label>
+                                    <input type="text" name="model" class="form-control mb-2" placeholder="Toyota..." value="" required/>
+                                    <div class="text-muted fs-7"></div>
+                                </div>
+                                <div class="">
+                                    <label class="form-label">Color</label>
+                                    <input type="text" name="color" class="form-control mb-2" value="" required placeholder="" />
+                                    <div class="text-muted fs-7"></div>
+                                </div>
+                                <div class="">
+                                    <label class="form-label">Placa</label>
+                                    <input type="text" name="plaque" class="form-control mb-2" value="" required/>
+                                    <div class="text-muted fs-7"></div>
+                                </div>
+                                <div class="">
+                                    <label class="form-label">Nro maximo de pasajeros</label>
+                                    <input type="number" name="passengers_numbers" class="form-control mb-2" value="" required/>
+                                    <div class="text-muted fs-7"></div>
+                                </div>
+                                <div class="">
+                                    <label class="form-label">Tipo de Vehiculo</label>
+                                    <select name="type" class="form-select mb-2" data-control="select2" data-hide-search="true" required>
+                                        <option value="" selected disabled>-----</option>
+                                        {% for type in type %}
+                                        <option value="{{ type.id }}" >{{ type.type }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="text-muted fs-7"></div>
+                                </div>
+                            
                         </div>
                         <!--end::Input group-->
-                        <!--begin::Input group-->
-                        <div class="mb-8 fv-row">
-                            <!--begin::Label-->
-                            <label class="form-label">Correo electrónico</label>
-                            <!--end::Label-->
-                            <!--begin::Editor-->
-                            <input type="email" name="user_email" class="form-control mb-2" placeholder="email" value="" />
-                            <!--end::Editor-->
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">ingrese el correo electrónico del usuario</div>
-                            <!--end::Description-->
-                        </div>
-                        <div class="mb-8 fv-row">
-                            <!--begin::Label-->
-                            <label class="form-label">Rol de usuario</label>
-                            <!--end::Label-->
-                            <!--begin::Editor-->
-                            <select class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Select an option" aria-readonly="true" disabled>
-                                <option value="conductor" selected="selected">Conductor</option>
-                                <!-- <option value="unpublished">Unpublished</option> -->
-                            </select>
-                            <!--end::Editor-->
-                            <!--begin::Description-->
-                            <!--end::Description-->
-                        </div>
-                        <!--end::Input group-->
-                        <div class="mb-1 fv-row" >
-                            <!--begin::Label-->
-                            <label class="form-label">Teléfono del conductor</label>
-                            <!--end::Label-->
-                            <!--begin::Editor-->
-                            <input type="number" name="user_email" class="form-control mb-2" placeholder="" value="" />
-                            <!--end::Editor-->
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">ingrese el número teléfonico del conductor</div>
-                            <!--end::Description-->
-                        </div>
                     </div>
                     <!--end::Card header-->
                 </div>
                 <!--end::General options-->
                 <!--begin::Automation-->
+                <!-- <div class="card card-flush py-4">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h2>¿Empresa no registrada?</h2>
+                        </div>
+                    </div>
+
+
+                    <div class="card-body pt-0">
+                        <div>
+                            <label class="form-label mb-5">Si la empresa no aparece en el listado puedes agregarla en este paso.</label>
+
+                            <div class="d-flex fv-row">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input me-3" name="method" type="radio" value="0" id="kt_ecommerce_add_category_automation_0" checked='checked' />
+
+                                    <label class="form-check-label" for="kt_ecommerce_add_category_automation_0">
+                                        <div class="fw-bolder text-gray-800">Si, ya está registrada la empresa</div>
+                                        <div class="text-gray-600">la empresa aparece sin ningún problema en el listado.</div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class='separator separator-dashed my-5'></div>
+                            <div class="d-flex fv-row">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input me-3" name="method" type="radio" value="1" id="kt_ecommerce_add_category_automation_1" />
+
+                                    <label class="form-check-label" for="kt_ecommerce_add_category_automation_1">
+                                        <div class="fw-bolder text-gray-800">No, no encuntro a la empresa en el listado</div>
+                                        <div class="text-gray-600">Puedes añadir a la empresa desde esta opción.</div>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="d-none mt-10" data-kt-ecommerce-catalog-add-category="auto-options">
+                            <div class="card-body pt-0">
+                                <div class="mb-10 fv-row">
+                                    <label class="required form-label">Nombre de la empresa</label>
+                                    <input type="text" name="user_name" class="form-control mb-2" placeholder="nombre de usuario" value="" />
+
+                                    <div class="text-muted fs-7">El nombre de la empresa es obligatorio.</div>
+                                </div>
+                                <div class="">
+                                    <label class="form-label">Correo electrónico</label>
+                                    <input type="email" name="user_email" class="form-control mb-2" placeholder="email" value="" />
+
+                                    <div class="text-muted fs-7">ingrese el correo electrónico del la empresa, este debe ser unico</div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
                 <div class="d-flex justify-content-end">
-                    <!--begin::Button-->
                     <a href="../../demo1/dist/apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancelar</a>
-                    <!--end::Button-->
-                    <!--begin::Button-->
-                    <button type="submit" id="kt_ecommerce_add_category_submit" class="btn btn-primary">
-                        <span class="indicator-label">Registrar usuario</span>
-                        <span class="indicator-progress">Please wait...
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="indicator-label">Registrar Copnductor</span>
+                        <span class="indicator-progress">
                         <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                     </button>
-                    <!--end::Button-->
                 </div>
+
+
+
             </div>
-            <!--end::Main column-->
         </form>
     </div>
     <!--end::Container-->
@@ -207,5 +321,19 @@
 <script src="{% static 'assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
 <script src="{% static 'ssets/js/custom/utilities/modals/create-app.js' %}"></script>
 <script src="{% static 'assets/js/custom/utilities/modals/users-search.js' %}"></script>
+
+<script>
+    $('#id_password1, #id_password2').val('asdjhsdjhsdjhsjdh')
+    $('#id_role option[value="conductor"]').prop('selected', true);
+
+
+    $('#id_role').change(function() {
+    if ($(this).val() == 'supervisor') {
+        $('#travel_approval_div').removeClass('d-none');
+    } else {
+        $('#travel_approval_div').addClass('d-none');
+    }
+});
+</script>
 <!--end::Page Custom Javascript-->
 {% endblock extra_js %}

@@ -61,8 +61,8 @@ class CustomUserCreationForm(UserCreationForm):
     
     class Meta(UserCreationForm.Meta):
         model = CustomUser
+        exclude = ['password1','password2']
         fields = UserCreationForm.Meta.fields + ('first_name', 'last_name', 'email', 'phone', 'role', 'department', 'status', 'company', 'travel_approval')
-        exclude = ['password']
         widgets = {
             'role': Select(
                 attrs={

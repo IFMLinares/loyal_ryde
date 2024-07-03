@@ -2,7 +2,7 @@ from rest_framework_jwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.validators import UniqueValidator
 from rest_framework import serializers
-from ..loyalRyde.models import CustomUser
+from ..loyalRyde.models import CustomUser, CustomUserDriver
 
 
 class UserSerializers(serializers.ModelSerializer):
@@ -38,7 +38,10 @@ class UserSerializers(serializers.ModelSerializer):
     )
     
     class Meta:
-        model = CustomUser  # Specify the model you're serializing (CustomUser in your case)
-        fields = '__all__'  # Or specify the fields you want to include/exclude
+        model = CustomUser
+        fields = '__all__' 
 
-        # Additional options can be added here, such as ordering, extra_kwargs, etc.
+class CustomUserDriverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUserDriver
+        fields = '__all__'

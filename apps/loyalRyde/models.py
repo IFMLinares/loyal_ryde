@@ -56,6 +56,12 @@ ROUTE_CHOICES = [
 
 
 # Create your models here.
+
+class FleetType(models.Model):
+    type = models.CharField(max_length=255, verbose_name="Tipo de Vehiculo", blank=True, null=True,)
+    def __str__(self):
+        return f"{self.type}"
+
 class Company(models.Model):
     name = models.CharField(max_length=256, verbose_name="Nombre de la Empresa", help_text='El nombre de la empresa es obligatorio.')
     email = models.EmailField(unique=True, verbose_name="Correo electrónico", blank=True, null=True, help_text='ingrese el correo electrónico del la empresa, este debe ser unico')
@@ -73,7 +79,7 @@ class CustomUser(AbstractUser):
     phone = models.CharField(max_length=20, blank=True, verbose_name='Teléfono')
     role = models.CharField(max_length=20, choices=[('supervisor', 'Supervisor'), ('operator', 'Operador'), ('conductor', 'Conductor')], verbose_name='Rol')
     department = models.CharField(max_length=100, blank=True, verbose_name='Departamento')
-    travel_approval = models.BooleanField(default=False, verbose_name='Código de aprobación')
+    travel_approval = models.BooleanField(default=False, verbose_name='Código de aprobación', blank=True, null=True)
     status = models.CharField(verbose_name="Status",max_length=20, default='inactive', choices=[('inactive', 'Inactivo'), ('active', 'Activo'), ('suspended', 'Suspendido')])
     company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name='Empresa', null=True, blank=True,)
     class Meta:
@@ -82,6 +88,18 @@ class CustomUser(AbstractUser):
             ('is_company_user', 'Can perform company user actions'),
             # Otros permisos personalizados aquí
         )
+
+class CustomUserDriver(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    marca = models.CharField(max_length=256, verbose_name="Marca del Vehiculo", blank=True, null=True)
+    model = models.CharField(max_length=256, verbose_name="Modelo del vehiculo", blank=True, null=True)
+    color = models.CharField(max_length=256, verbose_name="Color del vehiculo", blank=True, null=True)
+    plaque = models.CharField(max_length=256, verbose_name="Nro de placa",)
+    passengers_numbers = models.IntegerField(verbose_name="Número maximo de Pasajeros", blank=True, null=True)
+    type = models.ForeignKey(FleetType, on_delete=models.CASCADE, verbose_name="Tipo de vehiculo")
+
+    def __str__(self):
+        return self.user.username
 
 class PeopleTransfer(models.Model):
     name = models.CharField(max_length=255, verbose_name='nombre')
@@ -114,11 +132,6 @@ class ArrivalPoint(models.Model):
         verbose_name_plural = "Destinos"
     def __str__(self):
         return f"{self.name}"
-
-class FleetType(models.Model):
-    type = models.CharField(max_length=255, verbose_name="Tipo de Vehiculo", blank=True, null=True,)
-    def __str__(self):
-        return f"{self.type}"
 
 class Fleet(models.Model):
     brand = models.CharField(max_length=256, verbose_name="Marca del Vehiculo", blank=True, null=True)

@@ -34,11 +34,38 @@ class Index(LoginRequiredMixin, TemplateView):
 # VISTAS DE USUARIOS (PARA ADMINISTRADORES)
 
 #  Agregar usuario
-class UserAdd(LoginRequiredMixin, TemplateView):
+class UserAdd(LoginRequiredMixin, CreateView):
+    model = CustomUser
+    form_class = CustomUserCreationForm
     template_name = 'loyal_ryde_system/add_user.html'
 
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            # Verifica el nombre de la compañía antes de guardar el usuario
+            if user.company.name != "Loyal ride":
+                # Asigna permisos de usuario normal
+                user.is_staff = False
+                # Puedes agregar el usuario a un grupo con permisos específicos si es necesario
+                # group = Group.objects.get(name='Normal Users')
+                # user.groups.add(group)
+
+            random_password = get_random_string(length=10)
+            user.set_password(random_password)
+            user.save()
+            send_styled_email(user,random_password)
+            return HttpResponseRedirect(reverse_lazy('core:user_list_supervisor'))
+        return render(request, self.template_name, {'form': form})
+
 #  Agregar usuario (de las eempresas)
-class UserCompanyAdd(LoginRequiredMixin, View):
+class UserCompanyAdd(LoginRequiredMixin, CreateView):
+    model = CustomUser
     form_class = CustomUserCreationForm
     template_name = 'loyal_ryde_system/add_user_company.html'
 
@@ -138,8 +165,45 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
         return super().post(request, *args, **kwargs)
 
 #  Agregar conductor
-class DriverAdd(LoginRequiredMixin, TemplateView):
+class DriverAdd(LoginRequiredMixin, CreateView):
+    model = CustomUser
+    form_class = CustomUserCreationForm
     template_name = 'loyal_ryde_system/add_driver.html'
+    success_url = reverse_lazy('core:driver_list')
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            random_password = get_random_string(length=10)
+            user.set_password(random_password)
+            user.save()
+
+            
+            # Crear instancia de CustomUserDriver y asignar valores
+            fleet = FleetType.objects.get(id=request.POST.get('type')) 
+            custom_user_driver = CustomUserDriver(
+                user=user,
+                marca=request.POST.get('marca'),
+                model=request.POST.get('model'),
+                color=request.POST.get('color'),
+                plaque=request.POST.get('plaque'),
+                passengers_numbers=request.POST.get('passengers_numbers'),
+                type=fleet
+            )
+            custom_user_driver.save()
+
+            send_styled_email(user, random_password)
+            return HttpResponseRedirect(reverse_lazy('core:driver_list'))
+        return render(request, self.template_name, {'form': form})
+    
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        type = FleetType.objects.all()
+        context['type'] = type
+        print("Contexto:")
+        print(context)
+        return context
 
 #  Agregar Flota
 class FleetAdd(LoginRequiredMixin, CreateView):
