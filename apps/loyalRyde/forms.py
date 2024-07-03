@@ -79,6 +79,17 @@ class CustomUserCreationForm(UserCreationForm):
                     'data-placeholder': "Seleccione la empresa",
                 },
             ),
+            'destination_direc': TextInput(
+                attrs={
+                    'autocomplete': 'off',
+                },
+            ),
+            'destination_landmark': TextInput(
+                attrs={
+                    'autocomplete': 'off',
+                },
+            ),
+
         }
 
 class AddRouteForm(ModelForm):

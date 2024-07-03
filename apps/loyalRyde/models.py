@@ -54,6 +54,13 @@ ROUTE_CHOICES = [
     ('Valencia', 'Valencia')
 ]
 
+USER_CHOCIES = [
+    ('supervisor', 'Supervisor'), 
+    ('operator', 'Operador'), 
+    ('conductor', 'Conductor'), 
+    ('administrador', 'Administrador'),
+    ('despachador', 'Despachador')
+    ]
 
 # Create your models here.
 
@@ -77,7 +84,7 @@ class Company(models.Model):
 class CustomUser(AbstractUser):
     # Añade campos adicionales aquí
     phone = models.CharField(max_length=20, blank=True, verbose_name='Teléfono')
-    role = models.CharField(max_length=20, choices=[('supervisor', 'Supervisor'), ('operator', 'Operador'), ('conductor', 'Conductor')], verbose_name='Rol')
+    role = models.CharField(max_length=20, choices=USER_CHOCIES, verbose_name='Rol')
     department = models.CharField(max_length=100, blank=True, verbose_name='Departamento')
     travel_approval = models.BooleanField(default=False, verbose_name='Código de aprobación', blank=True, null=True)
     status = models.CharField(verbose_name="Status",max_length=20, default='inactive', choices=[('inactive', 'Inactivo'), ('active', 'Activo'), ('suspended', 'Suspendido')])

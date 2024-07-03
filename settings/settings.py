@@ -60,6 +60,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -67,7 +68,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # django all auth
     "allauth.account.middleware.AccountMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'settings.urls'
@@ -188,3 +188,7 @@ JWT_AUTH = {
 }
 
 GOOGLE_MAPS_API_KEY = os.environ.get('DJANGO_GOOGLE_MAPS_API_KEY')
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost"
+]
