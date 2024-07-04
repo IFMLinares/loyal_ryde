@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
 from ..loyalRyde.models import CustomUser, CustomUserDriver
 from .serializers import UserSerializers, CustomUserDriverSerializer
@@ -30,7 +31,9 @@ class UserLoginView(APIView):
         print(user)
 
         return Response("TESTING", status=200)
-        
+    
+    
+    @csrf_exempt
     def post(self, request, format=None):
         user_obj = CustomUser.objects.filter(email=request.data['username']).first() or CustomUser.objects.filter(username=request.data['username']).first()
         user_driver = get_object_or_404(CustomUserDriver, user=user_obj)

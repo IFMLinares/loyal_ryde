@@ -3,8 +3,7 @@ var directionsService;
 var directionsRenderer;
 var startMarker;
 var endMarker;
-
-    directionsService = new google.maps.DirectionsService();
+directionsService = new google.maps.DirectionsService();
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 6.42375, lng: -66.58973 },
@@ -48,6 +47,9 @@ function initMap() {
         updateMarkers();
         calculateRoute();
     });
+    
+    updateMarkers();
+    calculateRoute();
 }
 function updateMarkers() {
     var startAddress = document.getElementById('id_destination_direc').value;

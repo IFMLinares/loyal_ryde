@@ -253,8 +253,6 @@ let url_form = "{% url 'core:transfer_request_people_create' %}";
 <script src="{% static 'ruta.js' %}"></script>
 <script>
     $(document).ready(function () {
-            updateMarkers();
-            calculateRoute();
             // Cuando cambia el select de salida
             $("#id_departure_site_route").change(function () {
                 const selectedDeparture = $(this).val();

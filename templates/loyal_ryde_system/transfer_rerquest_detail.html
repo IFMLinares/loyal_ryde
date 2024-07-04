@@ -246,11 +246,6 @@
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>
 <script>
-
-$( document ).ready(function() {
-    updateMarkers();
-    calculateRoute();
-});
 let executive_transfer = '{{ detail.executive_transfer }}'
 let encomienda = '{{ detail.encomienda }}'
 let driver = '{{ detail.driver }}'
@@ -285,11 +280,5 @@ if(full_day  === 'True' ){
 if(half_day  === 'True' ){
     $('#id_half_day').attr('checked', true)
 }
-
-
-
-
-
-
 </script>
 {% endblock extra_js %}
