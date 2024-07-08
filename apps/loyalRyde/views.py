@@ -48,14 +48,6 @@ class UserAdd(LoginRequiredMixin, CreateView):
         form = self.form_class(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            # Verifica el nombre de la compañía antes de guardar el usuario
-            if user.company.name != "Loyal ride":
-                # Asigna permisos de usuario normal
-                user.is_staff = False
-                # Puedes agregar el usuario a un grupo con permisos específicos si es necesario
-                # group = Group.objects.get(name='Normal Users')
-                # user.groups.add(group)
-
             random_password = get_random_string(length=10)
             user.set_password(random_password)
             user.save()
@@ -260,8 +252,28 @@ class RatesCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('core:rates_list')
 
 #  Listado de conductores
-class DriverListView(LoginRequiredMixin, TemplateView):
+class DriverListView(LoginRequiredMixin, ListView):
     template_name = 'loyal_ryde_system/driver_list.html'
+    model = CustomUserDriver
+    context_object_name = 'drivers'
+
+#  Listado de conductores Activos
+class DriverActiveListView(LoginRequiredMixin, ListView):
+    template_name = 'loyal_ryde_system/driver_list_active.html'
+    model = CustomUserDriver
+    context_object_name = 'drivers'
+
+    def get_queryset(self):
+        return CustomUserDriver.objects.filter(user__status='active')
+
+#  Listado de conductores Pendientes
+class DriverPendingListView(LoginRequiredMixin, ListView):
+    template_name = 'loyal_ryde_system/driver_list_pending.html'
+    model = CustomUserDriver
+    context_object_name = 'drivers'
+
+    def get_queryset(self):
+        return CustomUserDriver.objects.filter(user__status='inactive')
 
 #  Listado de Flotas
 class FleetListView(LoginRequiredMixin, ListView):
@@ -344,30 +356,23 @@ class ArrivalListView(LoginRequiredMixin, ListView):
     context_object_name = 'arrival'
     template_name = 'loyal_ryde_system/arrival_list.html'
 
-
-#  Listado de conductores Activos
-class DriverActiveListView(LoginRequiredMixin, TemplateView):
-    template_name = 'loyal_ryde_system/driver_list_active.html'
-
-#  Listado de conductores Pendientes
-class DriverPendingListView(LoginRequiredMixin, TemplateView):
-    template_name = 'loyal_ryde_system/driver_list_pending.html'
-
 # Lista de administradores
 class UserAdminListView(LoginRequiredMixin, ListView):
-    model = User
+    model = CustomUser
     template_name = 'loyal_ryde_system/user_list_view.html'
+    context_object_name = "users"
 
     def get_queryset(self):
-        return User.objects.filter(is_staff=True)
+        return CustomUser.objects.filter(role='administrador')
 
 # Lista de despacahdores
 class UserDispatchListView(LoginRequiredMixin, ListView):
-    model = User
+    model = CustomUser
     template_name = 'loyal_ryde_system/user_list_view_dispatcher.html'
+    context_object_name = "users"
 
     def get_queryset(self):
-        return User.objects.filter(is_staff=True)
+        return CustomUser.objects.filter(role='despachador')
 
 # Lista de Operadores (Usuarios del cliente)
 class UserOperatorListView(LoginRequiredMixin, ListView):

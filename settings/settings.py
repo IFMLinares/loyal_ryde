@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 
     'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
 
     # Apps 
@@ -192,3 +194,16 @@ GOOGLE_MAPS_API_KEY = os.environ.get('DJANGO_GOOGLE_MAPS_API_KEY')
 CORS_ALLOWED_ORIGINS = [
     "http://localhost"
 ]
+
+# Daphne
+ASGI_APPLICATION = 'settings.asgi.application'
+
+# Channels
+CHANNEL_LAYERS = {
+	'default': {
+		'BACKEND': 'channels_redis.core.RedisChannelLayer',
+		'CONFIG': {
+			'hosts': [('127.0.0.1', 6379)]
+		}
+	}
+}
