@@ -1,7 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth import get_user_model
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from django.core.serializers import serialize
+from decimal import Decimal
+from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
+
 
 payment_method_choices = [
         (1, 'CECO/GRAFO/PEDIDO'),
@@ -62,6 +69,17 @@ USER_CHOCIES = [
     ('despachador', 'Despachador')
     ]
 
+
+
+class CustomJSONEncoder(DjangoJSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, Decimal):
+                return float(obj)  # Convertimos Decimal a float
+            return super().default(obj)
+
+def serialize_rates(rates_obj):
+        serialized_rates = serialize("json", [rates_obj], cls=CustomJSONEncoder)
+        return serialized_rates
 # Create your models here.
 
 class FleetType(models.Model):
@@ -104,6 +122,7 @@ class CustomUserDriver(models.Model):
     plaque = models.CharField(max_length=256, verbose_name="Nro de placa",)
     passengers_numbers = models.IntegerField(verbose_name="Número maximo de Pasajeros", blank=True, null=True)
     type = models.ForeignKey(FleetType, on_delete=models.CASCADE, verbose_name="Tipo de vehiculo")
+    image = models.ImageField(upload_to='driver/', blank=True, null=True, verbose_name="Foto")
 
     def __str__(self):
         return self.user.username
@@ -198,7 +217,7 @@ class TransferRequest(models.Model):
     date_created = models.DateTimeField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
     hour = models.TimeField(verbose_name="Hora")  # Formato 12h
     payment_method = models.PositiveSmallIntegerField(verbose_name="Método de Pago", choices=payment_method_choices)
-    ceco_grafo_pedido = models.PositiveIntegerField(verbose_name="CECO/GRAFO/PEDIDO", blank=True, null=True)  # Puede empezar por 0
+    ceco_grafo_pedido = models.PositiveIntegerField(verbose_name="CECO/GRAFO/PEDIDO", blank=True, null=True)
     division = models.CharField(max_length=255, verbose_name="División", blank=True, null=True)
     in_town = models.BooleanField(verbose_name="Dentro de la localidad")
     outside_town = models.BooleanField(verbose_name="Fuera de la localidad") 
@@ -228,7 +247,35 @@ class TransferRequest(models.Model):
     lat_2 = models.CharField(max_length=255, verbose_name="Latitud", blank=True, null=True)
     long_2= models.CharField(max_length=255, verbose_name="Longitud", blank=True, null=True)
 
+
+
+    # Luego, en tu función enviar_id_a_usuario:
+    def enviar_id_a_usuario(self):
+        CustomUser = get_user_model()
+        conductor = CustomUser.objects.filter(role="conductor", status="active").first()
+        if conductor:
+            rates = self.rate  # Supongo que tienes una relación ForeignKey en tu modelo
+            serialized_rates = serialize_rates(rates)
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                conductor.username,
+                {
+                    "type": "transferencia_validada",
+                    "transferencia_id": self.id,
+                    "transferencia_data": serialized_rates,
+                },
+            )
     
+    def save(self, *args, **kwargs):
+        # Validación personalizada antes de guardar
+        if self.status == 'validada':
+            # Realiza la funcionalidad adicional que necesitas
+            self.enviar_id_a_usuario()
+
+        # Llama al método save original para guardar normalmente
+        super().save(*args, **kwargs)
+
+
     def __str__(self):
         return f"Solicitud de Transferencia {self.id}"
     

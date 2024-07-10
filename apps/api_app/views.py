@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import AllowAny
 
 from ..loyalRyde.models import CustomUser, CustomUserDriver
 from .serializers import UserSerializers, CustomUserDriverSerializer
@@ -22,28 +23,18 @@ class UserView(APIView):
         return Response("MSG:ERR", status=400)
 
 class UserLoginView(APIView):
+    permission_classes = [AllowAny]
 
-    def get(self, request, format=None):
-        if request.user.is_authenticated == False or request.user.is_active == False:
-            return Response("Credenciales Invalidas", status=403)
-        
-        user = UserSerializers(request.user)
-        print(user)
-
-        return Response("TESTING", status=200)
-    
-    
-    @csrf_exempt
     def post(self, request, format=None):
-        user_obj = CustomUser.objects.filter(email=request.data['username']).first() or CustomUser.objects.filter(username=request.data['username']).first()
+        username = request.data['username']
+        password = request.data['password']
+        user_obj = CustomUser.objects.filter(email=username).first() or CustomUser.objects.filter(username=username).first()
         user_driver = get_object_or_404(CustomUserDriver, user=user_obj)
-        # CustomUserDriver.objects.get(user=user_obj)
-
 
         if user_obj is not None:
             credentials = {
                 'username': user_obj.username,
-                'password': request.data['password']
+                'password': password
             }
 
             user = authenticate(**credentials)
