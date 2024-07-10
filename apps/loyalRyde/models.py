@@ -69,17 +69,6 @@ USER_CHOCIES = [
     ('despachador', 'Despachador')
     ]
 
-
-
-class CustomJSONEncoder(DjangoJSONEncoder):
-        def default(self, obj):
-            if isinstance(obj, Decimal):
-                return float(obj)  # Convertimos Decimal a float
-            return super().default(obj)
-
-def serialize_rates(rates_obj):
-        serialized_rates = serialize("json", [rates_obj], cls=CustomJSONEncoder)
-        return serialized_rates
 # Create your models here.
 
 class FleetType(models.Model):
@@ -248,21 +237,18 @@ class TransferRequest(models.Model):
     long_2= models.CharField(max_length=255, verbose_name="Longitud", blank=True, null=True)
 
 
-
-    # Luego, en tu función enviar_id_a_usuario:
     def enviar_id_a_usuario(self):
         CustomUser = get_user_model()
         conductor = CustomUser.objects.filter(role="conductor", status="active").first()
         if conductor:
-            rates = self.rate  # Supongo que tienes una relación ForeignKey en tu modelo
-            serialized_rates = serialize_rates(rates)
+            serialized_transfer = serialize("json", [self])
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 conductor.username,
                 {
                     "type": "transferencia_validada",
                     "transferencia_id": self.id,
-                    "transferencia_data": serialized_rates,
+                    "transferencia_data": serialized_transfer,
                 },
             )
     
