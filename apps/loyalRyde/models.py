@@ -243,9 +243,10 @@ class TransferRequest(models.Model):
         CustomUser = get_user_model()
         conductor = CustomUser.objects.filter(role="conductor", status="active").first()
         if conductor:
-            print(self.service_requested.company.name)
             serialized_transfer = serialize("json", [self], use_natural_foreign_keys=True)
-            print(serialized_transfer)
+            rates = {
+                "driver_gain": str(self.rate.driver_price)
+            }
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 conductor.username,
@@ -253,6 +254,7 @@ class TransferRequest(models.Model):
                     "type": "transferencia_validada",
                     "transferencia_id": self.id,
                     "transferencia_data": serialized_transfer,
+                    "rates": rates
                 },
             )
     

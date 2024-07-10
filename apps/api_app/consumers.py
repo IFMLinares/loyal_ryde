@@ -59,10 +59,12 @@ class NotificationConsummer(WebsocketConsumer):
     def transferencia_validada(self, event):
         transferencia_id = event["transferencia_id"]
         transferencia_data = event["transferencia_data"]
+        rates = event["rates"]
 
         try:
             # Deserializamos los datos de transferencia
             transferencia_dict = json.loads(transferencia_data)[0]
+            transferencia_dict["rates"] = rates
 
             # Enviamos el JSON completo al cliente (conductor)
             response_data = {
