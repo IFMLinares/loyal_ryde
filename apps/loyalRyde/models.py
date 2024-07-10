@@ -1,3 +1,4 @@
+import json
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -235,13 +236,16 @@ class TransferRequest(models.Model):
     long_1= models.CharField(max_length=255, verbose_name="Longitud", blank=True, null=True)
     lat_2 = models.CharField(max_length=255, verbose_name="Latitud", blank=True, null=True)
     long_2= models.CharField(max_length=255, verbose_name="Longitud", blank=True, null=True)
+    company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
 
 
     def enviar_id_a_usuario(self):
         CustomUser = get_user_model()
         conductor = CustomUser.objects.filter(role="conductor", status="active").first()
         if conductor:
-            serialized_transfer = serialize("json", [self])
+            print(self.service_requested.company.name)
+            serialized_transfer = serialize("json", [self], use_natural_foreign_keys=True)
+            print(serialized_transfer)
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 conductor.username,
@@ -253,6 +257,7 @@ class TransferRequest(models.Model):
             )
     
     def save(self, *args, **kwargs):
+        self.company = self.service_requested.company.name
         # Validación personalizada antes de guardar
         if self.status == 'validada':
             # Realiza la funcionalidad adicional que necesitas
