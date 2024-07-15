@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -88,6 +89,11 @@ class Company(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+        return self.user.username
+
+    class Meta:
+        verbose_name = 'Compañia'
+        verbose_name_plural = 'Compañias'
 
 class CustomUser(AbstractUser):
     # Añade campos adicionales aquí
@@ -103,6 +109,8 @@ class CustomUser(AbstractUser):
             ('is_company_user', 'Can perform company user actions'),
             # Otros permisos personalizados aquí
         )
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
 
 class CustomUserDriver(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
@@ -116,6 +124,10 @@ class CustomUserDriver(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    class Meta:
+        verbose_name = 'Usuario Conductor'
+        verbose_name_plural = 'Usuarios Conductores'
 
 class PeopleTransfer(models.Model):
     name = models.CharField(max_length=255, verbose_name='nombre')
@@ -202,7 +214,40 @@ class Rates(models.Model):
     class Meta:
         verbose_name_plural = "Tarifas"
 
+class TransferStop(models.Model):
+    start_time = models.TimeField(verbose_name="Hora de inicio", blank=True, null=True)
+    end_time = models.TimeField(verbose_name="Hora de finalización", blank=True, null=True)
+    total_time = models.DurationField(verbose_name="Tiempo todal de espera", blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+            # Convierte start_time y end_time a objetos datetime
+            start_datetime = datetime.combine(datetime.today(), self.start_time)
+            end_datetime = datetime.combine(datetime.today(), self.end_time)
+
+            # Calcula la diferencia entre start_time y end_time
+            if self.start_time and self.end_time:
+                self.total_time = end_datetime - start_datetime
+            super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'Parada'
+        verbose_name_plural = 'Paradas'
+
+class Desviation(models.Model):
+    desviation_direc = models.CharField(max_length=255, verbose_name="Dirección de desvio", blank=True, null=True)
+    lat= models.CharField(max_length=255, verbose_name="Latitud", blank=True, null=True)
+    long= models.CharField(max_length=255, verbose_name="Longitud", blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Desvio'
+        verbose_name_plural = 'Desvios'
+
 class TransferRequest(models.Model):
+    rate = models.ForeignKey(Rates, on_delete=models.CASCADE, verbose_name="Tarifa")
+    service_requested = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Usuario que Llenó el Formulario", blank=True, null=True)
+    user_driver = models.ForeignKey(CustomUserDriver, on_delete=models.CASCADE, verbose_name="Usuario conductor", blank=True, null=True)
+    stop_time = models.ManyToManyField(TransferStop, verbose_name="Pausa del viaje", blank=True)
+    deviation = models.ManyToManyField(Desviation, verbose_name="Desvios", blank=True)
     date = models.DateField(verbose_name="Fecha del traslado")  # DD/MM/AA
     date_created = models.DateTimeField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
     hour = models.TimeField(verbose_name="Hora")  # Formato 12h
@@ -216,7 +261,6 @@ class TransferRequest(models.Model):
     flight = models.CharField(max_length=255, verbose_name="Vuelo", blank=True, null=True)
     route_fly = models.CharField(max_length=255, verbose_name="Ruta de vuelo", blank=True, null=True)
     person_to_transfer = models.ManyToManyField(PeopleTransfer, verbose_name="Persona(s) a Transferir")
-    service_requested = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Usuario que Llenó el Formulario", blank=True, null=True)
     service_authorize = models.TextField(verbose_name="Autorización del Servicio", blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Estado", blank=True, null=True, default='esperando validación' )
     executive_transfer = models.BooleanField(default=False, blank=True, null=True, verbose_name="Traslado ejecutivo")
@@ -231,7 +275,6 @@ class TransferRequest(models.Model):
     departure_site_route = models.CharField(max_length=256, verbose_name="Salida")
     departure_direc = models.CharField(max_length=255, verbose_name="Dirección salida exacta", blank=True, null=True)
     departure_landmark = models.CharField(max_length=255, verbose_name="Punto de referencia", blank=True, null=True)
-    rate = models.ForeignKey(Rates, on_delete=models.CASCADE, verbose_name="Tarifa")
     lat_1 = models.CharField(max_length=255, verbose_name="Latitud", blank=True, null=True)
     long_1= models.CharField(max_length=255, verbose_name="Longitud", blank=True, null=True)
     lat_2 = models.CharField(max_length=255, verbose_name="Latitud", blank=True, null=True)

@@ -17,8 +17,7 @@ class NotificationConsummer(WebsocketConsumer):
             self.username, self.channel_name
         )
         self.accept()
-
-
+    
     def disconnect(self, close_code):
         
         # Leave room/group

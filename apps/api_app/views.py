@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
@@ -6,8 +7,8 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import AllowAny
 
-from ..loyalRyde.models import CustomUser, CustomUserDriver
-from .serializers import UserSerializers, CustomUserDriverSerializer
+from ..loyalRyde.models import CustomUser, CustomUserDriver,TransferStop, Desviation, TransferRequest
+from .serializers import UserSerializers, CustomUserDriverSerializer,TransferStopSerializer, DesviationSerializer
 
 class UserView(APIView):
 
@@ -56,3 +57,41 @@ class UserLoginView(APIView):
                 return Response("ERR: Cuenta no activa", status=403)
                 
         return Response("ERR: Credenciales invalidas", status=403)
+    
+class TransferStopViewSet(viewsets.ModelViewSet):
+    queryset = TransferStop.objects.all()
+    serializer_class = TransferStopSerializer
+
+    def perform_create(self, serializer):
+        # Guarda la instancia TransferStop
+        transfer_stop = serializer.save()
+
+        # Busca el TransferRequest con el mismo ID
+        transfer_request_id = self.request.data.get("id")
+        transfer_request = TransferRequest.objects.filter(id=transfer_request_id).first()
+
+        if transfer_request:
+            # Asigna la instancia TransferStop al campo stop_time de TransferRequest
+            transfer_request.stop_time.add(transfer_stop)
+            transfer_request.save()
+
+        return Response({"message": "Guardado exitoso"}, status=200)
+
+class DesviationViewSet(viewsets.ModelViewSet):
+    queryset = Desviation.objects.all()
+    serializer_class = DesviationSerializer
+
+    def perform_create(self, serializer):
+        # Guarda la instancia Desviation
+        desviation = serializer.save()
+
+        # Busca el TransferRequest con el mismo ID
+        transfer_request_id = self.request.data.get("id")
+        transfer_request = TransferRequest.objects.filter(id=transfer_request_id).first()
+
+        if transfer_request:
+            # Asigna la instancia Desviation al campo deviation de TransferRequest
+            transfer_request.deviation.add(desviation)
+            transfer_request.save()
+
+        return Response({"message": "Guardado exitoso"}, status=200)

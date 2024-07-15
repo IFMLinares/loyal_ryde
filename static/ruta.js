@@ -13,8 +13,13 @@ function initMap() {
     directionsService = new google.maps.DirectionsService();
     directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
 
-    var autocompleteStart = new google.maps.places.Autocomplete(document.getElementById('id_destination_direc'));
-    var autocompleteEnd = new google.maps.places.Autocomplete(document.getElementById('id_departure_direc'));
+    var autocompleteStart = new google.maps.places.Autocomplete(document.getElementById('id_destination_direc'), {
+        componentRestrictions: { country: 'VE' }
+    });
+    
+    var autocompleteEnd = new google.maps.places.Autocomplete(document.getElementById('id_departure_direc'), {
+        componentRestrictions: { country: 'VE' }
+    });
 
     autocompleteStart.addListener('place_changed', function () {
         calculateRoute();

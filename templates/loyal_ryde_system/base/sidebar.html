@@ -75,6 +75,7 @@
 				data-kt-menu="true"
 				data-kt-menu-expand="false"
 			>
+				<!-- Inicio  -->
 				<div class="menu-item">
 					<a
 						class="menu-link"
@@ -91,15 +92,198 @@
 							<i class="fas fa-solid fa-home"></i>
 							<!--end::Svg Icon-->
 						</span>
-						<span class="menu-title">Inicio</span>
+						<span class="font_white">Inicio</span>
 					</a>
+				</div>
+				
+				<!-- Traslado -->
+				<div class="menu-item">
+					<div class="menu-content pt-8 pb-2">
+						<span
+							class="font_white text-uppercase fs-8 ls-1"
+							>Traslado</span
+						>
+					</div>
+				</div>
+				<div
+					data-kt-menu-trigger="click"
+					class="menu-item menu-accordion"
+				>
+					<span class="menu-link">
+						<span class="menu-icon">
+							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+							<i class="fas fa-solid fa-route"></i>
+							<!--end::Svg Icon-->
+						</span>
+						<span class="menu-title">Traslados</span>
+						<span class="menu-arrow"></span>
+					</span>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link"
+								href="{% url 'core:transfer_request_create' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Solicitar Traslado</span
+								>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link"
+								href="{% url 'core:transfer_request_list' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Lista de Traslados</span
+								>
+							</a>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Viajes -->
+				<div class="menu-item">
+					<div class="menu-content pt-8 pb-2">
+						<span
+							class="font_white text-uppercase fs-8 ls-1"
+							>Viajes</span
+						>
+					</div>
+				</div>
+
+				<div
+					data-kt-menu-trigger="click"
+					class="menu-item menu-accordion"
+				>
+					<span class="menu-link">
+						<span class="menu-icon">
+							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+							<i class="fas fa-solid fa-caravan"></i>
+							<!--end::Svg Icon-->
+						</span>
+						<span class="menu-title">Viajes</span>
+						<span class="menu-arrow"></span>
+					</span>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:trips_progress' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">En progreso</span>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:trips_programed' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">Programados</span>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:trips_completed' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">Completados</span>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:trips_hold' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">Por Aprobar</span>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:trips_cancelled' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">Cancelados</span>
+							</a>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Emergencias -->
+				<div class="menu-item">
+					<div class="menu-content pt-8 pb-2">
+						<span
+							class="font_white text-uppercase fs-8 ls-1"
+							>Emergencias</span
+						>
+					</div>
+				</div>
+				<div
+					data-kt-menu-trigger="click"
+					class="menu-item menu-accordion"
+				>
+					<span class="menu-link">
+						<span class="menu-icon">
+							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+							<i class="fas fa-solid fa-exclamation"></i>
+							<!--end::Svg Icon-->
+						</span>
+						<span class="menu-title">Emergencias</span>
+						<span class="menu-arrow"></span>
+					</span>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link"
+								href="{% url 'core:index' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Ver emergencias</span
+								>
+							</a>
+						</div>
+					</div>
 				</div>
 				
 				<!-- Empresas -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
 						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
+							class="font_white text-uppercase fs-8 ls-1"
 							>Empresas</span
 						>
 					</div>
@@ -191,13 +375,13 @@
 					</div>
 				</div>
 
-				
-				<!-- Traslado -->
+
+				<!-- Flotas -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
 						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
-							>Traslado</span
+							class="font_white text-uppercase fs-8 ls-1"
+							>Flotas</span
 						>
 					</div>
 				</div>
@@ -208,23 +392,49 @@
 					<span class="menu-link">
 						<span class="menu-icon">
 							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<i class="fas fa-solid fa-route"></i>
+							<i class="fas fa-solid fa-truck-moving"></i>
 							<!--end::Svg Icon-->
 						</span>
-						<span class="menu-title">Traslados</span>
+						<span class="menu-title">Flotas</span>
 						<span class="menu-arrow"></span>
 					</span>
 					<div class="menu-sub menu-sub-accordion menu-active-bg">
 						<div class="menu-item">
 							<a
-								class="menu-link"
-								href="{% url 'core:transfer_request_create' %}"
+								class="menu-link py-3"
+								href="{% url 'core:fleet_add_type' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">Registrar tipo de Flota</span>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:fleet_add' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title">Registrar Flota</span>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link py-3"
+								href="{% url 'core:fleet_list' %}"
 							>
 								<span class="menu-bullet">
 									<span class="bullet bullet-dot"></span>
 								</span>
 								<span class="menu-title"
-									>Solicitar Traslado</span
+									>Lista de Flotas</span
 								>
 							</a>
 						</div>
@@ -232,117 +442,25 @@
 					<div class="menu-sub menu-sub-accordion menu-active-bg">
 						<div class="menu-item">
 							<a
-								class="menu-link"
-								href="{% url 'core:transfer_request_list' %}"
+								class="menu-link py-3"
+								href="{% url 'core:fleet_list_type' %}"
 							>
 								<span class="menu-bullet">
 									<span class="bullet bullet-dot"></span>
 								</span>
 								<span class="menu-title"
-									>Lista de Traslados</span
+									>Lista de tipos Flotas</span
 								>
 							</a>
 						</div>
 					</div>
 				</div>
-
-				
-				
-				<!-- Viajes -->
-				<div class="menu-item">
-					<div class="menu-content pt-8 pb-2">
-						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
-							>Viajes</span
-						>
-					</div>
-				</div>
-				<div
-					data-kt-menu-trigger="click"
-					class="menu-item menu-accordion"
-				>
-					<span class="menu-link">
-						<span class="menu-icon">
-							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<i class="fas fa-solid fa-caravan"></i>
-							<!--end::Svg Icon-->
-						</span>
-						<span class="menu-title">Viajes</span>
-						<span class="menu-arrow"></span>
-					</span>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:trips_progress' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title">En progreso</span>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:trips_programed' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title">Programados</span>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:trips_completed' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title">Completados</span>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:trips_hold' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title">Por Aprobar</span>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:trips_cancelled' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title">Cancelados</span>
-							</a>
-						</div>
-					</div>
-				</div>
-
 
 				<!-- Rutas -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
 						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
+							class="font_white text-uppercase fs-8 ls-1"
 							>Rutas</span
 						>
 					</div>
@@ -452,7 +570,7 @@
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
 						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
+							class="font_white text-uppercase fs-8 ls-1"
 							>Tarifas</span
 						>
 					</div>
@@ -500,7 +618,7 @@
 				<div class="menu-item">
 									<div class="menu-content pt-8 pb-2">
 										<span
-											class="menu-section text-muted text-uppercase fs-8 ls-1"
+											class="font_white text-uppercase fs-8 ls-1"
 											>Conductores</span
 										>
 									</div>
@@ -580,12 +698,12 @@
 									</div>
 				</div>
 				
-				<!-- Flotas -->
+				<!-- Comentarios -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
 						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
-							>Flotas</span
+							class="font_white text-uppercase fs-8 ls-1"
+							>Comentarios</span
 						>
 					</div>
 				</div>
@@ -596,64 +714,23 @@
 					<span class="menu-link">
 						<span class="menu-icon">
 							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<i class="fas fa-solid fa-truck-moving"></i>
+							<i class="fas fa-solid fa-tag"></i>
 							<!--end::Svg Icon-->
 						</span>
-						<span class="menu-title">Flotas</span>
+						<span class="menu-title">Comentarios</span>
 						<span class="menu-arrow"></span>
 					</span>
 					<div class="menu-sub menu-sub-accordion menu-active-bg">
 						<div class="menu-item">
 							<a
-								class="menu-link py-3"
-								href="{% url 'core:fleet_add_type' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title">Registrar tipo de Flota</span>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:fleet_add' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title">Registrar Flota</span>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:fleet_list' %}"
+								class="menu-link"
+								href="{% url 'core:index' %}"
 							>
 								<span class="menu-bullet">
 									<span class="bullet bullet-dot"></span>
 								</span>
 								<span class="menu-title"
-									>Lista de Flotas</span
-								>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link py-3"
-								href="{% url 'core:fleet_list_type' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Lista de tipos Flotas</span
+									>Ver comentarios</span
 								>
 							</a>
 						</div>
@@ -664,7 +741,7 @@
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
 						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
+							class="font_white text-uppercase fs-8 ls-1"
 							>Cupones de descuento</span
 						>
 					</div>
@@ -714,89 +791,12 @@
 					</div>
 				</div>
 
-				<!-- Emergencias -->
-				<div class="menu-item">
-					<div class="menu-content pt-8 pb-2">
-						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
-							>Emergencias</span
-						>
-					</div>
-				</div>
-				<div
-					data-kt-menu-trigger="click"
-					class="menu-item menu-accordion"
-				>
-					<span class="menu-link">
-						<span class="menu-icon">
-							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<i class="fas fa-solid fa-exclamation"></i>
-							<!--end::Svg Icon-->
-						</span>
-						<span class="menu-title">Emergencias</span>
-						<span class="menu-arrow"></span>
-					</span>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link"
-								href="{% url 'core:index' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Ver emergencias</span
-								>
-							</a>
-						</div>
-					</div>
-				</div>
-
-				<!-- Comentarios -->
-				<div class="menu-item">
-					<div class="menu-content pt-8 pb-2">
-						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
-							>Comentarios</span
-						>
-					</div>
-				</div>
-				<div
-					data-kt-menu-trigger="click"
-					class="menu-item menu-accordion"
-				>
-					<span class="menu-link">
-						<span class="menu-icon">
-							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<i class="fas fa-solid fa-tag"></i>
-							<!--end::Svg Icon-->
-						</span>
-						<span class="menu-title">Comentarios</span>
-						<span class="menu-arrow"></span>
-					</span>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link"
-								href="{% url 'core:index' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Ver comentarios</span
-								>
-							</a>
-						</div>
-					</div>
-				</div>
 
 				<!-- Reportes -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
 						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
+							class="font_white text-uppercase fs-8 ls-1"
 							>Reportes</span
 						>
 					</div>
@@ -881,7 +881,7 @@
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
 						<span
-							class="menu-section text-muted text-uppercase fs-8 ls-1"
+							class="font_white text-uppercase fs-8 ls-1"
 							>Usuarios del Sistema</span
 						>
 					</div>

@@ -98,6 +98,18 @@ $(document).ready(function () {
 			$("#localidad").addClass("d-none");
 		}
 	});
+	$("#id_driver").change(function () {
+		if (this.checked) {
+			$('#id_executive_transfer').prop("checked", false);
+			$('#id_encomienda').prop("checked", false);
+			$('#id_executive_transfer').prop("disabled", true);
+			$('#id_encomienda').prop("disabled", true);
+		} else {
+			$('#id_executive_transfer').prop("disabled", false);
+			$('#id_encomienda').prop("disabled", false);
+		}
+	});
+	
 
 	// $('#id_route_init').on('change', function(){
 	// 	console.log('asdasd')

@@ -2,7 +2,7 @@ from rest_framework_jwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.validators import UniqueValidator
 from rest_framework import serializers
-from ..loyalRyde.models import CustomUser, CustomUserDriver
+from ..loyalRyde.models import CustomUser, CustomUserDriver,TransferStop, Desviation
 
 
 class UserSerializers(serializers.ModelSerializer):
@@ -20,4 +20,14 @@ class UserSerializers(serializers.ModelSerializer):
 class CustomUserDriverSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUserDriver
+        fields = '__all__'
+
+class TransferStopSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TransferStop
+        fields = '__all__'
+
+class DesviationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Desviation
         fields = '__all__'

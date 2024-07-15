@@ -50,31 +50,39 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-check form-check-custom form-check-solid mt-5">
-                                            <input class="form-check-input" type="checkbox" value="" id="id_executive_transfer"  name="executive_transfer" disabled/>
+                                            {{ form.executive_transfer }}
+                                            <!-- <input class="form-check-input" type="checkbox" value="" id="id_executive_transfer"  name="executive_transfer"/> -->
                                             <label class="form-check-label" for="id_executive_transfer">
-                                                Traslado Ejecutivo
+                                                <i class="fas fa-solid fa-car-side" style="color: #009ef6; font-size: 20px;"></i>   
+                                                TRASLADO EJECUTIVO
                                             </label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check form-check-custom form-check-solid mt-5">
-                                            <input class="form-check-input" type="checkbox" value="" id="id_encomienda"  name="encomienda" disabled/>
+                                            {{ form.encomienda }}
+                                            <!-- <input class="form-check-input" type="checkbox" value="" id="id_encomienda"  name="encomienda"/> -->
                                             <label class="form-check-label" for="id_encomienda">
-                                                Encomienda
+                                                <i class="fas fa-solid fa-dolly" style="color: #009ef6; font-size: 20px;"></i>
+                                                ENCOMIENDA
                                             </label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check form-check-custom form-check-solid mt-5">
-                                            <input class="form-check-input" type="checkbox" value="" id="id_driver"  name="driver" disabled/>
+                                            {{ form.driver }}
+                                            <!-- <input class="form-check-input" type="checkbox" value="" id="id_driver"  name="driver"/> -->
                                             <label class="form-check-label" for="id_driver">
-                                                Conductor
+                                                <i class="fas fa-solid fa-user"  style="color: #009ef6; font-size: 20px;"></i>
+                                                CONDUCTOR
                                             </label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mt-8 col-md-12">
-                                    <h3>Lista de personas para el traslado:</h3>
+                                    <h3>
+                                        <i class="fas fa-solid fa-users" style="color: #009ef6; font-size: 20px;"></i> Lista de personas para el traslado:
+                                    </h3>
                                 </div>
                                 <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_person_to_transfer">Persona(s):</label>
@@ -92,7 +100,7 @@
                                 <div class="row mb-5">
                                     
                                 <div class="mt-8 col-md-12">
-                                    <h3>Salida/Destino(s):</h3>
+                                    <h3><i class="fas fa-solid fa-road" style="color: #009ef6; font-size: 20px;"></i> Salida/Destino(s):</h3>
                                 </div>
                                     <!-- <div class="col-md-6">
                                         <div class="form-check form-check-custom form-check-solid mt-5">
@@ -108,7 +116,8 @@
                                         <div class="form-check form-check-custom form-check-solid mt-5">
                                             <input class="form-check-input" type="checkbox" id="id_fly_checkbox"  name="fly_checkbox"/>
                                             <label class="form-check-label text-dark" for="id_fly_checkbox">
-                                                ¿Tu traslado es hacia un aeropuerto?
+                                                <i class="fas fa-solid fa-plane-departure"  style="color: #009ef6; font-size: 20px;"></i>
+                                                ¿TU TRASLADO ES HACIA UN AEROPUERTO?
                                             </label>
                                         </div>
                                     </div>
@@ -228,8 +237,6 @@
                                 <input type="hidden" name="status" id="status" value="{{form.instance.status}}">
 
                             </div>
-                            <br>
-                            <button type="submit" class="btn btn-primary btn-hover-rotate-end mt-5">Solicitar traslado</button>
                         </form>
                     </div>
                 </div>
