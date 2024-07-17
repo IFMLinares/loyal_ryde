@@ -117,6 +117,39 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
 
         return super().post(request, *args, **kwargs)
 
+# agregar traslado (modo invitado)
+class GuestTransferCreateView(CreateView):
+    model = TransferRequest
+    template_name = 'loyal_ryde_system/transfer_rerquest_guest.html'
+    form_class = TransferRequestForm
+    success_url = reverse_lazy('core:transfer_request_list')
+
+    def form_valid(self, form):
+        form.instance.service_requested = self.request.user
+        messages.success(self.request, 'Su solictud de trasslado ha sido registrada exitosamente. Por favor espere la aprobación para iniciar su servicio')
+        return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        # Obtén la fecha directamente del POST
+        fecha = request.POST.get('date')
+
+        # Convierte la fecha al formato que Django espera
+        fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
+
+        # Actualiza la fecha en los datos del POST
+        request.POST = request.POST.copy()
+        request.POST['date'] = fecha
+        return super().post(request, *args, **kwargs)
+    
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        departure_points = DeparturePoint.objects.all()
+        context['departure'] = departure_points
+        return context
+
+        return super().post(request, *args, **kwargs)
+
+
 # Detalles del traslado
 class TransferRequestDetailview(LoginRequiredMixin, DetailView):
     model = TransferRequest
@@ -318,7 +351,17 @@ class TripsHoldListView(LoginRequiredMixin, ListView):
     template_name = 'loyal_ryde_system/trips_on_hold.html'
     
     def get_queryset(self):
-        return TransferRequest.objects.filter(status='esperando validación')
+        return TransferRequest.objects.filter(status__in=['esperando validación', 'validada'])
+
+
+#  Listado de Viajes en en espera
+class TripsAroveListView(LoginRequiredMixin, ListView):
+    model = TransferRequest
+    context_object_name = 'transfer'
+    template_name = 'loyal_ryde_system/trips_approve.html'
+    
+    def get_queryset(self):
+        return TransferRequest.objects.filter(status='aprobada')
 
 #  Listado de Viajes programados
 class TripsProgramedListView(LoginRequiredMixin, ListView):
@@ -438,6 +481,15 @@ def approve_request(request):
         transfer_request.status = 'validada'
         transfer_request.save()
         return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido validada con éxito.'})
+
+@csrf_exempt
+def approve_request_admin(request):
+    if request.method == 'POST':
+        request_id = request.POST.get('request_id')
+        transfer_request = TransferRequest.objects.get(id=request_id)
+        transfer_request.status = 'aprobada'
+        transfer_request.save()
+        return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido aprobada con éxito.'})
 
 def get_company_image(request):
     company_id = request.GET.get('company_id')

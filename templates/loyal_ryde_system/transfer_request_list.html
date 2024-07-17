@@ -52,10 +52,12 @@
                                                     <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-warning translate rounded"></span>
                                                     {% elif transfer_request.status == 'validada' %}
                                                     <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-primary translate rounded"></span>
+                                                    {% elif transfer_request.status == 'aprobada' %}
+                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-success translate rounded"></span>
                                                     {% elif transfer_request.status == 'en proceso' %}
                                                     <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-info translate rounded"></span>
                                                     {% elif transfer_request.status == 'finalizada' %}
-                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-success translate rounded"></span>
+                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-secondary translate rounded"></span>
                                                     {% endif %}
                                                     <!--end::Line-->
                                                 </span>
@@ -84,7 +86,12 @@
                                                         <a href="{% url 'core:transfer_request_detail' pk=transfer_request.id %}" class="menu-link px-3" data-kt-users-table-filter="delete_row">Ver</a>
                                                     </div>
                                                     <div class="menu-item px-3">
-                                                        <a href="#" class="btn btn-xs btn-primary {% if transfer_request.status == 'validada' %}disabled{% endif %}" data-id="{{ transfer_request.id }}">Aprobar</a>
+                                                        {% if transfer_request.status == 'validada' %}
+                                                        <a href="#" class="btn btn-xs btn-primary aprobar" data-id="{{ transfer_request.id }}">confirmar</a>
+                                                        {% endif %}
+                                                        {% if transfer_request.status == 'esperando validación' %}
+                                                        <a href="#" class="btn btn-xs btn-primary validar" data-id="{{ transfer_request.id }}">validar</a>
+                                                        {% endif %}
                                                     </div>
                                                     <!--end::Menu item-->
                                                 </div>
@@ -106,6 +113,7 @@
 {% block extra_js %}
 <script>
 let url_approve_ajax = "{% url 'core:transfer_request_approve' %}";
+let url_approve_ajax_admin = "{% url 'core:transfer_request_approve_admin' %}";
 </script>
 <script src="{% static 'trasnfer_request_list.js' %}"></script>
 <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>

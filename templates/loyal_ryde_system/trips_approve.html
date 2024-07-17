@@ -20,7 +20,7 @@
                 <!--begin::Card title-->
                 
                 <div class="col-md-12 text-center">
-                    <h1 class="">Lista de Viajes: Por aprobar</h1>
+                    <h1 class="">Lista de Viajes: Aprobados</h1>
                 </div>
                 <div class="card-title">
                     <!--begin::Search-->
@@ -80,6 +80,8 @@
                                         <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-warning translate rounded"></span>
                                         {% elif item.status == 'validada' %}
                                         <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-primary translate rounded"></span>
+                                        {% elif item.status == 'aprobada' %}
+                                        <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-success translate rounded"></span>
                                         {% elif item.status == 'en proceso' %}
                                         <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-info translate rounded"></span>
                                         {% elif item.status == 'finalizada' %}
@@ -107,9 +109,6 @@
                                         <div class="menu-item px-3">
                                             <a href="{% url 'core:transfer_request_detail' pk=item.id %}" class="menu-link px-3" data-kt-users-table-filter="delete_row">Ver</a>
                                         </div>
-                                        <div class="menu-item px-3">
-                                            <a href="#" class="btn btn-xs btn-primary {% if item.status != 'validada' %}disabled{% endif %}" data-id="{{ item.id }}">Aprobar</a>
-                                        </div>
                                         <!--end::Menu item-->
                                     </div>
                                     <!--end::Menu-->
@@ -130,5 +129,6 @@
 {% endblock content %} 
 
 {% block extra_js %} 
+        <script src="{% static 'trasnfer_request_list.js' %}"></script>
         <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
 {% endblock extra_js %}

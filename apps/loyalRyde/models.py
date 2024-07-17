@@ -21,6 +21,7 @@ payment_method_choices = [
 STATUS_CHOICES = [
         ('esperando validación', 'Esperando Validación'),
         ('validada', 'Validada'),
+        ('aprobada', 'Aprobada'),
         ('en proceso', 'En Proceso'),
         ('finalizada', 'Finalizada'),
         ('cancelada', 'Cancelada'),
@@ -304,7 +305,7 @@ class TransferRequest(models.Model):
     def save(self, *args, **kwargs):
         self.company = self.service_requested.company.name
         # Validación personalizada antes de guardar
-        if self.status == 'validada':
+        if self.status == 'aprobada':
             # Realiza la funcionalidad adicional que necesitas
             self.enviar_id_a_usuario()
 
