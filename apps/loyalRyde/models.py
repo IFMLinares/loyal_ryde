@@ -124,7 +124,7 @@ class CustomUserDriver(models.Model):
     image = models.ImageField(upload_to='driver/', blank=True, null=True, verbose_name="Foto")
 
     def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}. {self.marca} {self.model} {self.color} {self.plaque}"
+        return f"{self.user.first_name} {self.user.last_name}. Telefono: {self.user.phone} . {self.marca} {self.model} {self.color} {self.plaque}. "
 
     class Meta:
         verbose_name = 'Usuario Conductor'
@@ -286,8 +286,6 @@ class TransferRequest(models.Model):
     def enviar_id_a_usuario(self):
         CustomUser = get_user_model()
         conductor = CustomUser.objects.get(pk=self.user_driver.user.pk)
-        print(conductor)
-        print("asdasdas")
         if conductor:
             serialized_transfer = serialize("json", [self], use_natural_foreign_keys=True)
             rates = {

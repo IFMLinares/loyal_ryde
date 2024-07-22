@@ -12,6 +12,10 @@ class TransferRequestForm(ModelForm):
                 form.field.widget.attrs['class'] = 'form-check-input'
             elif form.name == 'person_to_transfer':
                 form.field.widget.attrs['class'] = 'form-select'
+            elif form.name == 'user_driver' or form.name == 'payment_method':
+                form.field.widget.attrs['class'] = 'form-select mb-2'
+                form.field.widget.attrs['data-control'] = 'select2'
+                form.field.widget.attrs['data-hide-search'] = 'true'
             else:
                 form.field.widget.attrs['class'] = 'form-control'
 
