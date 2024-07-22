@@ -286,6 +286,8 @@ class TransferRequest(models.Model):
     def enviar_id_a_usuario(self):
         CustomUser = get_user_model()
         conductor = CustomUser.objects.get(pk=self.user_driver.user.pk)
+        print(conductor)
+        print("asdasdas")
         if conductor:
             serialized_transfer = serialize("json", [self], use_natural_foreign_keys=True)
             rates = {
