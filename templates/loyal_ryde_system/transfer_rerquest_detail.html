@@ -213,6 +213,16 @@
                                         <input type="text" class="form-control" id="id_division" name="division" >
                                     </div>
                                 </div>
+                                
+                                <div class="mt-5 col-md-12">
+                                    <label class="form-label" for="">Conductor:</label>
+                                    {% if detail.user_driver %}
+                                        {{ detail.user_driver }}
+                                    {% else %}
+                                        No hay condcutor asignado
+                                    {% endif %}
+                                </div>
+
                                 <div id="rates_div" class="row">
                                     
                                     <div class="mt-5 col-md-6">
