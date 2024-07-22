@@ -14,7 +14,7 @@ from django.conf import settings
 
 payment_method_choices = [
         (1, 'CECO/GRAFO/PEDIDO'),
-        (2, 'EFECTIVO'),
+        (2, 'CREDITO'),
         (3, 'TARJETA DE CRÉDITO'),
     ]
 
