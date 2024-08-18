@@ -301,16 +301,23 @@ class TransferRequest(models.Model):
                     "rates": rates
                 },
             )
+            print(serialized_transfer)
     
     def save(self, *args, **kwargs):
         self.company = self.service_requested.company.name
         # Validación personalizada antes de guardar
+        print("No se selecciono conductor")
         if self.status == 'aprobada':
             # Realiza la funcionalidad adicional que necesitas
-            self.enviar_id_a_usuario()
+            if self.user_driver:
+                print("Se ha seleccionado conductor")
+                self.enviar_id_a_usuario()
+            else:
+                print("No se selecciono conductor")
 
         # Llama al método save original para guardar normalmente
         super().save(*args, **kwargs)
+
 
 
     def __str__(self):

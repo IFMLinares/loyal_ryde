@@ -27,7 +27,9 @@ class TransferRequestForm(ModelForm):
             'encomienda': CheckboxInput(),
             'driver': CheckboxInput(),
             'id_fly_checkbox': CheckboxInput(),
-            'person_to_transfer': SelectMultiple()
+            'person_to_transfer': SelectMultiple(),
+            # 'destination_direc': TextInput(attrs={'autocomplete': 'off'}),
+            # 'departure_direc': TextInput(attrs={'autocomplete': 'off'})
         }
 
 class AddCompanyForm(ModelForm):

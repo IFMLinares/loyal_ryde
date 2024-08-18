@@ -487,9 +487,12 @@ def approve_request_admin(request):
     if request.method == 'POST':
         request_id = request.POST.get('request_id')
         transfer_request = TransferRequest.objects.get(id=request_id)
-        transfer_request.status = 'aprobada'
-        transfer_request.save()
-        return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido aprobada con éxito.'})
+        if(not transfer_request.user_driver):
+            return JsonResponse({'status': 'error', 'message': 'No ha seleccionado un conductor.'})
+        else:
+            transfer_request.status = 'aprobada'
+            transfer_request.save()
+            return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido aprobada con éxito.'})
 
 def get_company_image(request):
     company_id = request.GET.get('company_id')

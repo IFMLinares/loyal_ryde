@@ -8,7 +8,6 @@ $(document).ready(function () {
 	$("#id_in_town").change(function () {
 		if ($(this).prop("checked")) {
 			$("#id_outside_town").prop("checked", false);
-			
 		}
 	});
 
@@ -100,16 +99,15 @@ $(document).ready(function () {
 	});
 	$("#id_driver").change(function () {
 		if (this.checked) {
-			$('#id_executive_transfer').prop("checked", false);
-			$('#id_encomienda').prop("checked", false);
-			$('#id_executive_transfer').prop("disabled", true);
-			$('#id_encomienda').prop("disabled", true);
+			$("#id_executive_transfer").prop("checked", false);
+			$("#id_encomienda").prop("checked", false);
+			$("#id_executive_transfer").prop("disabled", true);
+			$("#id_encomienda").prop("disabled", true);
 		} else {
-			$('#id_executive_transfer').prop("disabled", false);
-			$('#id_encomienda').prop("disabled", false);
+			$("#id_executive_transfer").prop("disabled", false);
+			$("#id_encomienda").prop("disabled", false);
 		}
 	});
-	
 
 	// $('#id_route_init').on('change', function(){
 	// 	console.log('asdasd')
@@ -125,52 +123,75 @@ $(document).ready(function () {
 		}
 	});
 
-	$('#id_payment_method').change(function() {
-        if($(this).val() == "1") {
-            // Si el valor seleccionado es "1", quitamos la clase 'd-none' del div
-            $('#data_required').removeClass('d-none');
-        } else {
-            // Si el valor seleccionado es cualquier otro, agregamos la clase 'd-none' al div
-            $('#data_required').addClass('d-none');
-        }
-    });
-
+	$("#id_payment_method").change(function () {
+		if ($(this).val() == "1") {
+			// Si el valor seleccionado es "1", quitamos la clase 'd-none' del div
+			$("#data_required").removeClass("d-none");
+		} else {
+			// Si el valor seleccionado es cualquier otro, agregamos la clase 'd-none' al div
+			$("#data_required").addClass("d-none");
+		}
+	});
 
 	const $idInTownCheckbox = $("#id_in_town");
-        const $idOutsideTownCheckbox = $("#id_outside_town");
-        const $idFullDayCheckbox = $("#id_full_day");
-        const $idHalfDayCheckbox = $("#id_half_day");
+	const $idOutsideTownCheckbox = $("#id_outside_town");
+	const $idFullDayCheckbox = $("#id_full_day");
+	const $idHalfDayCheckbox = $("#id_half_day");
 
-        // Función para habilitar/deshabilitar los checkboxes
-        function updateCheckboxes() {
-            if ($idInTownCheckbox.is(":checked")) {
-                $idFullDayCheckbox.prop("disabled", false);
-                $idHalfDayCheckbox.prop("disabled", false);
-            } else {
-                $idFullDayCheckbox.prop("disabled", true);
-                $idHalfDayCheckbox.prop("disabled", true);
-            }
+	// Función para habilitar/deshabilitar los checkboxes
+	function updateCheckboxes() {
+		if ($idInTownCheckbox.is(":checked")) {
+			$idFullDayCheckbox.prop("disabled", false);
+			$idHalfDayCheckbox.prop("disabled", false);
+		} else {
+			$idFullDayCheckbox.prop("disabled", true);
+			$idHalfDayCheckbox.prop("disabled", true);
+		}
 
-            if ($idOutsideTownCheckbox.is(":checked")) {
-                $idFullDayCheckbox.prop("disabled", true);
-                $idHalfDayCheckbox.prop("disabled", true);
-            }
+		if ($idOutsideTownCheckbox.is(":checked")) {
+			$idFullDayCheckbox.prop("disabled", true);
+			$idHalfDayCheckbox.prop("disabled", true);
+		}
 
-            // Verificamos si ambos checkboxes están seleccionados
-            if ($idFullDayCheckbox.is(":checked") && $idHalfDayCheckbox.is(":checked")) {
-                // Si ambos están seleccionados, deseleccionamos uno de ellos
-                $idFullDayCheckbox.prop("checked", false);
-                $idHalfDayCheckbox.prop("checked", false);
-            }
-        }
+		// Verificamos si ambos checkboxes están seleccionados
+		if (
+			$idFullDayCheckbox.is(":checked") &&
+			$idHalfDayCheckbox.is(":checked")
+		) {
+			// Si ambos están seleccionados, deseleccionamos uno de ellos
+			$idFullDayCheckbox.prop("checked", false);
+			$idHalfDayCheckbox.prop("checked", false);
+		}
+	}
 
-        // Escuchamos los cambios en los checkboxes
-        $idInTownCheckbox.on("change", updateCheckboxes);
-        $idOutsideTownCheckbox.on("change", updateCheckboxes);
-        $idFullDayCheckbox.on("change", updateCheckboxes);
-        $idHalfDayCheckbox.on("change", updateCheckboxes);
+	// Escuchamos los cambios en los checkboxes
+	$idInTownCheckbox.on("change", updateCheckboxes);
+	$idOutsideTownCheckbox.on("change", updateCheckboxes);
+	$idFullDayCheckbox.on("change", updateCheckboxes);
+	$idHalfDayCheckbox.on("change", updateCheckboxes);
 
-        // Llamamos a la función inicialmente para establecer el estado correcto
-        updateCheckboxes();
+	// Llamamos a la función inicialmente para establecer el estado correcto
+	updateCheckboxes();
 
+	
+	$("#addWaypointBtn").on("click", function () {
+		var waypointsContainer = $("#waypointsContainer");
+		var waypointInput = $("<input>")
+			.addClass("form-control")
+			.attr("type", "text")
+			.attr("name", "waypoint")
+			.attr("placeholder", "Ingrese desvío");
+		waypointsContainer.append(waypointInput);
+	
+		// Añadir funcionalidad de autocompletado de Google Maps
+		var autocomplete = new google.maps.places.Autocomplete(waypointInput[0], {
+			componentRestrictions: { country: "VE" },
+		});
+	
+		autocomplete.addListener("place_changed", function () {
+			calculateRoute();
+			updateMarkers();
+		});
+	});
+	
 });

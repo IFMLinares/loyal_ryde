@@ -207,6 +207,15 @@
                                     {{ form.destination_landmark }}
                                     <!-- <input class="form-control" type="text" name="destination_landmark" id="id_destination_landmark"> -->
                                 </div>
+                                <div class="mt-8 col-md-12">
+                                    <h3>¿Necesitas desvíos?</h3>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <button type="button" id="addWaypointBtn" class="btn btn-success btn-hover-rotate-end" >Añadir desvío</button>
+                                    <!-- btn btn-primary btn-hover-rotate-end mt-5 -->
+                                    <div id="waypointsContainer" class="mt-3"></div>
+                                </div>
+
                                 <div id="map" style="height: 400px;" class="mt-xl-4">
 
                                 </div>
@@ -229,7 +238,9 @@
                                 </div>
 
                                 <div class="mt-5 col-md-12">
-                                    <label class="form-label" for="">Conductor:</label>
+                                    <div class="col-md-12">
+                                        <h3>Conductor:</h3>
+                                    </div>
                                     {{ form.user_driver }}
                                 </div>
 
