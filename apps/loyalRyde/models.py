@@ -294,7 +294,7 @@ class TransferRequest(models.Model):
         if conductor:
             serialized_transfer = serialize("json", [self], use_natural_foreign_keys=True)
             serialized_deviations = serialize("json", self.deviation.all(), use_natural_foreign_keys=True)
-            
+            print(serialized_deviations)
             rates = {
                 "driver_gain": str(self.rate.driver_price)
             }
