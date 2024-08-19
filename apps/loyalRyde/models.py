@@ -236,12 +236,17 @@ class TransferStop(models.Model):
 
 class Desviation(models.Model):
     desviation_direc = models.CharField(max_length=255, verbose_name="Dirección de desvio", blank=True, null=True)
+    desviation_number = models.IntegerField(verbose_name="Número de desvio", blank=True, null=True, default=0)
+    waypoint_number = models.IntegerField(verbose_name="Número de desvio", blank=True, null=True, default=0)
     lat= models.CharField(max_length=255, verbose_name="Latitud", blank=True, null=True)
     long= models.CharField(max_length=255, verbose_name="Longitud", blank=True, null=True)
 
     class Meta:
         verbose_name = 'Desvio'
         verbose_name_plural = 'Desvios'
+    
+    def __str__(self):
+        return f"{self.id}-{self.desviation_number}-{self.waypoint_number}"
 
 class TransferRequest(models.Model):
     rate = models.ForeignKey(Rates, on_delete=models.CASCADE, verbose_name="Tarifa")
@@ -276,10 +281,10 @@ class TransferRequest(models.Model):
     departure_site_route = models.CharField(max_length=256, verbose_name="Salida")
     departure_direc = models.CharField(max_length=255, verbose_name="Dirección salida exacta", blank=True, null=True)
     departure_landmark = models.CharField(max_length=255, verbose_name="Punto de referencia", blank=True, null=True)
-    lat_1 = models.CharField(max_length=255, verbose_name="Latitud", blank=True, null=True)
-    long_1= models.CharField(max_length=255, verbose_name="Longitud", blank=True, null=True)
-    lat_2 = models.CharField(max_length=255, verbose_name="Latitud", blank=True, null=True)
-    long_2= models.CharField(max_length=255, verbose_name="Longitud", blank=True, null=True)
+    lat_1 = models.CharField(max_length=255, verbose_name="Latitud Inicio", blank=True, null=True)
+    long_1= models.CharField(max_length=255, verbose_name="Longitud Inicio", blank=True, null=True)
+    lat_2 = models.CharField(max_length=255, verbose_name="Latitud Final", blank=True, null=True)
+    long_2= models.CharField(max_length=255, verbose_name="Longitud Final", blank=True, null=True)
     company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
 
 
@@ -288,6 +293,8 @@ class TransferRequest(models.Model):
         conductor = CustomUser.objects.get(pk=self.user_driver.user.pk)
         if conductor:
             serialized_transfer = serialize("json", [self], use_natural_foreign_keys=True)
+            serialized_deviations = serialize("json", self.deviation.all(), use_natural_foreign_keys=True)
+            
             rates = {
                 "driver_gain": str(self.rate.driver_price)
             }
@@ -298,10 +305,10 @@ class TransferRequest(models.Model):
                     "type": "transferencia_validada",
                     "transferencia_id": self.id,
                     "transferencia_data": serialized_transfer,
+                    "deviation_data": serialized_deviations,
                     "rates": rates
                 },
             )
-            print(serialized_transfer)
     
     def save(self, *args, **kwargs):
         self.company = self.service_requested.company.name

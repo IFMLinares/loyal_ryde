@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -94,7 +95,7 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.service_requested = self.request.user
-        messages.success(self.request, 'Su solictud de trasslado ha sido registrada exitosamente. Por favor espere la aprobación para iniciar su servicio')
+        messages.success(self.request, 'Su solicitud de traslado ha sido registrada exitosamente. Por favor espere la aprobación para iniciar su servicio')
         return super().form_valid(form)
 
     def post(self, request, *args, **kwargs):
@@ -107,7 +108,28 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         # Actualiza la fecha en los datos del POST
         request.POST = request.POST.copy()
         request.POST['date'] = fecha
-        return super().post(request, *args, **kwargs)
+
+        # Llama al método post original para guardar el TransferRequest
+        response = super().post(request, *args, **kwargs)
+
+        # Obtén el objeto TransferRequest recién creado
+        transfer_request = self.object
+
+        # Procesa los desvíos adicionales
+        waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
+        for i in range(3, 3 + waypoints_numbers):
+            lat = request.POST.get(f'lat_{i}')
+            lng = request.POST.get(f'lng_{i}')
+            if lat and lng:
+                desviation = Desviation.objects.create(
+                    desviation_number=i - 2,
+                    waypoint_number=i,
+                    lat=lat,
+                    long=lng
+                )
+                transfer_request.deviation.add(desviation)
+        print(transfer_request)
+        return response
     
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
@@ -153,9 +175,17 @@ class GuestTransferCreateView(CreateView):
 # Detalles del traslado
 class TransferRequestDetailview(LoginRequiredMixin, DetailView):
     model = TransferRequest
-    form_class = TransferRequestForm
-    template_name = 'loyal_ryde_system/transfer_rerquest_detail.html'
+    template_name = 'loyal_ryde_system/transfer_request_detail.html'
     context_object_name = 'detail'
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        departure_points = DeparturePoint.objects.all()
+        context['departure'] = departure_points
+        context['desviations'] = self.object.deviation.all()
+        return context
+
+        return super().post(request, *args, **kwargs)
 
 class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
     model = TransferRequest
@@ -172,19 +202,37 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
         # Obtén la fecha directamente del POST
         fecha = request.POST.get('date')
 
-        # Convierte la fecha al formato que Django espera
-        print(fecha)
-        # fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
-
         # Actualiza la fecha en los datos del POST
         request.POST = request.POST.copy()
         request.POST['date'] = fecha
-        return super().post(request, *args, **kwargs)
+        
+        # Llama al método post original para guardar el TransferRequest
+        response = super().post(request, *args, **kwargs)
+
+        # Obtén el objeto TransferRequest recién creado
+        transfer_request = self.object
+
+        # Procesa los desvíos adicionales
+        waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
+        for i in range(3, 3 + waypoints_numbers):
+            lat = request.POST.get(f'lat_{i}')
+            lng = request.POST.get(f'lng_{i}')
+            if lat and lng:
+                desviation = Desviation.objects.create(
+                    desviation_number=i - 2,
+                    waypoint_number=i,
+                    lat=lat,
+                    long=lng
+                )
+                transfer_request.deviation.add(desviation)
+        print(transfer_request)
+        return response
     
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
         departure_points = DeparturePoint.objects.all()
         context['departure'] = departure_points
+        context['desviations'] = self.object.deviation.all()
         return context
 
         return super().post(request, *args, **kwargs)

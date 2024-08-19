@@ -173,25 +173,101 @@ $(document).ready(function () {
 	// Llamamos a la función inicialmente para establecer el estado correcto
 	updateCheckboxes();
 
-	
 	$("#addWaypointBtn").on("click", function () {
+		waypointCount++;
+		console.log(waypointCount)
 		var waypointsContainer = $("#waypointsContainer");
+		var waypointDiv = $("<div>")
+			.addClass("waypoint-div")
+			.attr("data-index", waypointCount);
+
+		var waypointLabelContainer = $("<div>").addClass("mt-8 col-md-12");
+		var waypointLabel = $("<h3>").text(`Desvío # ${waypointCount}`);
+		waypointLabelContainer.append(waypointLabel);
+
 		var waypointInput = $("<input>")
 			.addClass("form-control")
 			.attr("type", "text")
-			.attr("name", "waypoint")
+			.attr("waypoint", "true")
 			.attr("placeholder", "Ingrese desvío");
-		waypointsContainer.append(waypointInput);
-	
+		var latInput = $("<input>")
+			.attr("type", "hidden")
+			.attr("id", `id_lat_${waypointCount + 2}`)
+			.attr("name", `lat_${waypointCount + 2}`);
+		var lngInput = $("<input>")
+			.attr("type", "hidden")
+			.attr("id", `id_long_${waypointCount + 2}`)
+			.attr("name", `lng_${waypointCount + 2}`);
+		var removeBtn = $("<button>")
+			.addClass("btn btn-danger mt-3")
+			.text("Eliminar")
+			.on("click", function () {
+				var index = waypointDiv.attr("data-index");
+				waypointDiv.remove();
+				removeWaypointMarker(index);
+				updateWaypointNumbers();
+			});
+
+		waypointDiv
+			.append(waypointLabelContainer)
+			.append(waypointInput)
+			.append(latInput)
+			.append(lngInput)
+			.append(removeBtn);
+		waypointsContainer.append(waypointDiv);
+
 		// Añadir funcionalidad de autocompletado de Google Maps
-		var autocomplete = new google.maps.places.Autocomplete(waypointInput[0], {
-			componentRestrictions: { country: "VE" },
-		});
-	
+		var autocomplete = new google.maps.places.Autocomplete(
+			waypointInput[0],
+			{
+				componentRestrictions: { country: "VE" },
+			}
+		);
+
 		autocomplete.addListener("place_changed", function () {
-			calculateRoute();
-			updateMarkers();
+			var place = autocomplete.getPlace();
+			if (place.geometry) {
+				latInput.val(place.geometry.location.lat());
+				lngInput.val(place.geometry.location.lng());
+				calculateRoute();
+			}
 		});
+		$("#id_waypoints_numbers").val(waypointCount);
 	});
+
+	function updateWaypointNumbers() {
+		$(".waypoint-div").each(function (index, element) {
+			waypointCount++;
+			$(element).attr("data-index", waypointCount);
+			$(element).find("h3").text(`Desvío # ${waypointCount}`);
+			$(element)
+				.find("input[type='hidden']")
+				.each(function () {
+					var name = $(this).attr("name");
+					if (name.startsWith("lat_")) {
+						$(this).attr("id", `id_lat_${waypointCount + 2}`);
+						$(this).attr("name", `lat_${waypointCount + 2}`);
+					} else if (name.startsWith("lng_")) {
+						$(this).attr("id", `id_long_${waypointCount + 2}`);
+						$(this).attr("name", `lng_${waypointCount + 2}`);
+					}
+				});
+		});
+		console.log(waypointCount + 'update')
+		$("#id_waypoints_numbers").val(waypointCount); // Actualiza el valor del input
+		calculateRoute();
+	}
 	
+	function removeWaypointMarker(index) {
+		console.log(waypointCount + 'Eliminar')
+		var marker = waypointMarkers[index - 1];
+		if (marker) {
+			marker.setMap(null);
+			waypointMarkers.splice(index - 1, 1);
+		}
+		waypointCount = waypointCount - 1
+		// updateWaypointNumbers(); // Llama a la función para actualizar el número de desvíos
+		calculateRoute();
+	}
+
 });

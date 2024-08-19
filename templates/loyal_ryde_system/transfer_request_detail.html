@@ -186,8 +186,40 @@
                                 </div>
 
                                 
+                                
+                                <div class="mt-8 col-md-12">
+                                    <h3>¿Necesitas desvíos?</h3>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <button type="button" id="addWaypointBtn" class="btn btn-success btn-hover-rotate-end" >Añadir desvío</button>
+                                    <!-- btn btn-primary btn-hover-rotate-end mt-5 -->
+                                    <div id="waypointsContainer" class="mt-3">
+                                        {% for desvio in desviations %}
+                                            <div class="waypoint-div" data-index="{{ desvio.waypoint_number }}">
+                                                <div class="mt-8 col-md-12">
+                                                    <h3>Desvío #{{ desvio.waypoint_number }}</h3>
+                                                </div>
+                                                <input class="form-control" type="text" waypoint="true" placeholder="Ingrese desvío" value="{{ desvio.desviation_direc }}">
+                                                <input type="hidden" id="id_lat_{{ desvio.waypoint_number }}" name="lat_{{ desvio.waypoint_number }}" value="{{ desvio.lat }}">
+                                                <input type="hidden" id="id_long_{{ desvio.waypoint_number }}" name="lng_{{ desvio.waypoint_number }}" value="{{ desvio.long }}">
+                                                <button type="button" class="btn btn-danger mt-3" onclick="removeWaypointMarker({{ desvio.waypoint_number }})">Eliminar</button>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                
                                 <div id="map" style="height: 400px;" class="mt-xl-4">
 
+                                </div>
+                                
+                                <div class="">
+                                    {{ form.lat_1 }}
+                                    {{ form.long_1 }}
+                                    {{ form.lat_2 }}
+                                    {{ form.long_2 }}
+                                    {{ form.deviation }}
+                                    <input type="hidden" name="waypoints_numbers" id="id_waypoints_numbers" placeholder="">
                                 </div>
 
                                 <div class="mt-5 col-md-12">
@@ -262,6 +294,7 @@
 
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>
+<script src="{% static 'transfer_form.js' %}"></script>
 <script>
 let executive_transfer = '{{ detail.executive_transfer }}'
 let encomienda = '{{ detail.encomienda }}'

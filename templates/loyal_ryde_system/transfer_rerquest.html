@@ -219,11 +219,13 @@
                                 <div id="map" style="height: 400px;" class="mt-xl-4">
 
                                 </div>
-                                <div class="d-none">
+                                <div class="">
                                     {{ form.lat_1 }}
                                     {{ form.long_1 }}
                                     {{ form.lat_2 }}
                                     {{ form.long_2 }}
+                                    
+                                    <input type="hidden" name="waypoints_numbers" id="id_waypoints_numbers" placeholder="Nro de inputs">
                                 </div>
 
                                 <div class="mt-5 col-md-12">
@@ -279,6 +281,9 @@
 {% endblock content %} 
 
 {% block extra_js %}
+<script>    
+    var waypointCount = 0;
+</script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>
 <script src="{% static 'transfer_form.js' %}"></script>

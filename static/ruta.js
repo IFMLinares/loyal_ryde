@@ -6,42 +6,50 @@ var endMarker;
 var waypointMarkers = [];
 
 directionsService = new google.maps.DirectionsService();
-
 function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
+    map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 6.42375, lng: -66.58973 },
         zoom: 5,
     });
 
     directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: true });
-
-    var autocompleteStart = new google.maps.places.Autocomplete(document.getElementById('id_destination_direc'), {
-        componentRestrictions: { country: 'VE' }
+    directionsRenderer = new google.maps.DirectionsRenderer({
+        map: map,
+        suppressMarkers: true,
     });
 
-    var autocompleteEnd = new google.maps.places.Autocomplete(document.getElementById('id_departure_direc'), {
-        componentRestrictions: { country: 'VE' }
-    });
+    var autocompleteStart = new google.maps.places.Autocomplete(
+        document.getElementById("id_destination_direc"),
+        {
+            componentRestrictions: { country: "VE" },
+        }
+    );
 
-    autocompleteStart.addListener('place_changed', function () {
+    var autocompleteEnd = new google.maps.places.Autocomplete(
+        document.getElementById("id_departure_direc"),
+        {
+            componentRestrictions: { country: "VE" },
+        }
+    );
+
+    autocompleteStart.addListener("place_changed", function () {
         var place = autocompleteStart.getPlace();
         if (place.geometry) {
             startMarker.setPosition(place.geometry.location);
             startMarker.setVisible(true);
-            $('#id_lat_1').val(place.geometry.location.lat());
-            $('#id_long_1').val(place.geometry.location.lng());
+            $("#id_lat_1").val(place.geometry.location.lat());
+            $("#id_long_1").val(place.geometry.location.lng());
             calculateRoute();
         }
     });
 
-    autocompleteEnd.addListener('place_changed', function () {
+    autocompleteEnd.addListener("place_changed", function () {
         var place = autocompleteEnd.getPlace();
         if (place.geometry) {
             endMarker.setPosition(place.geometry.location);
             endMarker.setVisible(true);
-            $('#id_lat_2').val(place.geometry.location.lat());
-            $('#id_long_2').val(place.geometry.location.lng());
+            $("#id_lat_2").val(place.geometry.location.lat());
+            $("#id_long_2").val(place.geometry.location.lng());
             calculateRoute();
         }
     });
@@ -49,28 +57,28 @@ function initMap() {
     startMarker = new google.maps.Marker({
         position: { lat: 0, lng: 0 },
         map: map,
-        icon: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        icon: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
         draggable: true,
     });
 
     endMarker = new google.maps.Marker({
         position: { lat: 0, lng: 0 },
         map: map,
-        icon: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
         draggable: true,
     });
 
-    startMarker.addListener('dragend', function () {
+    startMarker.addListener("dragend", function () {
         var position = startMarker.getPosition();
-        $('#id_lat_1').val(position.lat());
-        $('#id_long_1').val(position.lng());
+        $("#id_lat_1").val(position.lat());
+        $("#id_long_1").val(position.lng());
         calculateRoute();
     });
 
-    endMarker.addListener('dragend', function () {
+    endMarker.addListener("dragend", function () {
         var position = endMarker.getPosition();
-        $('#id_lat_2').val(position.lat());
-        $('#id_long_2').val(position.lng());
+        $("#id_lat_2").val(position.lat());
+        $("#id_long_2").val(position.lng());
         calculateRoute();
     });
 
@@ -78,16 +86,21 @@ function initMap() {
     calculateRoute();
 }
 
+
+$(document).ready(function() {
+    
+});
+
 function updateMarkers() {
-    var startAddress = document.getElementById('id_destination_direc').value;
-    var endAddress = document.getElementById('id_departure_direc').value;
+    var startAddress = document.getElementById("id_destination_direc").value;
+    var endAddress = document.getElementById("id_departure_direc").value;
 
     if (startAddress) {
         geocodeAddress(startAddress, function (latLng) {
             startMarker.setPosition(latLng);
             startMarker.setVisible(true);
-            $('#id_lat_1').val(latLng.lat());
-            $('#id_long_1').val(latLng.lng());
+            $("#id_lat_1").val(latLng.lat());
+            $("#id_long_1").val(latLng.lng());
             calculateRoute();
         });
     } else {
@@ -98,8 +111,8 @@ function updateMarkers() {
         geocodeAddress(endAddress, function (latLng) {
             endMarker.setPosition(latLng);
             endMarker.setVisible(true);
-            $('#id_lat_2').val(latLng.lat());
-            $('#id_long_2').val(latLng.lng());
+            $("#id_lat_2").val(latLng.lat());
+            $("#id_long_2").val(latLng.lng());
             calculateRoute();
         });
     } else {
@@ -110,78 +123,85 @@ function updateMarkers() {
 function geocodeAddress(address, callback) {
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode({ address: address }, function (results, status) {
-        if (status === 'OK' && results[0]) {
+        if (status === "OK" && results[0]) {
             callback(results[0].geometry.location);
         }
     });
 }
 
 function calculateRoute() {
-    var start = { lat: parseFloat($('#id_lat_1').val()), lng: parseFloat($('#id_long_1').val()) };
-    var end = { lat: parseFloat($('#id_lat_2').val()), lng: parseFloat($('#id_long_2').val()) };
+    var startLat = parseFloat($('#id_lat_1').val());
+    var startLng = parseFloat($('#id_long_1').val());
+    var endLat = parseFloat($('#id_lat_2').val());
+    var endLng = parseFloat($('#id_long_2').val());
+
+    // Verificar que las coordenadas de inicio y fin sean válidas
+    if (isNaN(startLat) || isNaN(startLng) || isNaN(endLat) || isNaN(endLng)) {
+        console.error('Invalid latitude and longitude');
+        return;
+    }
+
+    var start = { lat: startLat, lng: startLng };
+    var end = { lat: endLat, lng: endLng };
     var waypoints = [];
 
-    var waypointInputs = document.getElementsByName('waypoint');
-    for (var i = 0; i < waypointInputs.length; i++) {
-        if (waypointInputs[i].value) {
+    var waypointInputs = $('[waypoint="true"]');
+    waypointInputs.each(function (index, element) {
+        var lat = parseFloat($(`#id_lat_${index + 3}`).val());
+        var lng = parseFloat($(`#id_long_${index + 3}`).val());
+        if (!isNaN(lat) && !isNaN(lng)) {
             waypoints.push({
-                location: waypointInputs[i].value,
+                location: { lat: lat, lng: lng },
                 stopover: true
             });
         }
-    }
+    });
 
-    if (start && end) {
-        directionsService.route({
-            origin: start,
-            destination: end,
-            waypoints: waypoints,
-            travelMode: google.maps.TravelMode.DRIVING,
-        }, function (response, status) {
-            if (status === google.maps.DirectionsStatus.OK) {
-                directionsRenderer.setDirections(response);
-                // Limpiar marcadores de waypoints anteriores
-                waypointMarkers.forEach(marker => marker.setMap(null));
-                waypointMarkers = [];
+    directionsService.route({
+        origin: start,
+        destination: end,
+        waypoints: waypoints,
+        travelMode: google.maps.TravelMode.DRIVING,
+    }, function (response, status) {
+        if (status === google.maps.DirectionsStatus.OK) {
+            directionsRenderer.setDirections(response);
+            // Limpiar marcadores de waypoints anteriores
+            waypointMarkers.forEach(marker => marker.setMap(null));
+            waypointMarkers = [];
 
-                // Agregar nuevos marcadores de waypoints
-                waypoints.forEach((waypoint, index) => {
-                    geocodeAddress(waypoint.location, function (latLng) {
-                        var marker = new google.maps.Marker({
-                            position: latLng,
-                            map: map,
-                            icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
-                            title: `Waypoint ${index + 1}`,
-                            draggable: true
-                        });
-
-                        marker.addListener('dragend', function () {
-                            updateWaypointPosition(index, marker.getPosition());
-                            calculateRoute(); // Recalcular la ruta después de mover el waypoint
-                        });
-
-                        waypointMarkers.push(marker);
-                    });
+            // Agregar nuevos marcadores de waypoints
+            waypoints.forEach((waypoint, index) => {
+                var marker = new google.maps.Marker({
+                    position: waypoint.location,
+                    map: map,
+                    icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+                    title: `Waypoint ${index + 3}`,
+                    draggable: true
                 });
-            } else {
-                console.error('Error al calcular la ruta:', status);
-            }
-        });
-    } else {
-        directionsRenderer.set('directions', null);
-    }
+
+                marker.addListener('dragend', function () {
+                    updateWaypointPosition(index, marker.getPosition());
+                    calculateRoute(); // Recalcular la ruta después de mover el waypoint
+                });
+
+                waypointMarkers.push(marker);
+            });
+        } else {
+            console.error('Error al calcular la ruta:', status);
+        }
+    });
 }
 
 function updateWaypointPosition(index, position) {
-    var waypointInputs = document.getElementsByName('waypoint');
+    var waypointInputs = $('[waypoint="true"]');
     var waypointInput = waypointInputs[index];
-    var latInput = document.getElementById(`id_lat_${index + 3}`);
-    var lngInput = document.getElementById(`id_long_${index + 3}`);
+    var latInput = $(`#id_lat_${index + 3}`);
+    var lngInput = $(`#id_long_${index + 3}`);
 
     geocodeLatLng(position, function (address) {
         waypointInput.value = address;
-        latInput.value = position.lat();
-        lngInput.value = position.lng();
+        latInput.val(position.lat());
+        lngInput.val(position.lng());
     });
 }
 

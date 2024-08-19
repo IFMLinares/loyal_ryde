@@ -59,11 +59,13 @@ class NotificationConsummer(WebsocketConsumer):
         transferencia_id = event["transferencia_id"]
         transferencia_data = event["transferencia_data"]
         rates = event["rates"]
+        desviations = event["desviations"]
 
         try:
             # Deserializamos los datos de transferencia
             transferencia_dict = json.loads(transferencia_data)[0]
             transferencia_dict["rates"] = rates
+            transferencia_dict["desviations"] = desviations
 
             # Enviamos el JSON completo al cliente (conductor)
             response_data = {
@@ -71,6 +73,7 @@ class NotificationConsummer(WebsocketConsumer):
                 "source": "NotificationConsummer.transfer.accept",
                 "data": transferencia_dict,
             }
+            print(response_data)
             self.send(text_data=json.dumps(response_data))
         except (ValueError, IndexError):
             # Manejamos errores de deserialización o campos faltantes

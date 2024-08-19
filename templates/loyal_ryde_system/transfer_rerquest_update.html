@@ -201,16 +201,37 @@
                                     <!-- <input class="form-control" type="text" name="destination_landmark" id="id_destination_landmark"> -->
                                 </div>
                                 
+                                <div class="mt-8 col-md-12">
+                                    <h3>¿Necesitas desvíos?</h3>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <button type="button" id="addWaypointBtn" class="btn btn-success btn-hover-rotate-end" >Añadir desvío</button>
+                                    <!-- btn btn-primary btn-hover-rotate-end mt-5 -->
+                                    <div id="waypointsContainer" class="mt-3">
+                                        {% for desvio in desviations %}
+                                            <div class="waypoint-div" data-index="{{ desvio.waypoint_number }}">
+                                                <div class="mt-8 col-md-12">
+                                                    <h3>Desvío #{{ desvio.waypoint_number }}</h3>
+                                                </div>
+                                                <input class="form-control" type="text" waypoint="true" placeholder="Ingrese desvío" value="{{ desvio.desviation_direc }}">
+                                                <input type="hidden" id="id_lat_{{ desvio.waypoint_number }}" name="lat_{{ desvio.waypoint_number }}" value="{{ desvio.lat }}">
+                                                <input type="hidden" id="id_long_{{ desvio.waypoint_number }}" name="lng_{{ desvio.waypoint_number }}" value="{{ desvio.long }}">
+                                                <button type="button" class="btn btn-danger mt-3" onclick="removeWaypointMarker({{ desvio.waypoint_number }})">Eliminar</button>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div id="map" style="height: 400px;" class="mt-xl-4">
+                                </div>
+                                
                                 <div class="d-none">
                                     {{ form.lat_1 }}
                                     {{ form.long_1 }}
                                     {{ form.lat_2 }}
                                     {{ form.long_2 }}
-                                </div>
-
-                                
-                                <div id="map" style="height: 400px;" class="mt-xl-4">
-
+                                    {{ form.deviation }}
+                                    <input type="hidden" name="waypoints_numbers" id="id_waypoints_numbers" placeholder="">
                                 </div>
 
                                 <div class="mt-5 col-md-12">
@@ -265,10 +286,12 @@
 {% block extra_js %} 
 <script>
 let url_form = "{% url 'core:transfer_request_people_create' %}";
+var waypointCount = parseInt({{ desviations|length }});
+console.log(waypointCount);
 </script>
-<script src="{% static 'transfer_form.js' %}"></script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>
+<script src="{% static 'transfer_form.js' %}"></script>
 <script>
     $(document).ready(function () {
             // Cuando cambia el select de salida
@@ -356,5 +379,6 @@ let url_form = "{% url 'core:transfer_request_people_create' %}";
                 });
             });
     });
+
 </script>
 {% endblock extra_js %}
