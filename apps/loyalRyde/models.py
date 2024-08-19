@@ -293,8 +293,15 @@ class TransferRequest(models.Model):
         conductor = CustomUser.objects.get(pk=self.user_driver.user.pk)
         if conductor:
             serialized_transfer = serialize("json", [self], use_natural_foreign_keys=True)
+            serialized_transfer_data = json.loads(serialized_transfer)[0]  # Convertir a dict
+
+            # Serializar los desvíos
             serialized_deviations = serialize("json", self.deviation.all(), use_natural_foreign_keys=True)
-            print(serialized_deviations)
+            serialized_deviations_data = json.loads(serialized_deviations)
+
+            # Añadir los desvíos al diccionario de la transferencia
+            serialized_transfer_data['fields']['deviations'] = serialized_deviations_data
+
             rates = {
                 "driver_gain": str(self.rate.driver_price)
             }
@@ -304,11 +311,11 @@ class TransferRequest(models.Model):
                 {
                     "type": "transferencia_validada",
                     "transferencia_id": self.id,
-                    "transferencia_data": serialized_transfer,
-                    "deviation_data": serialized_deviations,
+                    "transferencia_data": json.dumps(serialized_transfer_data),  # Convertir de nuevo a JSON
                     "rates": rates
                 },
             )
+            print(json.dumps(serialized_transfer_data))
     
     def save(self, *args, **kwargs):
         self.company = self.service_requested.company.name
