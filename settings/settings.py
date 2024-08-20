@@ -191,11 +191,13 @@ JWT_AUTH = {
 
 GOOGLE_MAPS_API_KEY = os.environ.get('DJANGO_GOOGLE_MAPS_API_KEY')
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost",
-    "http://127.0.0.1",
-    "http://185.182.186.224"
-]
+CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost",
+#     "http://127.0.0.1",
+#     "http://185.182.186.224"
+# ]
 
 # Daphne
 ASGI_APPLICATION = 'settings.asgi.application'
