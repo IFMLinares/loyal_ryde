@@ -1,6 +1,6 @@
 from datetime import datetime
+
 import calendar
-import locale
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.shortcuts import render
@@ -25,7 +25,6 @@ from .forms import *
 from .models import *
 # Create your views here.
 
-locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 #  INICIO
 class Index(LoginRequiredMixin, TemplateView):
     template_name = 'loyal_ryde_system/index.html'
@@ -624,7 +623,7 @@ def transfer_requests_per_month(request):
     data = TransferRequest.objects.annotate(month=TruncMonth('date_created')).values('month').annotate(count=Count('id')).order_by('month')
     
     # Crear un diccionario con todos los meses y valores iniciales de cero
-    response_data = {calendar.month_name[i]: 0 for i in range(1, 13)}
+    response_data = {month: 0 for month in calendar.month_name if month}
     
     # Actualizar el diccionario con los datos de la consulta
     for item in data:
