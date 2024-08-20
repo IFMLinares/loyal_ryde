@@ -21,7 +21,7 @@ class NotificationConsummer(WebsocketConsumer):
     def disconnect(self, close_code):
         
         # Leave room/group
-        async_to_sync(self.channel_layer.group.discard)(
+        async_to_sync(self.channel_layer.group_discard)(
             self.username, self.channel_name
         )
 
