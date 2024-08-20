@@ -116,18 +116,21 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         transfer_request = self.object
 
         # Procesa los desvíos adicionales
-        waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
-        for i in range(3, 3 + waypoints_numbers):
-            lat = request.POST.get(f'lat_{i}')
-            lng = request.POST.get(f'lng_{i}')
-            if lat and lng:
-                desviation = Desviation.objects.create(
-                    desviation_number=i - 2,
-                    waypoint_number=i,
-                    lat=lat,
-                    long=lng
-                )
-                transfer_request.deviation.add(desviation)
+        try:
+            waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
+            for i in range(3, 3 + waypoints_numbers):
+                lat = request.POST.get(f'lat_{i}')
+                lng = request.POST.get(f'lng_{i}')
+                if lat and lng:
+                    desviation = Desviation.objects.create(
+                        desviation_number=i - 2,
+                        waypoint_number=i,
+                        lat=lat,
+                        long=lng
+                    )
+                    transfer_request.deviation.add(desviation)
+        except:
+            pass
         print(transfer_request)
         return response
     
