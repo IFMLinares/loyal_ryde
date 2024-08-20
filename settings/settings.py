@@ -193,7 +193,8 @@ GOOGLE_MAPS_API_KEY = os.environ.get('DJANGO_GOOGLE_MAPS_API_KEY')
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
-    "http://127.0.0.1"
+    "http://127.0.0.1",
+    "http://185.182.186.224"
 ]
 
 # Daphne

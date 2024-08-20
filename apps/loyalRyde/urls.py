@@ -50,6 +50,7 @@ urlpatterns = [
     path('company/image', get_company_image, name='company_image'),
     path("transfer-request/routes", get_routes_by_departure, name="routes_ajax"),
     path("transfer-request/rates", get_rates, name="rates_ajax"),
+    path('ajax/transfer-month/', transfer_requests_per_month, name='transfer_month'),
     
     
 ]

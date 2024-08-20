@@ -286,6 +286,7 @@ class TransferRequest(models.Model):
     lat_2 = models.CharField(max_length=255, verbose_name="Latitud Final", blank=True, null=True)
     long_2= models.CharField(max_length=255, verbose_name="Longitud Final", blank=True, null=True)
     company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
+    observations = models.TextField(blank=True, null=True, verbose_name='Observaciones')
 
 
     def enviar_id_a_usuario(self):

@@ -1,4 +1,6 @@
 from datetime import datetime
+import calendar
+import locale
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.shortcuts import render
@@ -6,6 +8,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, ListView, DeleteView, DetailView, CreateView, View, UpdateView
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
 from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
@@ -21,6 +25,7 @@ from .forms import *
 from .models import *
 # Create your views here.
 
+locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 #  INICIO
 class Index(LoginRequiredMixin, TemplateView):
     template_name = 'loyal_ryde_system/index.html'
@@ -53,7 +58,14 @@ class UserAdd(LoginRequiredMixin, CreateView):
             user.set_password(random_password)
             user.save()
             send_styled_email(user,random_password)
-            return HttpResponseRedirect(reverse_lazy('core:user_list_supervisor'))
+            if user.role == 'administrador':
+                return HttpResponseRedirect(reverse_lazy('core:user_list_admin'))
+            elif user.role == 'despachador':
+                return HttpResponseRedirect(reverse_lazy('core:user_list_dispatcher'))
+            elif user.role == 'supervisor':
+                return HttpResponseRedirect(reverse_lazy('core:user_list_supervisor'))
+            elif user.role == 'operator':
+                return HttpResponseRedirect(reverse_lazy('core:user_list_operator'))
         return render(request, self.template_name, {'form': form})
 
 #  Agregar usuario (de las eempresas)
@@ -605,3 +617,17 @@ def send_styled_email(user, password):
     email = EmailMultiAlternatives(subject, text_content, 'loyalride.test@gmail.com', [user.email])
     email.attach_alternative(html_content, 'text/html')  # Adjunta el contenido HTML
     email.send()
+
+
+def transfer_requests_per_month(request):
+    # Obtener los datos de la consulta
+    data = TransferRequest.objects.annotate(month=TruncMonth('date_created')).values('month').annotate(count=Count('id')).order_by('month')
+    
+    # Crear un diccionario con todos los meses y valores iniciales de cero
+    response_data = {calendar.month_name[i]: 0 for i in range(1, 13)}
+    
+    # Actualizar el diccionario con los datos de la consulta
+    for item in data:
+        response_data[item['month'].strftime('%B')] = item['count']
+    
+    return JsonResponse(response_data)
