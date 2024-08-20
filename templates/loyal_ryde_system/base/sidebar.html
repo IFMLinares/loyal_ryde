@@ -254,7 +254,8 @@
 						</div>
 					</div>
 				</div>
-				
+				{% if user.is_authenticated and user.role == 'administrador' %}
+				<!-- Contenido para administradores -->
 				<!-- Emergencias -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
@@ -806,92 +807,6 @@
 					</div>
 				</div>
 
-
-				<!-- Reportes -->
-				<div class="menu-item">
-					<div class="menu-content pt-8 pb-2">
-						<span
-							class="font_white text-uppercase fs-8 ls-1"
-							>Reportes</span
-						>
-					</div>
-				</div>
-				<div
-					data-kt-menu-trigger="click"
-					class="menu-item menu-accordion"
-				>
-					<span class="menu-link">
-						<span class="menu-icon">
-							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<i class="fas fa-solid fa-file"></i>
-							<!--end::Svg Icon-->
-						</span>
-						<span class="menu-title">Reportes</span>
-						<span class="menu-arrow"></span>
-					</span>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link"
-								href="{% url 'core:index' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Reportes Generales</span
-								>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link"
-								href="{% url 'core:index' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Reportes de Ganancias globales</span
-								>
-							</a>
-						</div>
-					</div>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link"
-								href="{% url 'core:index' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Reportes de estadístico por empresa</span
-								>
-							</a>
-						</div>
-					</div>
-					
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link"
-								href="{% url 'core:index' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Reportes de viajes</span
-								>
-							</a>
-						</div>
-					</div>
-				</div>
-				
 				<!-- Usuarios -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
@@ -978,6 +893,94 @@
 						</div>
 					</div>
 				</div>
+				{% endif %}
+
+
+				<!-- Reportes -->
+				<div class="menu-item">
+					<div class="menu-content pt-8 pb-2">
+						<span
+							class="font_white text-uppercase fs-8 ls-1"
+							>Reportes</span
+						>
+					</div>
+				</div>
+				<div
+					data-kt-menu-trigger="click"
+					class="menu-item menu-accordion"
+				>
+					<span class="menu-link">
+						<span class="menu-icon">
+							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+							<i class="fas fa-solid fa-file"></i>
+							<!--end::Svg Icon-->
+						</span>
+						<span class="menu-title">Reportes</span>
+						<span class="menu-arrow"></span>
+					</span>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link"
+								href="{% url 'core:index' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Reportes Generales</span
+								>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link"
+								href="{% url 'core:index' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Reportes de Ganancias globales</span
+								>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link"
+								href="{% url 'core:index' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Reportes de estadístico por empresa</span
+								>
+							</a>
+						</div>
+					</div>
+					
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a
+								class="menu-link"
+								href="{% url 'core:index' %}"
+							>
+								<span class="menu-bullet">
+									<span class="bullet bullet-dot"></span>
+								</span>
+								<span class="menu-title"
+									>Reportes de viajes</span
+								>
+							</a>
+						</div>
+					</div>
+				</div>
+				
 
 
 

@@ -107,9 +107,11 @@
                                         <div class="menu-item px-3">
                                             <a href="{% url 'core:transfer_request_detail' pk=item.id %}" class="menu-link px-3" data-kt-users-table-filter="delete_row">Ver</a>
                                         </div>
-                                        <div class="menu-item px-3">
-                                            <a href="#" class="btn btn-xs btn-primary {% if item.status != 'validada' %}disabled{% endif %}" data-id="{{ item.id }}">Aprobar</a>
-                                        </div>
+                                        {% if user.is_authenticated and user.role == 'administrador' %}
+                                            <div class="menu-item px-3">
+                                                <a href="#" class="btn btn-xs btn-primary {% if item.status != 'validada' %}disabled{% endif %}" data-id="{{ item.id }}">Aprobar</a>
+                                            </div>
+                                        {% endif %}
                                         <!--end::Menu item-->
                                     </div>
                                     <!--end::Menu-->

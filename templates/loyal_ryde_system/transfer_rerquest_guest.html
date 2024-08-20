@@ -55,6 +55,29 @@
     #page1 {
         display: block;
     }
+    body {
+            background-image: url("{% static 'img/background/2.jpg' %}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        /* .transparente {
+            opacity: 0.5;
+        } */
+        .transparente {
+            background-color: rgba(0, 0, 0, 0.5); /* Fondo negro con 50% de transparencia */
+            padding: 20px;
+            color: white; /* Color del texto para mejor visibilidad */
+        }
+        
+        .transparente1 {
+            background-color: rgba(255, 255, 255, 0.8); /* Fondo negro con 50% de transparencia */
+            padding: 20px;
+            color: white; /* Color del texto para mejor visibilidad */
+        }
+        .form-check-input {
+            border: 1px solid rgb(90, 89, 89)!important; /* Borde negro delgado */
+        }
 		</style>
 	</head>
 	<!--end::Head-->
@@ -71,16 +94,16 @@
 		<!--begin::Root-->
 		<div class="d-flex flex-column flex-root">
 			<!--begin::Page-->
-			<div class="page d-flex flex-row flex-column-fluid">
+			<div class="page d-flex flex-row flex-column-fluid ">
 				<div
 					class="pt-xl-6 d-flex flex-column flex-row-fluid"
 					id="kt_wrapper"
 				>
-                    <div class=" post d-flex flex-column-fluid" id="kt_post">
+                    <div class=" post d-flex flex-column-fluid " id="kt_post">
                         <!--begin::Container-->
-                        <div id="kt_content_container" class="container-xxl">
+                        <div id="kt_content_container " class="container-xxl">
                             <!--begin::Navbar-->
-                            <div class="card mb-5 mb-xxl-12">
+                            <div class="card mb-5 mb-xxl-12 transparente1">
                                 <div class="card-body pt-9 pb-0">
                                     <div class="mb-10">
                                         <form method="POST">
@@ -113,7 +136,7 @@
                                                                         
                                                                     {{ form.executive_transfer }}
                                                                     <!-- <input class="form-check-input" type="checkbox" value="" id="id_executive_transfer"  name="executive_transfer"/> -->
-                                                                    <label class="form-check-label" for="id_executive_transfer">
+                                                                    <label class="form-check-label" for="id_executive_transfer" style="color: black;">
                                                                         <i class="fas fa-solid fa-car-side" style="color: #009ef6; font-size: 20px;"></i>   
                                                                         TRASLADO EJECUTIVO
                                                                     </label>
@@ -123,7 +146,7 @@
                                                                 <div class="form-check form-check-custom form-check-solid mt-5">
                                                                     {{ form.encomienda }}
                                                                     <!-- <input class="form-check-input" type="checkbox" value="" id="id_encomienda"  name="encomienda"/> -->
-                                                                    <label class="form-check-label" for="id_encomienda">
+                                                                    <label class="form-check-label" for="id_encomienda" style="color: black;">
                                                                         <i class="fas fa-solid fa-dolly" style="color: #009ef6; font-size: 20px;"></i>
                                                                         ENCOMIENDA
                                                                     </label>
@@ -133,7 +156,7 @@
                                                                 <div class="form-check form-check-custom form-check-solid mt-5">
                                                                     {{ form.driver }}
                                                                     <!-- <input class="form-check-input" type="checkbox" value="" id="id_driver"  name="driver"/> -->
-                                                                    <label class="form-check-label" for="id_driver">
+                                                                    <label class="form-check-label" for="id_driver" style="color: black;">
                                                                         <i class="fas fa-solid fa-user"  style="color: #009ef6; font-size: 20px;"></i>
                                                                         CONDUCTOR
                                                                     </label>
@@ -181,6 +204,14 @@
                                                                 {{ form.destination_landmark }}
                                                                 <!-- <input class="form-control" type="text" name="destination_landmark" id="id_destination_landmark"> -->
                                                             </div>
+                                                            <div class="mt-8 col-md-12">
+                                                                <h3>¿Necesitas desvíos?</h3>
+                                                            </div>
+                                                            <div class="col-md-4 mt-2">
+                                                                <button type="button" id="addWaypointBtn" class="btn btn-success btn-hover-rotate-end" >Añadir desvío</button>
+                                                                <!-- btn btn-primary btn-hover-rotate-end mt-5 -->
+                                                                <div id="waypointsContainer" class="mt-3"></div>
+                                                            </div>
                                                             <div id="map" style="height: 400px;" class="mt-xl-4">
                             
                                                             </div>
@@ -189,6 +220,8 @@
                                                                 {{ form.long_1 }}
                                                                 {{ form.lat_2 }}
                                                                 {{ form.long_2 }}
+                                                                
+                                                                <input type="hidden" name="waypoints_numbers" id="id_waypoints_numbers" placeholder="Nro de inputs">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -303,6 +336,9 @@
 			{% endif %}
 			</script>
 		{% endblock error_js %}
+        <script>
+            var waypointCount = 0;
+        </script>
 		<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
         <script src="{% static 'ruta.js' %}"></script>
         <script src="{% static 'transfer_form.js' %}"></script>
