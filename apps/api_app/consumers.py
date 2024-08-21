@@ -56,17 +56,16 @@ class NotificationConsummer(WebsocketConsumer):
         '''
 
     def transferencia_validada(self, event):
+        transferencia_id = event["transferencia_id"]
         transferencia_data = event["transferencia_data"]
-        print("Transferencia Data:", transferencia_data)
-        try:
-            transferencia_dict = json.loads(transferencia_data)
-            print("Transferencia Dict:", transferencia_dict)
-            if not transferencia_dict:
-                raise ValueError("Transferencia data is empty")
-            transferencia_dict = transferencia_dict[0]
-            print(transferencia_dict)
-            transferencia_dict["rates"] = event["rates"]
+        rates = event["rates"]
 
+        try:
+            # Deserializamos los datos de transferencia
+            transferencia_dict = json.loads(transferencia_data)[0]
+            transferencia_dict["rates"] = rates
+
+            # Enviamos el JSON completo al cliente (conductor)
             response_data = {
                 "type": "transferencia_validada",
                 "source": "NotificationConsummer.transfer.accept",
@@ -74,9 +73,9 @@ class NotificationConsummer(WebsocketConsumer):
             }
             print(response_data)
             self.send(text_data=json.dumps(response_data))
-        except (ValueError, IndexError, KeyError) as e:
-            error_message = f"Error al procesar la transferencia: {str(e)}"
-            print(error_message)
+        except (ValueError, IndexError):
+            # Manejamos errores de deserialización o campos faltantes
+            error_message = f"Error al procesar la transferencia {transferencia_id}"
             self.send(text_data=json.dumps({"error": error_message}))
 
 class ConductorConsumer(AsyncWebsocketConsumer):
