@@ -19,7 +19,6 @@ class NotificationConsummer(WebsocketConsumer):
         self.accept()
     
     def disconnect(self, close_code):
-        
         # Leave room/group
         async_to_sync(self.channel_layer.group_discard )(
             self.username, self.channel_name
@@ -78,6 +77,7 @@ class NotificationConsummer(WebsocketConsumer):
             error_message = f"Error al procesar la transferencia {transferencia_id}"
             print('D A T O S :')
             print(transferencia_data)
+            print(json.loads(transferencia_data))
             self.send(text_data=json.dumps({"error": error_message}))
 
 class ConductorConsumer(AsyncWebsocketConsumer):
