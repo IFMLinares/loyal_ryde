@@ -73,9 +73,11 @@ class NotificationConsummer(WebsocketConsumer):
             }
             print(response_data)
             self.send(text_data=json.dumps(response_data))
-        except (ValueError, IndexError):
+        except (ValueError, IndexError, KeyError):
             # Manejamos errores de deserialización o campos faltantes
             error_message = f"Error al procesar la transferencia {transferencia_id}"
+            print('D A T O S :')
+            print(transferencia_data)
             self.send(text_data=json.dumps({"error": error_message}))
 
 class ConductorConsumer(AsyncWebsocketConsumer):
