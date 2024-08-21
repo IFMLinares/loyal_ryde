@@ -6,13 +6,13 @@ class NotificationConsummer(WebsocketConsumer):
     
     def connect(self):
         user = self.scope['user']
-        print(user, user.is_authenticated)
+        print(f"User: {user}, Authenticated: {user.is_authenticated}")
         if not user.is_authenticated:
+            self.close()
             return
         self.username = user.username
 
-        # Save username too use group name for this user
-
+        # Save username to use group name for this user
         async_to_sync(self.channel_layer.group_add)(
             self.username, self.channel_name
         )
@@ -63,6 +63,7 @@ class NotificationConsummer(WebsocketConsumer):
         try:
             # Deserializamos los datos de transferencia
             transferencia_dict = json.loads(transferencia_data)[0]
+            print(transferencia_dict)
             transferencia_dict["rates"] = rates
 
             # Enviamos el JSON completo al cliente (conductor)
