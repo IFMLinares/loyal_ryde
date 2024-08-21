@@ -2,7 +2,7 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 
-class NotificationConsummer(AsyncWebsocketConsumer):
+class NotificationConsummer(WebsocketConsumer):
     
     def connect(self):
         user = self.scope['user']
@@ -21,7 +21,7 @@ class NotificationConsummer(AsyncWebsocketConsumer):
     def disconnect(self, close_code):
         
         # Leave room/group
-        async_to_sync(self.channel_layer.group_discard)(
+        async_to_sync(self.channel_layer.group_discard )(
             self.username, self.channel_name
         )
 
@@ -63,7 +63,6 @@ class NotificationConsummer(AsyncWebsocketConsumer):
         try:
             # Deserializamos los datos de transferencia
             transferencia_dict = json.loads(transferencia_data)[0]
-            print(transferencia_dict)
             transferencia_dict["rates"] = rates
 
             # Enviamos el JSON completo al cliente (conductor)
