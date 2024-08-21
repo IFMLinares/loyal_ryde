@@ -56,15 +56,12 @@ class NotificationConsummer(WebsocketConsumer):
         '''
 
     def transferencia_validada(self, event):
-        transferencia_data = event["transferencia_data"]
-        print("Transferencia Data:", transferencia_data)
+        transferencia_data = event.get("transferencia_data", '[]')
         try:
             transferencia_dict = json.loads(transferencia_data)
-            print("Transferencia Dict:", transferencia_dict)
-            if not transferencia_dict:
-                raise ValueError("Transferencia data is empty")
+            if not isinstance(transferencia_dict, list) or not transferencia_dict:
+                raise ValueError("Transferencia data is not a valid list or is empty")
             transferencia_dict = transferencia_dict[0]
-            print(transferencia_dict)
             transferencia_dict["rates"] = event["rates"]
 
             response_data = {
@@ -72,12 +69,11 @@ class NotificationConsummer(WebsocketConsumer):
                 "source": "NotificationConsummer.transfer.accept",
                 "data": transferencia_dict,
             }
-            print(response_data)
             self.send(text_data=json.dumps(response_data))
         except (ValueError, IndexError, KeyError) as e:
             error_message = f"Error al procesar la transferencia: {str(e)}"
-            print(error_message)
             self.send(text_data=json.dumps({"error": error_message}))
+
 
 class ConductorConsumer(AsyncWebsocketConsumer):
     async def connect(self):
