@@ -319,10 +319,10 @@ class TransferRequest(models.Model):
             )
     
     def save(self, *args, **kwargs):
-        if isinstance(self.request.user, AnonymousUser):
-            self.company = None
-        else:
+        try:
             self.company = self.service_requested.company.name
+        except: 
+            self.company = None
         # Validación personalizada antes de guardar
         print("No se selecciono conductor")
         if self.status == 'aprobada':
