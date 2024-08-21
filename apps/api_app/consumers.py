@@ -61,7 +61,7 @@ class NotificationConsummer(WebsocketConsumer):
 
         try:
             # Deserializamos los datos de transferencia
-            transferencia_dict = json.loads(transferencia_data)[0]
+            transferencia_dict = json.loads(transferencia_data)
             transferencia_dict["rates"] = rates
 
             # Enviamos el JSON completo al cliente (conductor)
@@ -76,7 +76,7 @@ class NotificationConsummer(WebsocketConsumer):
             # Manejamos errores de deserialización o campos faltantes
             error_message = f"Error al procesar la transferencia {transferencia_id}"
             print('D A T O S :')
-            print(transferencia_data)
+            # print(transferencia_data)
             print(json.loads(transferencia_data))
             self.send(text_data=json.dumps({"error": error_message}))
 
