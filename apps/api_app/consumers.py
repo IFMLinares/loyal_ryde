@@ -57,6 +57,8 @@ class NotificationConsummer(WebsocketConsumer):
 
     def transferencia_validada(self, event):
         transferencia_data = event.get("transferencia_data", '[]')
+        print('test')
+        print(event["transferencia_data"])
         try:
             transferencia_dict = json.loads(transferencia_data)
             if not isinstance(transferencia_dict, list) or not transferencia_dict:
