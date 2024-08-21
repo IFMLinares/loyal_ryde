@@ -2,7 +2,7 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 
-class NotificationConsummer(WebsocketConsumer):
+class NotificationConsummer(AsyncWebsocketConsumer):
     
     def connect(self):
         user = self.scope['user']

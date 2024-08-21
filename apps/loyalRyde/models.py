@@ -316,7 +316,6 @@ class TransferRequest(models.Model):
                     "rates": rates
                 },
             )
-            print(json.dumps(serialized_transfer_data))
     
     def save(self, *args, **kwargs):
         self.company = self.service_requested.company.name
