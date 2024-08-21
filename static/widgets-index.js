@@ -109,9 +109,96 @@ var KTWidgets = {
                 strokeWidth: 3,
             },
         }).render();
-    }
+    },
+
+    
 };
 
 $(document).ready(function () {
     KTWidgets.init();
+    var s = KTUtil.getCssVariableValue("--bs-gray-500"),
+        r = KTUtil.getCssVariableValue("--bs-gray-200"),
+        i = KTUtil.getCssVariableValue("--bs-gray-300");
+
+    $(".mixed-widget-10-chart").each(function () {
+        var $chart = $(this),
+            e = $chart.data("kt-color"),
+            t = parseInt($chart.css("height")),
+            a = KTUtil.getCssVariableValue("--bs-" + e);
+
+        new ApexCharts($chart[0], {
+            series: [
+                {
+                    name: "Net Profit",
+                    data: [50, 60, 70, 80, 60, 50, 70, 60],
+                },
+                {
+                    name: "Revenue",
+                    data: [50, 60, 70, 80, 60, 50, 70, 60],
+                },
+            ],
+            chart: {
+                fontFamily: "inherit",
+                type: "bar",
+                height: t,
+                toolbar: { show: false },
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: ["50%"],
+                    borderRadius: 4,
+                },
+            },
+            legend: { show: false },
+            dataLabels: { enabled: false },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ["transparent"],
+            },
+            xaxis: {
+                categories: [
+                    "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"
+                ],
+                axisBorder: { show: false },
+                axisTicks: { show: false },
+                labels: {
+                    style: { colors: s, fontSize: "12px" },
+                },
+            },
+            yaxis: {
+                y: 0,
+                offsetX: 0,
+                offsetY: 0,
+                labels: {
+                    style: { colors: s, fontSize: "12px" },
+                },
+            },
+            fill: { type: "solid" },
+            states: {
+                normal: { filter: { type: "none", value: 0 } },
+                hover: { filter: { type: "none", value: 0 } },
+                active: {
+                    allowMultipleDataPointsSelection: false,
+                    filter: { type: "none", value: 0 },
+                },
+            },
+            tooltip: {
+                style: { fontSize: "12px" },
+                y: {
+                    formatter: function (e) {
+                        return "$" + e + " revenue";
+                    },
+                },
+            },
+            colors: [a, i],
+            grid: {
+                padding: { top: 10 },
+                borderColor: r,
+                strokeDashArray: 4,
+                yaxis: { lines: { show: true } },
+            },
+        }).render();
+    });
 });

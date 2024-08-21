@@ -10,6 +10,7 @@ from django.core.serializers import serialize
 from decimal import Decimal
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 
 
 payment_method_choices = [
@@ -254,7 +255,7 @@ class TransferRequest(models.Model):
     user_driver = models.ForeignKey(CustomUserDriver, on_delete=models.CASCADE, verbose_name="Usuario conductor", blank=True, null=True)
     stop_time = models.ManyToManyField(TransferStop, verbose_name="Pausa del viaje", blank=True)
     deviation = models.ManyToManyField(Desviation, verbose_name="Desvios", blank=True)
-    date = models.DateField(verbose_name="Fecha del traslado")  # DD/MM/AA
+    date = models.DateField(verbose_name="Fecha del traslado", blank=True, null=True)  # DD/MM/AA
     date_created = models.DateTimeField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
     hour = models.TimeField(verbose_name="Hora")  # Formato 12h
     payment_method = models.PositiveSmallIntegerField(verbose_name="Método de Pago", choices=payment_method_choices)
@@ -318,7 +319,10 @@ class TransferRequest(models.Model):
             )
     
     def save(self, *args, **kwargs):
-        self.company = self.service_requested.company.name
+        if isinstance(self.request.user, AnonymousUser):
+            self.company = None
+        else:
+            self.company = self.service_requested.company.name
         # Validación personalizada antes de guardar
         print("No se selecciono conductor")
         if self.status == 'aprobada':

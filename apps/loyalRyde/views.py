@@ -1,10 +1,11 @@
 from datetime import datetime
-
+from django.utils import timezone
 import calendar
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.dateparse import parse_date
 from django.views.generic import TemplateView, ListView, DeleteView, DetailView, CreateView, View, UpdateView
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
@@ -19,6 +20,9 @@ from django.core.mail import send_mail, EmailMessage
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.contrib.auth.models import AnonymousUser
+from django.utils.timezone import now
+
 
 
 from .forms import *
@@ -31,9 +35,12 @@ class Index(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        now = timezone.now()
+        start_of_month = now.replace(day=1)
         context['latest_transfer_requests'] = TransferRequest.objects.all().order_by('-date_created')[:10]
         context['in_progress_transfer_requests'] = TransferRequest.objects.filter(status='en proceso').order_by('-date_created')[:10]
         context['total_transfer_requests'] = TransferRequest.objects.count()
+        context['total_records'] = TransferRequest.objects.filter(date_created__gte=start_of_month).count()
         return context
 
 # VISTAS DE USUARIOS (PARA ADMINISTRADORES)
@@ -161,29 +168,40 @@ class GuestTransferCreateView(CreateView):
     success_url = reverse_lazy('core:transfer_request_list')
 
     def form_valid(self, form):
-        form.instance.service_requested = self.request.user
-        messages.success(self.request, 'Su solictud de trasslado ha sido registrada exitosamente. Por favor espere la aprobación para iniciar su servicio')
+        fecha = form.instance.date
+
+        # Ensure fecha is a string
+        if isinstance(fecha, str):
+            # Convierte la fecha al formato que Django espera
+            fecha = parse_date(fecha)
+        else:
+            # Handle the case where fecha is not a string
+            fecha = fecha.isoformat()
+
+        form.instance.company = None
+        print(fecha)
         return super().form_valid(form)
 
-    def post(self, request, *args, **kwargs):
-        # Obtén la fecha directamente del POST
-        fecha = request.POST.get('date')
+    # def post(self, request, *args, **kwargs):
+    #     fecha = request.POST.get('date')
 
-        # Convierte la fecha al formato que Django espera
-        fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
+    #     # Ensure fecha is a string
+    #     if isinstance(fecha, str):
+    #         # Convierte la fecha al formato que Django espera
+    #         fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
 
-        # Actualiza la fecha en los datos del POST
-        request.POST = request.POST.copy()
-        request.POST['date'] = fecha
-        return super().post(request, *args, **kwargs)
+    #     # Actualiza la fecha en los datos del POST
+    #     request.POST = request.POST.copy()
+    #     request.POST['date'] = fecha
+
+    #     # Llama al método post original para guardar el TransferRequest
+    #     return super().post(request, *args, **kwargs)
     
-    def get_context_data(self,**kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         departure_points = DeparturePoint.objects.all()
         context['departure'] = departure_points
         return context
-
-        return super().post(request, *args, **kwargs)
 
 
 # Detalles del traslado
