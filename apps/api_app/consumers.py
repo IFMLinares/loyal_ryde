@@ -6,13 +6,13 @@ class NotificationConsummer(WebsocketConsumer):
     
     def connect(self):
         user = self.scope['user']
-        print(f"User: {user}, Authenticated: {user.is_authenticated}")
+        print(user, user.is_authenticated)
         if not user.is_authenticated:
-            self.close()
             return
         self.username = user.username
 
-        # Save username to use group name for this user
+        # Save username too use group name for this user
+
         async_to_sync(self.channel_layer.group_add)(
             self.username, self.channel_name
         )
