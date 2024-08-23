@@ -307,7 +307,7 @@ class TransferRequest(models.Model):
                 company_image_url = ""
 
             # Obtener la información completa de las personas a trasladar
-            persons_to_transfer = list(self.person_to_transfer.values('name', 'phone', 'company'))
+            persons_to_transfer = self.person_to_transfer.values('name', 'phone', 'company')
 
             # Añadir el nombre y apellido, la URL de la imagen de la empresa y la información de las personas a trasladar al diccionario de la transferencia
             serialized_transfer_data['fields']['service_requested'] = user_full_name
