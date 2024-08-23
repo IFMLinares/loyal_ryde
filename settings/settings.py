@@ -199,6 +199,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 #     "http://185.182.186.224"
 # ]
 
+SITE_DOMAIN = 'http://185.182.186.224:8000'
+
 # Daphne
 ASGI_APPLICATION = 'settings.asgi.application'
 

@@ -289,7 +289,6 @@ class TransferRequest(models.Model):
     company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
     observations = models.TextField(blank=True, null=True, verbose_name='Observaciones')
 
-
     def enviar_id_a_usuario(self):
         CustomUser = get_user_model()
         conductor = CustomUser.objects.get(pk=self.user_driver.user.pk)
@@ -301,9 +300,15 @@ class TransferRequest(models.Model):
             user = self.service_requested
             user_full_name = f"{user.first_name} {user.last_name}"
 
-            # Añadir el nombre y apellido al diccionario de la transferencia
+            # Obtener la URL completa de la imagen de la empresa
+            if user.company and user.company.image:
+                company_image_url = f"{settings.SITE_DOMAIN}{user.company.image.url}"
+            else:
+                company_image_url = None
+
+            # Añadir el nombre y apellido y la URL de la imagen de la empresa al diccionario de la transferencia
             serialized_transfer_data['fields']['service_requested'] = user_full_name
-            print(serialized_transfer_data['fields']['service_requested'])
+            serialized_transfer_data['fields']['company_image_url'] = company_image_url
 
             # Serializar los desvíos
             serialized_deviations = serialize("json", self.deviation.all(), use_natural_foreign_keys=True)
