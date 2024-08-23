@@ -297,6 +297,13 @@ class TransferRequest(models.Model):
             serialized_transfer = serialize("json", [self], use_natural_foreign_keys=True)
             serialized_transfer_data = json.loads(serialized_transfer)[0]  # Convertir a dict
 
+            # Obtener el nombre y apellido del usuario
+            user = self.service_requested
+            user_full_name = f"{user.first_name} {user.last_name}"
+
+            # Añadir el nombre y apellido al diccionario de la transferencia
+            serialized_transfer_data['fields']['service_requested'] = user_full_name
+
             # Serializar los desvíos
             serialized_deviations = serialize("json", self.deviation.all(), use_natural_foreign_keys=True)
             serialized_deviations_data = json.loads(serialized_deviations)

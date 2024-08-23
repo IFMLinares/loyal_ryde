@@ -157,8 +157,11 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         departure_points = DeparturePoint.objects.all()
         context['departure'] = departure_points
         return context
-
-        return super().post(request, *args, **kwargs)
+    
+    def get_form(self, form_class=None):
+            form = super().get_form(form_class)
+            form.exclude_user_driver(self.request.user)
+            return form
 
 # agregar traslado (modo invitado)
 class GuestTransferCreateView(CreateView):
@@ -574,6 +577,16 @@ def approve_request_admin(request):
             transfer_request.save()
             return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido aprobada con éxito.'})
 
+@csrf_exempt
+def cancel_request(request):
+    if request.method == 'POST':
+        request_id = request.POST.get('request_id')
+        transfer_request = TransferRequest.objects.get(id=request_id)
+        transfer_request.status = 'cancelada'
+        transfer_request.save()
+        return JsonResponse({'status': 'warning', 'message': 'La solicitud ha sido cancelada.'})
+
+
 def get_company_image(request):
     company_id = request.GET.get('company_id')
     company = Company.objects.get(id=company_id)
@@ -634,7 +647,6 @@ def send_styled_email(user, password):
     email = EmailMultiAlternatives(subject, text_content, 'loyalride.test@gmail.com', [user.email])
     email.attach_alternative(html_content, 'text/html')  # Adjunta el contenido HTML
     email.send()
-
 
 def transfer_requests_per_month(request):
     # Obtener los datos de la consulta

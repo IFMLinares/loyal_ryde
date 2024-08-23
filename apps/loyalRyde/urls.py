@@ -46,6 +46,7 @@ urlpatterns = [
     # AJAX VIEWS
     path('transfer-request/people/create', get_people_transfer, name='transfer_request_people_create'),
     path('transfer-request/approve', approve_request, name='transfer_request_approve'),
+    path('transfer-request/cancel/', cancel_request, name='transfer_request_cancel'),
     path('transfer-request/admin/approve/', approve_request_admin, name='transfer_request_approve_admin'),
     path('company/image', get_company_image, name='company_image'),
     path("transfer-request/routes", get_routes_by_departure, name="routes_ajax"),
