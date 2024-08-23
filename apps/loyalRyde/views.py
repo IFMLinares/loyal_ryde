@@ -137,10 +137,12 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         try:
             waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
             for i in range(3, 3 + waypoints_numbers):
+                name = request.POST.get(f'waypoint-{i}')
                 lat = request.POST.get(f'lat_{i}')
                 lng = request.POST.get(f'lng_{i}')
                 if lat and lng:
                     desviation = Desviation.objects.create(
+                        desviation_direc = name,
                         desviation_number=i - 2,
                         waypoint_number=i,
                         lat=lat,

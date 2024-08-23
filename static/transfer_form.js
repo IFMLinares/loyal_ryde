@@ -189,7 +189,8 @@ $(document).ready(function () {
 			.addClass("form-control")
 			.attr("type", "text")
 			.attr("waypoint", "true")
-			.attr("placeholder", "Ingrese desvío");
+			.attr("placeholder", "Ingrese desvío")
+			.attr("name", `waypoint-${waypointCount + 2}`);
 		var latInput = $("<input>")
 			.attr("type", "hidden")
 			.attr("id", `id_lat_${waypointCount + 2}`)
