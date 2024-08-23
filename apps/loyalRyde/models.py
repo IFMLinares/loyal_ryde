@@ -312,7 +312,7 @@ class TransferRequest(models.Model):
             # Añadir el nombre y apellido, la URL de la imagen de la empresa y la información de las personas a trasladar al diccionario de la transferencia
             serialized_transfer_data['fields']['service_requested'] = user_full_name
             serialized_transfer_data['fields']['company_image_url'] = company_image_url
-            serialized_transfer_data['fields']['person_to_transfer'] = persons_to_transfer
+            serialized_transfer_data['fields']['person_to_transfer'] = serialize("json", persons_to_transfer, use_natural_foreign_keys=True)
 
             # Serializar los desvíos
             serialized_deviations = serialize("json", self.deviation.all(), use_natural_foreign_keys=True)
