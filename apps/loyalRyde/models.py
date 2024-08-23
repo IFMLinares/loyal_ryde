@@ -304,7 +304,7 @@ class TransferRequest(models.Model):
             if user.company and user.company.image:
                 company_image_url = f"{settings.SITE_DOMAIN}{user.company.image.url}"
             else:
-                company_image_url = None
+                company_image_url = ""
 
             # Añadir el nombre y apellido y la URL de la imagen de la empresa al diccionario de la transferencia
             serialized_transfer_data['fields']['service_requested'] = user_full_name
