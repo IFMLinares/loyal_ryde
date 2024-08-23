@@ -5,6 +5,11 @@ from django.core.mail import send_mail, EmailMessage
 from .models import *
 
 class TransferRequestForm(ModelForm):
+
+    def exclude_user_driver(self, user):
+        if user and user.role in ['supervisor', 'operator']:
+            self.fields.pop('user_driver')
+
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         for form in  self.visible_fields():

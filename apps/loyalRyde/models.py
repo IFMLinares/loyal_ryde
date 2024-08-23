@@ -10,6 +10,7 @@ from django.core.serializers import serialize
 from decimal import Decimal
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 
 
 payment_method_choices = [
@@ -254,7 +255,7 @@ class TransferRequest(models.Model):
     user_driver = models.ForeignKey(CustomUserDriver, on_delete=models.CASCADE, verbose_name="Usuario conductor", blank=True, null=True)
     stop_time = models.ManyToManyField(TransferStop, verbose_name="Pausa del viaje", blank=True)
     deviation = models.ManyToManyField(Desviation, verbose_name="Desvios", blank=True)
-    date = models.DateField(verbose_name="Fecha del traslado")  # DD/MM/AA
+    date = models.DateField(verbose_name="Fecha del traslado", blank=True, null=True)  # DD/MM/AA
     date_created = models.DateTimeField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
     hour = models.TimeField(verbose_name="Hora")  # Formato 12h
     payment_method = models.PositiveSmallIntegerField(verbose_name="Método de Pago", choices=payment_method_choices)
@@ -286,6 +287,7 @@ class TransferRequest(models.Model):
     lat_2 = models.CharField(max_length=255, verbose_name="Latitud Final", blank=True, null=True)
     long_2= models.CharField(max_length=255, verbose_name="Longitud Final", blank=True, null=True)
     company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
+    observations = models.TextField(blank=True, null=True, verbose_name='Observaciones')
 
 
     def enviar_id_a_usuario(self):
@@ -294,6 +296,13 @@ class TransferRequest(models.Model):
         if conductor:
             serialized_transfer = serialize("json", [self], use_natural_foreign_keys=True)
             serialized_transfer_data = json.loads(serialized_transfer)[0]  # Convertir a dict
+
+            # Obtener el nombre y apellido del usuario
+            user = self.service_requested
+            user_full_name = f"{user.first_name} {user.last_name}"
+
+            # Añadir el nombre y apellido al diccionario de la transferencia
+            serialized_transfer_data['fields']['service_requested'] = user_full_name
 
             # Serializar los desvíos
             serialized_deviations = serialize("json", self.deviation.all(), use_natural_foreign_keys=True)
@@ -315,10 +324,12 @@ class TransferRequest(models.Model):
                     "rates": rates
                 },
             )
-            print(json.dumps(serialized_transfer_data))
     
     def save(self, *args, **kwargs):
-        self.company = self.service_requested.company.name
+        try:
+            self.company = self.service_requested.company.name
+        except: 
+            self.company = None
         # Validación personalizada antes de guardar
         print("No se selecciono conductor")
         if self.status == 'aprobada':

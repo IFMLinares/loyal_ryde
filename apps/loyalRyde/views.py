@@ -1,11 +1,16 @@
 from datetime import datetime
+from django.utils import timezone
+import calendar
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.dateparse import parse_date
 from django.views.generic import TemplateView, ListView, DeleteView, DetailView, CreateView, View, UpdateView
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
 from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
@@ -15,6 +20,9 @@ from django.core.mail import send_mail, EmailMessage
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.contrib.auth.models import AnonymousUser
+from django.utils.timezone import now
+
 
 
 from .forms import *
@@ -27,9 +35,12 @@ class Index(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        now = timezone.now()
+        start_of_month = now.replace(day=1)
         context['latest_transfer_requests'] = TransferRequest.objects.all().order_by('-date_created')[:10]
         context['in_progress_transfer_requests'] = TransferRequest.objects.filter(status='en proceso').order_by('-date_created')[:10]
         context['total_transfer_requests'] = TransferRequest.objects.count()
+        context['total_records'] = TransferRequest.objects.filter(date_created__gte=start_of_month).count()
         return context
 
 # VISTAS DE USUARIOS (PARA ADMINISTRADORES)
@@ -53,7 +64,14 @@ class UserAdd(LoginRequiredMixin, CreateView):
             user.set_password(random_password)
             user.save()
             send_styled_email(user,random_password)
-            return HttpResponseRedirect(reverse_lazy('core:user_list_supervisor'))
+            if user.role == 'administrador':
+                return HttpResponseRedirect(reverse_lazy('core:user_list_admin'))
+            elif user.role == 'despachador':
+                return HttpResponseRedirect(reverse_lazy('core:user_list_dispatcher'))
+            elif user.role == 'supervisor':
+                return HttpResponseRedirect(reverse_lazy('core:user_list_supervisor'))
+            elif user.role == 'operator':
+                return HttpResponseRedirect(reverse_lazy('core:user_list_operator'))
         return render(request, self.template_name, {'form': form})
 
 #  Agregar usuario (de las eempresas)
@@ -139,8 +157,11 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         departure_points = DeparturePoint.objects.all()
         context['departure'] = departure_points
         return context
-
-        return super().post(request, *args, **kwargs)
+    
+    def get_form(self, form_class=None):
+            form = super().get_form(form_class)
+            form.exclude_user_driver(self.request.user)
+            return form
 
 # agregar traslado (modo invitado)
 class GuestTransferCreateView(CreateView):
@@ -150,29 +171,40 @@ class GuestTransferCreateView(CreateView):
     success_url = reverse_lazy('core:transfer_request_list')
 
     def form_valid(self, form):
-        form.instance.service_requested = self.request.user
-        messages.success(self.request, 'Su solictud de trasslado ha sido registrada exitosamente. Por favor espere la aprobación para iniciar su servicio')
+        fecha = form.instance.date
+
+        # Ensure fecha is a string
+        if isinstance(fecha, str):
+            # Convierte la fecha al formato que Django espera
+            fecha = parse_date(fecha)
+        else:
+            # Handle the case where fecha is not a string
+            fecha = fecha.isoformat()
+
+        form.instance.company = None
+        print(fecha)
         return super().form_valid(form)
 
-    def post(self, request, *args, **kwargs):
-        # Obtén la fecha directamente del POST
-        fecha = request.POST.get('date')
+    # def post(self, request, *args, **kwargs):
+    #     fecha = request.POST.get('date')
 
-        # Convierte la fecha al formato que Django espera
-        fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
+    #     # Ensure fecha is a string
+    #     if isinstance(fecha, str):
+    #         # Convierte la fecha al formato que Django espera
+    #         fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
 
-        # Actualiza la fecha en los datos del POST
-        request.POST = request.POST.copy()
-        request.POST['date'] = fecha
-        return super().post(request, *args, **kwargs)
+    #     # Actualiza la fecha en los datos del POST
+    #     request.POST = request.POST.copy()
+    #     request.POST['date'] = fecha
+
+    #     # Llama al método post original para guardar el TransferRequest
+    #     return super().post(request, *args, **kwargs)
     
-    def get_context_data(self,**kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         departure_points = DeparturePoint.objects.all()
         context['departure'] = departure_points
         return context
-
-        return super().post(request, *args, **kwargs)
 
 
 # Detalles del traslado
@@ -545,6 +577,16 @@ def approve_request_admin(request):
             transfer_request.save()
             return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido aprobada con éxito.'})
 
+@csrf_exempt
+def cancel_request(request):
+    if request.method == 'POST':
+        request_id = request.POST.get('request_id')
+        transfer_request = TransferRequest.objects.get(id=request_id)
+        transfer_request.status = 'cancelada'
+        transfer_request.save()
+        return JsonResponse({'status': 'warning', 'message': 'La solicitud ha sido cancelada.'})
+
+
 def get_company_image(request):
     company_id = request.GET.get('company_id')
     company = Company.objects.get(id=company_id)
@@ -605,3 +647,16 @@ def send_styled_email(user, password):
     email = EmailMultiAlternatives(subject, text_content, 'loyalride.test@gmail.com', [user.email])
     email.attach_alternative(html_content, 'text/html')  # Adjunta el contenido HTML
     email.send()
+
+def transfer_requests_per_month(request):
+    # Obtener los datos de la consulta
+    data = TransferRequest.objects.annotate(month=TruncMonth('date_created')).values('month').annotate(count=Count('id')).order_by('month')
+    
+    # Crear un diccionario con todos los meses y valores iniciales de cero
+    response_data = {month: 0 for month in calendar.month_name if month}
+    
+    # Actualizar el diccionario con los datos de la consulta
+    for item in data:
+        response_data[item['month'].strftime('%B')] = item['count']
+    
+    return JsonResponse(response_data)
