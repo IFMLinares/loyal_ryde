@@ -306,9 +306,13 @@ class TransferRequest(models.Model):
             else:
                 company_image_url = ""
 
-            # Añadir el nombre y apellido y la URL de la imagen de la empresa al diccionario de la transferencia
+            # Obtener la información completa de las personas a trasladar
+            persons_to_transfer = list(self.person_to_transfer.values('name', 'phone', 'company'))
+
+            # Añadir el nombre y apellido, la URL de la imagen de la empresa y la información de las personas a trasladar al diccionario de la transferencia
             serialized_transfer_data['fields']['service_requested'] = user_full_name
             serialized_transfer_data['fields']['company_image_url'] = company_image_url
+            serialized_transfer_data['fields']['person_to_transfer'] = persons_to_transfer
 
             # Serializar los desvíos
             serialized_deviations = serialize("json", self.deviation.all(), use_natural_foreign_keys=True)
@@ -331,6 +335,7 @@ class TransferRequest(models.Model):
                 },
             )
             print(serialized_transfer_data)
+            print(persons_to_transfer)
     
     def save(self, *args, **kwargs):
         try:
