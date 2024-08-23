@@ -303,6 +303,7 @@ class TransferRequest(models.Model):
 
             # Añadir el nombre y apellido al diccionario de la transferencia
             serialized_transfer_data['fields']['service_requested'] = user_full_name
+            print(serialized_transfer_data['fields']['service_requested'])
 
             # Serializar los desvíos
             serialized_deviations = serialize("json", self.deviation.all(), use_natural_foreign_keys=True)
@@ -324,6 +325,7 @@ class TransferRequest(models.Model):
                     "rates": rates
                 },
             )
+            print(serialized_transfer_data)
     
     def save(self, *args, **kwargs):
         try:
