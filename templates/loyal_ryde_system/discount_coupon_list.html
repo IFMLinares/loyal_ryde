@@ -1,0 +1,98 @@
+{% extends "loyal_ryde_system/base/base.html" %}
+{% load static %}
+
+{% block title %}Lista de Cupones de Descuento{% endblock title %}
+
+{% block extra_css %}
+<!-- Aquí puedes agregar estilos adicionales si es necesario -->
+<link rel="stylesheet" href="{% static 'path/to/datatables.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+        <!--begin::Navbar-->
+        <div class="card mb-5 mb-xxl-12">
+            <div class="card-body">
+                <div class="col-md-12 text-center pb-0">
+                    <h1>Lista de Cupones de Descuento</h1>
+                </div>
+                <div class="mb-10 pt-9">
+                    <div class="table-responsive">
+                        <table class="table table-rounded table-striped border gy-7 gs-7" id="discount_coupon_table">
+                            <thead>
+                                <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
+                                    <th>Código</th>
+                                    <th>Tipo de Descuento</th>
+                                    <th>Valor del Descuento</th>
+                                    <th>Fecha de Expiración</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for coupon in coupons %}
+                                    <tr>
+                                        <td class="text-center">{{ coupon.code }}</td>
+                                        <td class="text-center">{{ coupon.get_discount_type_display }}</td>
+                                        <td class="text-center">{{ coupon.discount_value }}</td>
+                                        <td class="text-center">{{ coupon.expiration_date|date:'d/m/Y' }}</td>
+                                        <td class="text-end">
+                                            <a href="{% url 'core:discount_coupon_update' pk=coupon.id %}" class="btn btn-light btn-active-light-primary btn-sm">Editar</a>
+                                            <a href="{% url 'core:discount_coupon_detail' pk=coupon.id %}" class="btn btn-light btn-active-light-primary btn-sm">Ver</a>
+                                            <a href="#" class="btn btn-xs btn-danger eliminar-coupon" data-id="{{ coupon.id }}">Eliminar</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>                            
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end::Navbar-->
+    </div>
+    <!--end::Container-->
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<!-- Aquí puedes agregar scripts adicionales si es necesario -->
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#discount_coupon_table').DataTable();
+
+        $('.eliminar-coupon').click(function(e) {
+            e.preventDefault();
+            var couponId = $(this).data('id');
+            $.ajax({
+                url: '{% url "core:discount_coupon_delete" %}',
+                type: 'POST',
+                data: {
+                    'coupon_id': couponId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    if (data.status == 'success') {
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            text: data.message,
+                            icon: 'success'
+                        }).then(function() {
+                            // Redireccionar a una URL después de hacer clic en el botón "OK"
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>
+{% endblock extra_js %}

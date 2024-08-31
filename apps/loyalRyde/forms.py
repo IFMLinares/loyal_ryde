@@ -186,6 +186,21 @@ class AddFleetForm(ModelForm):
         model = Fleet
         fields = '__all__'
 
+class DiscountCouponForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for form in self.visible_fields():
+            if form.name == 'discount_type' or form.name == 'company':
+                form.field.widget.attrs['class'] = 'form-select mb-2'
+                form.field.widget.attrs['data-control'] = 'select2'
+                form.field.widget.attrs['data-hide-search'] = 'true'
+            else:
+                form.field.widget.attrs['class'] = 'form-control mb-2'
+
+    class Meta:
+        model = DiscountCoupon
+        fields = ['code', 'discount_type', 'discount_value', 'expiration_date', 'company']
+
 class AddFleetTypeForm(ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)

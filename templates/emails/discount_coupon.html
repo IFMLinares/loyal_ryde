@@ -1,0 +1,7 @@
+<!-- templates/emails/discount_coupon.html -->
+<p>Dear {{ user.first_name }},</p>
+<p>We are excited to offer you a new discount coupon!</p>
+<p>Coupon Code: {{ coupon.code }}</p>
+<p>Discount: {% if coupon.discount_type == 'percentage' %}{{ coupon.discount_value }}%{% else %}${{ coupon.discount_value }}{% endif %}</p>
+<p>Expiration Date: {{ coupon.expiration_date }}</p>
+<p>Use this coupon on your next transfer request to save money!</p>

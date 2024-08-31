@@ -11,6 +11,7 @@ from decimal import Decimal
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
+from django.utils import timezone
 
 
 payment_method_choices = [
@@ -183,7 +184,33 @@ class Route(models.Model):
 
     def __str__(self):
         return f"{self.route_name}: {self.departure_point}-{self.arrival_point}"
-    
+
+class DiscountCoupon(models.Model):
+    DISCOUNT_TYPE_CHOICES = [
+        ('percentage', 'Porcentaje'),
+        ('fixed', 'Monto Fijo'),
+    ]
+
+    code = models.CharField(max_length=50, unique=True, verbose_name="Código")
+    discount_type = models.CharField(max_length=10, choices=DISCOUNT_TYPE_CHOICES, verbose_name="Tipo de Descuento")
+    discount_value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor del Descuento")
+    expiration_date = models.DateField(verbose_name="Fecha de Expiración")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Empresa")
+    usage_limit = models.IntegerField(verbose_name="Límite de Uso")
+
+    def __str__(self):
+        return self.code
+
+    def get_discount_type_display(self):
+        return dict(self.DISCOUNT_TYPE_CHOICES).get(self.discount_type, self.discount_type)
+
+    def is_valid(self):
+        return self.expiration_date > timezone.now()
+
+    class Meta:
+        verbose_name = "Cupón de Descuento"
+        verbose_name_plural = "Cupones de Descuento"
+
 class Rates(models.Model):
     # vehicle = models.ForeignKey(Fleet, on_delete=models.CASCADE, verbose_name="Vehiculo", null=True, blank=True)
     type_vehicle = models.ForeignKey(FleetType, on_delete=models.CASCADE, verbose_name="Tipo de vehiculo", null=True, blank=True)
@@ -288,6 +315,16 @@ class TransferRequest(models.Model):
     long_2= models.CharField(max_length=255, verbose_name="Longitud Final", blank=True, null=True)
     company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
     observations = models.TextField(blank=True, null=True, verbose_name='Observaciones')
+    discount_coupon = models.ForeignKey(DiscountCoupon, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def apply_discount(self):
+        if self.discount_coupon and self.discount_coupon.is_valid():
+            if self.discount_coupon.discount_type == 'percentage':
+                discount_amount = (self.rate.price * self.discount_coupon.discount_value) / 100
+            else:
+                discount_amount = self.discount_coupon.discount_value
+            return max(self.rate.price - discount_amount, 0)
+        return self.rate.price
 
     def enviar_id_a_usuario(self):
         CustomUser = get_user_model()

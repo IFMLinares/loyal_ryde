@@ -1,0 +1,72 @@
+<!-- templates/loyal_ryde_system/discount_coupon_detail.html -->
+{% extends "loyal_ryde_system/base/base.html" %}
+
+{% block title %}Detalle del Cupón de Descuento{% endblock title %}
+
+{% block content %}
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+        <!--begin::Navbar-->
+        <div class="card mb-5 mb-xxl-12">
+            <div class="card-body">
+                <div class="col-md-12 text-center pb-0">
+                    <h1 class="display-4">Detalle del Cupón de Descuento</h1>
+                </div>
+                <div class="row mb-10 pt-9">
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-barcode"></i> Código</h5>
+                                <p class="card-text">{{ coupon.code }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-tags"></i> Tipo de Descuento</h5>
+                                <p class="card-text">{{ coupon.get_discount_type_display }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-dollar-sign"></i> Valor del Descuento</h5>
+                                <p class="card-text">{{ coupon.discount_value }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-calendar-alt"></i> Fecha de Expiración</h5>
+                                <p class="card-text">{{ coupon.expiration_date|date:'d/m/Y' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-building"></i> Empresa</h5>
+                                <p class="card-text">{{ coupon.company.name }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-redo"></i> Límite de Uso</h5>
+                                <p class="card-text">{{ coupon.usage_limit }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end::Navbar-->
+    </div>
+    <!--end::Container-->
+</div>
+{% endblock content %}

@@ -40,6 +40,11 @@ urlpatterns = [
     path('trips/cancelled/', TripsCancelledListView.as_view(), name='trips_cancelled'),
     path('rates/list/', RatesListView.as_view(), name='rates_list'),
     path('rates/create/', RatesCreateView.as_view(), name='rates_create'),
+    path('discount-coupon/create/', DiscountCouponCreateView.as_view(), name='discount_coupon_create'),
+    path('discount-coupons/', DiscountCouponListView.as_view(), name='discount_coupon_list'),
+    path('discount-coupon/update/<int:pk>/', DiscountCouponUpdateView.as_view(), name='discount_coupon_update'),
+    path('discount-coupon/detail/<int:pk>/', DiscountCouponDetailView.as_view(), name='discount_coupon_detail'),
+    path('discount-coupon/delete/', delete_coupon, name='discount_coupon_delete'),
     
     
     

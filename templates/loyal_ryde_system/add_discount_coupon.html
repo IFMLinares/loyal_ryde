@@ -1,0 +1,78 @@
+{% extends "loyal_ryde_system/base/base.html" %} 
+{% load static %} 
+
+{% block title %}Crear Cupón de Descuento{% endblock title %}
+
+{% block extra_css %} 
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+
+{% block content %}
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+        <form class="form d-flex flex-column flex-lg-row" method="post">
+            {% csrf_token %}
+            <!--begin::Main column-->
+            <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                <!--begin::General options-->
+                <div class="card card-flush py-4">
+                    <!--begin::Card header-->
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h2>Registrar Cupón de Descuento</h2>
+                        </div>
+                    </div>
+                    <!--end::Card header-->
+                    <!--begin::Card body-->
+                    <div class="card-body pt-0">
+                        <!--begin::Input group-->
+                        {% for field in form %}
+                        <div class="mb-3 fv-row">
+                            <!--begin::Label-->
+                            <label class="required form-label">{{ field.label }}</label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            {{ field }}
+                            <!--end::Input-->
+                            <!--begin::Description-->
+                            <div class="text-muted fs-7">{{ field.help_text }}</div>
+                            <!--end::Description-->
+                        </div>
+                        {% endfor %}
+                        <!--end::Input group-->
+                    </div>
+                    <!--end::Card body-->
+                </div>
+                <!--end::General options-->
+                <div class="d-flex justify-content-end">
+                    <!--begin::Button-->
+                    <a href="#" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancelar</a>
+                    <!--end::Button-->
+                    <!--begin::Button-->
+                    <button type="submit" class="btn btn-primary">
+                        <span class="indicator-label">Guardar</span>
+                        <span class="indicator-progress">Espere por favor...
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                    </button>
+                    <!--end::Button-->
+                </div>
+            </div>
+            <!--end::Main column-->
+        </form>
+    </div>
+    <!--end::Container-->
+</div>
+{% endblock content %} 
+
+{% block extra_js %} 
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script src="{% static 'assets/plugins/custom/formrepeater/formrepeater.bundle.js' %}"></script>
+<script src="{% static 'assets/js/custom/apps/ecommerce/catalog/save-category.js' %}"></script>
+<script src="{% static 'assets/js/widgets.bundle.js' %}"></script>
+<script src="{% static 'assets/js/custom/widgets.js' %}"></script>
+<script src="{% static 'assets/js/custom/apps/chat/chat.js' %}"></script>
+<script src="{% static 'assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
+<script src="{% static 'assets/js/custom/utilities/modals/create-app.js' %}"></script>
+<script src="{% static 'assets/js/custom/utilities/modals/users-search.js' %}"></script>
+{% endblock extra_js %}

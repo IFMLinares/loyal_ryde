@@ -274,6 +274,40 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
 
         return super().post(request, *args, **kwargs)
 
+# Agregar Cupones de descuento
+
+class DiscountCouponCreateView(CreateView):
+    model = DiscountCoupon
+    form_class = DiscountCouponForm
+    template_name = 'loyal_ryde_system/add_discount_coupon.html'
+    success_url = reverse_lazy('loyalRyde:discount_coupon_list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        company = form.cleaned_data['company']
+        users = CustomUser.objects.filter(company=company)
+        for user in users:
+            subject = 'New Discount Coupon Available'
+            html_message = render_to_string('emails/discount_coupon.html', {'coupon': self.object})
+            plain_message = strip_tags(html_message)
+            send_mail(subject, plain_message, 'from@example.com', [user.email], html_message=html_message)
+        return response
+
+class DiscountCouponListView(ListView):
+    model = DiscountCoupon
+    template_name = 'loyal_ryde_system/discount_coupon_list.html'
+    context_object_name = 'coupons'
+
+class DiscountCouponUpdateView(UpdateView):
+    model = DiscountCoupon
+    form_class = DiscountCouponForm
+    template_name = 'loyal_ryde_system/update_discount_coupon.html'
+    success_url = reverse_lazy('discount_coupon_list')
+
+class DiscountCouponDetailView(DetailView):
+    model = DiscountCoupon
+    template_name = 'loyal_ryde_system/discount_coupon_detail.html'
+    context_object_name = 'coupon'
 #  Agregar conductor
 class DriverAdd(LoginRequiredMixin, CreateView):
     model = CustomUser
@@ -662,3 +696,17 @@ def transfer_requests_per_month(request):
         response_data[item['month'].strftime('%B')] = item['count']
     
     return JsonResponse(response_data)
+
+
+@csrf_exempt
+def delete_coupon(request):
+    if request.method == 'POST':
+        coupon_id = request.POST.get('coupon_id')
+        try:
+            coupon = DiscountCoupon.objects.get(id=coupon_id)
+            coupon.delete()
+            return JsonResponse({'status': 'success', 'message': 'El cupón ha sido eliminado.'})
+        except DiscountCoupon.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'El cupón no existe.'})
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido.'})
+

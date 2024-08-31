@@ -1,0 +1,29 @@
+<!-- templates/loyal_ryde_system/update_discount_coupon.html -->
+{% extends "loyal_ryde_system/base/base.html" %}
+
+{% block title %}Actualizar Cupón de Descuento{% endblock title %}
+
+{% block content %}
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+        <!--begin::Navbar-->
+        <div class="card mb-5 mb-xxl-12">
+            <div class="card-body">
+                <div class="col-md-12 text-center pb-0">
+                    <h1>Actualizar Cupón de Descuento</h1>
+                </div>
+                <div class="mb-10 pt-9">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--end::Navbar-->
+    </div>
+    <!--end::Container-->
+</div>
+{% endblock content %}
