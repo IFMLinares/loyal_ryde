@@ -56,7 +56,9 @@ urlpatterns = [
     path('company/image', get_company_image, name='company_image'),
     path("transfer-request/routes", get_routes_by_departure, name="routes_ajax"),
     path("transfer-request/rates", get_rates, name="rates_ajax"),
+    path('verify-discount-code/', verify_discount_code, name='verify_discount_code'),
     path('ajax/transfer-month/', transfer_requests_per_month, name='transfer_month'),
+    path('transfer-request/excel/', TransferRequestExcelView.as_view(), name='transfer_request_excel'),
     
     
 ]

@@ -1,0 +1,105 @@
+{% extends "loyal_ryde_system/base/base.html" %}
+{% load static %}
+
+{% block title %}Traslados Mes 6-2024{% endblock title %}
+
+{% block extra_css %}
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css"/>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <div id="kt_content_container" class="container-xxl">
+        <div class="card mb-5 mb-xxl-12">
+            <div class="card-body">
+                <div class="col-md-12 text-center pb-0">
+                    <h1>Lista de traslados Transporte GGMN - Mes 6-2024</h1>
+                </div>
+                <div class="mb-10 pt-9">
+                    <div class="table-responsive">
+                        <table class="table table-rounded table-striped border gy-7 gs-7" id="transfer_list_table">
+                            <thead>
+                                <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
+                                    <th>Fecha</th>
+                                    <th>Dia</th>
+                                    <th>Hora</th>
+                                    <th>Pasajero</th>
+                                    <th>Origen</th>
+                                    <th>Destino</th>
+                                    <th>Descripcion</th>
+                                    <th>MONTO TRASLADO INICIAL US$</th>
+                                    <th>Horas Espera Cant</th>
+                                    <th>Horas Espera Monto US$</th>
+                                    <th>Desvios/Traslados Cant</th>
+                                    <th>Desvios/Traslados Monto US$</th>
+                                    <th>Lugar</th>
+                                    <th>Total Monto Traslado US$</th>
+                                    <th>GRAFO/CECO</th>
+                                    <th>Solicitante</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transfer_request in transfer_requests %}
+                                    <tr>
+                                        <td class="text-center">{{ transfer_request.date|date:'d/m/Y' }}</td>
+                                        <td class="text-center">{{ transfer_request.date|date:'l' }}</td>
+                                        <td class="text-center">{{ transfer_request.hour|date:'G:i' }}</td>
+                                        <td class="text-center">{{ transfer_request.passenger.name }}</td>
+                                        <td class="text-center">{{ transfer_request.departure_site_route }}</td>
+                                        <td class="text-center">{{ transfer_request.destination_route }}</td>
+                                        <td class="text-center">{{ transfer_request.description }}</td>
+                                        <td class="text-center">{{ transfer_request.initial_transfer_amount }}</td>
+                                        <td class="text-center">{{ transfer_request.waiting_hours_count }}</td>
+                                        <td class="text-center">{{ transfer_request.waiting_hours_amount }}</td>
+                                        <td class="text-center">{{ transfer_request.diversions_count }}</td>
+                                        <td class="text-center">{{ transfer_request.diversions_amount }}</td>
+                                        <td class="text-center">{{ transfer_request.diversion_place }}</td>
+                                        <td class="text-center">{{ transfer_request.total_transfer_amount }}</td>
+                                        <td class="text-center">{{ transfer_request.grafo_ceco }}</td>
+                                        <td class="text-center">{{ transfer_request.service_requested.username }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>                            
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button id="export-btn" class="btn btn-primary">Exportar a Excel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#transfer_list_table').DataTable();
+
+        $('#export-btn').click(function() {
+            $.ajax({
+                url: "{% url 'core:transfer_request_excel' %}?export=true",
+                method: 'GET',
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function(data) {
+                    var a = document.createElement('a');
+                    var url = window.URL.createObjectURL(data);
+                    a.href = url;
+                    a.download = 'solicitud_traslados_mes_6_2024.xlsx';
+                    document.body.append(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                },
+                error: function() {
+                    alert('Error al exportar el archivo.');
+                }
+            });
+        });
+    });
+</script>
+{% endblock extra_js %}

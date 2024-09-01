@@ -132,6 +132,14 @@ class CustomUserDriver(models.Model):
         verbose_name = 'Usuario Conductor'
         verbose_name_plural = 'Usuarios Conductores'
 
+class OTPCode(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.email} - {self.code}'
+
 class PeopleTransfer(models.Model):
     name = models.CharField(max_length=255, verbose_name='nombre')
     phone = models.CharField(max_length=255, verbose_name='teléfono')
@@ -316,6 +324,10 @@ class TransferRequest(models.Model):
     company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
     observations = models.TextField(blank=True, null=True, verbose_name='Observaciones')
     discount_coupon = models.ForeignKey(DiscountCoupon, on_delete=models.SET_NULL, null=True, blank=True)
+    is_round_trip = models.BooleanField(default=False, verbose_name="Ida y Vuelta")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio", default=0.00)
+    discounted_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio con Descuento", default=0.00)
+    discount_coupon = models.ForeignKey(DiscountCoupon, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Cupón de Descuento")
 
     def apply_discount(self):
         if self.discount_coupon and self.discount_coupon.is_valid():

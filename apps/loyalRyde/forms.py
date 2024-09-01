@@ -5,6 +5,23 @@ from django.core.mail import send_mail, EmailMessage
 from .models import *
 
 class TransferRequestForm(ModelForm):
+    discount_code = CharField(required=False, widget=TextInput(attrs={'class': 'form-control', 'placeholder': 'Código de Descuento'}))
+
+    def clean_discount_code(self):
+        code = self.cleaned_data.get('discount_code')
+        if code:
+            try:
+                coupon = DiscountCoupon.objects.get(code=code)
+                if coupon.expiration_date < timezone.now().date():
+                    raise ValidationError("El cupón ha expirado.")
+                if coupon.company != self.cleaned_data.get('company'):
+                    raise ValidationError("El cupón no es válido para su empresa.")
+                if coupon.usage_limit <= 0:
+                    raise ValidationError("El cupón ha alcanzado su límite de uso.")
+                return coupon
+            except DiscountCoupon.DoesNotExist:
+                raise ValidationError("El cupón no es válido.")
+        return None
 
     def exclude_user_driver(self, user):
         if user and user.role in ['supervisor', 'operator']:
@@ -13,7 +30,7 @@ class TransferRequestForm(ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         for form in  self.visible_fields():
-            if form.name == 'executive_transfer' or form.name == 'encomienda' or form.name == 'driver' or form.name == 'id_fly_checkbox':
+            if form.name == 'executive_transfer' or form.name == 'encomienda' or form.name == 'driver' or form.name == 'id_fly_checkbox' or form.name == 'is_round_trip':
                 form.field.widget.attrs['class'] = 'form-check-input'
             elif form.name == 'person_to_transfer':
                 form.field.widget.attrs['class'] = 'form-select'
@@ -31,6 +48,7 @@ class TransferRequestForm(ModelForm):
             'executive_transfer': CheckboxInput(),
             'encomienda': CheckboxInput(),
             'driver': CheckboxInput(),
+            'is_round_trip': CheckboxInput(),
             'id_fly_checkbox': CheckboxInput(),
             'person_to_transfer': SelectMultiple(),
             # 'destination_direc': TextInput(attrs={'autocomplete': 'off'}),
@@ -199,7 +217,7 @@ class DiscountCouponForm(ModelForm):
 
     class Meta:
         model = DiscountCoupon
-        fields = ['code', 'discount_type', 'discount_value', 'expiration_date', 'company']
+        fields = ['code', 'discount_type', 'discount_value', 'expiration_date', 'company', 'usage_limit']
 
 class AddFleetTypeForm(ModelForm):
     def __init__(self,*args,**kwargs):

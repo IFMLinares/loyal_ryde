@@ -22,6 +22,9 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.contrib.auth.models import AnonymousUser
 from django.utils.timezone import now
+from django.views.decorators.http import require_POST
+from django.http import HttpResponse
+import pandas as pd
 
 
 
@@ -112,8 +115,25 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('core:transfer_request_list')
 
     def form_valid(self, form):
-        form.instance.service_requested = self.request.user
-        messages.success(self.request, 'Su solicitud de traslado ha sido registrada exitosamente. Por favor espere la aprobación para iniciar su servicio')
+        transfer_request = form.save(commit=False)
+        rate = Rates.objects.get(id=form.cleaned_data['rate'])
+        if form.cleaned_data['is_round_trip']:
+            transfer_request.price = rate.driver_price_round_trip
+        else:
+            transfer_request.price = rate.driver_price
+
+        coupon = form.cleaned_data.get('discount_code')
+        if coupon:
+            if coupon.discount_type == 'percentage':
+                discount = transfer_request.price * (coupon.discount_value / 100)
+            else:
+                discount = coupon.discount_value
+            transfer_request.discounted_price = transfer_request.price - discount
+            transfer_request.discount_coupon = coupon
+        else:
+            transfer_request.discounted_price = transfer_request.price
+
+        transfer_request.save()
         return super().form_valid(form)
 
     def post(self, request, *args, **kwargs):
@@ -579,6 +599,50 @@ class CompnayAdd(LoginRequiredMixin, CreateView):
         messages.success(self.request, 'Formulario guardado exitosamente!')
         return response
 
+
+class TransferRequestExcelView(LoginRequiredMixin, ListView):
+    model = TransferRequest
+    template_name = 'loyal_ryde_system/transfer_request_excel.html'
+    context_object_name = 'transfer_requests'
+
+    # def get_queryset(self):
+    #     # Filtra los traslados para el mes y año específicos
+    #     return TransferRequest.objects.filter(date__year=2024, date__month=6)
+
+    def get(self, request, *args, **kwargs):
+        if 'export' in request.GET:
+            return self.export_to_excel()
+        return super().get(request, *args, **kwargs)
+
+    def export_to_excel(self):
+        transfer_requests = self.get_queryset()
+        data = []
+        for tr in transfer_requests:
+            for person in tr.person_to_transfer.all():
+                data.append({
+                    'Fecha': tr.date.strftime('%d/%m/%Y'),
+                    'Dia': tr.date.strftime('%A'),
+                    'Hora': tr.hour.strftime('%H:%M'),
+                    'Pasajero': person.name,
+                    'Origen': tr.departure_site_route,
+                    'Destino': tr.destination_route,
+                    'MONTO TRASLADO INICIAL US$': tr.price,
+                    'Horas Espera Cant': tr.stop_time.count(),
+                    'Horas Espera Monto US$': sum(stop.total_time.total_seconds() / 3600 for stop in tr.stop_time.all()) * tr.rate.daytime_waiting_time,
+                    'Desvios/Traslados Cant': tr.deviation.count(),
+                    'Desvios/Traslados Monto US$': tr.deviation.count() * tr.rate.detour_local,
+                    'Lugar': tr.departure_direc,
+                    'Total Monto Traslado US$': tr.price,
+                    'GRAFO/CECO': tr.ceco_grafo_pedido,
+                    'Solicitante': tr.service_requested.username,
+                })
+        df = pd.DataFrame(data)
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=solicitud_traslados_mes_6_2024.xlsx'
+        df.to_excel(response, index=False)
+        return response
+
+
 # AJAX FUNCTIONS
 @csrf_exempt
 def get_people_transfer(request):
@@ -666,12 +730,23 @@ def get_rates(request):
                     'rate_detour_local': n.detour_local,
                     # Agrega más campos según tus necesidades
                 })
+                print(rate_data)
             response_data = {
                 "rates": rate_data
             }
             return JsonResponse(response_data)
         except (Route.DoesNotExist, Rates.DoesNotExist):
             return JsonResponse({"error": "No se encontró una tarifa para esta ruta."}, status=404)
+
+
+@require_POST
+def verify_discount_code(request):
+    code = request.POST.get('code')
+    try:
+        coupon = DiscountCoupon.objects.get(code=code, expiration_date__gte=timezone.now())
+        return JsonResponse({'valid': True, 'discount_value': str(coupon.discount_value), 'discount_type': coupon.discount_type})
+    except DiscountCoupon.DoesNotExist:
+        return JsonResponse({'valid': False, 'message': 'Código de descuento no válido o expirado.'})
 
 # Email fuinctions
 
