@@ -116,33 +116,54 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('core:transfer_request_list')
 
     def form_valid(self, form):
-            transfer_request = form.save(commit=False)
-            rate_id = form.cleaned_data['rate'].id  # Asegúrate de obtener el ID del objeto Rates
-            rate = Rates.objects.get(id=rate_id)
-            if form.cleaned_data['is_round_trip']:
-                transfer_request.price = rate.price_round_trip
-            else:
-                transfer_request.price = rate.price
+        transfer_request = form.save(commit=False)
+        rate_id = form.cleaned_data['rate'].id  # Asegúrate de obtener el ID del objeto Rates
+        rate = Rates.objects.get(id=rate_id)
+        if form.cleaned_data['is_round_trip']:
+            transfer_request.price = rate.price_round_trip
+        else:
+            transfer_request.price = rate.price
 
-            coupon = form.cleaned_data.get('discount_code')
-            if coupon:
-                transfer_request.discount_coupon = coupon.pk
-                if coupon.discount_type == 'percentage':
-                    discount = transfer_request.price * (coupon.discount_value / 100)
-                else:
-                    discount = coupon.discount_value
-                transfer_request.discounted_price = transfer_request.price - discount
-                transfer_request.discount_coupon = coupon
+        coupon = form.cleaned_data.get('discount_code')
+        if coupon:
+            transfer_request.discount_coupon = coupon.pk
+            if coupon.discount_type == 'percentage':
+                discount = transfer_request.price * (coupon.discount_value / 100)
             else:
-                transfer_request.discounted_price = transfer_request.price
+                discount = coupon.discount_value
+            transfer_request.discounted_price = transfer_request.price - discount
+            transfer_request.discount_coupon = coupon
+        else:
+            transfer_request.discounted_price = transfer_request.price
 
-            waypoints_numbers = form.cleaned_data.get('waypoints_numbers', 0)
-            if waypoints_numbers > 0:
-                transfer_request.final_price += (waypoints_numbers * rate.detour_local)
-            transfer_request.save()
-            return super().form_valid(form)
-    def post(self, request, *args, **kwargs):
+        waypoints_numbers = form.cleaned_data.get('waypoints_numbers', 0)
+        if waypoints_numbers > 0:
+            transfer_request.final_price += (waypoints_numbers * rate.detour_local)
         
+        # Guarda el objeto TransferRequest antes de añadir las relaciones many-to-many
+        transfer_request.save()
+
+        # Procesa los desvíos adicionales
+        try:
+            for i in range(3, 3 + waypoints_numbers):
+                name = form.cleaned_data.get(f'waypoint-{i}')
+                lat = form.cleaned_data.get(f'lat_{i}')
+                lng = form.cleaned_data.get(f'lng_{i}')
+                if lat and lng:
+                    desviation = Desviation.objects.create(
+                        desviation_direc=name,
+                        desviation_number=i - 2,
+                        waypoint_number=i,
+                        lat=lat,
+                        long=lng
+                    )
+                    transfer_request.deviation.add(desviation)
+        except:
+            pass
+
+        return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
         print(request.POST)
         # Obtén la fecha directamente del POST
         fecha = request.POST.get('date')
@@ -157,37 +178,14 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         # Llama al método post original para guardar el TransferRequest
         response = super().post(request, *args, **kwargs)
 
-        # Obtén el objeto TransferRequest recién creado
-        transfer_request = self.object
-
-        # Procesa los desvíos adicionales
-        try:
-            waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
-            for i in range(3, 3 + waypoints_numbers):
-                name = request.POST.get(f'waypoint-{i}')
-                lat = request.POST.get(f'lat_{i}')
-                lng = request.POST.get(f'lng_{i}')
-                if lat and lng:
-                    desviation = Desviation.objects.create(
-                        desviation_direc = name,
-                        desviation_number=i - 2,
-                        waypoint_number=i,
-                        lat=lat,
-                        long=lng
-                    )
-                    transfer_request.deviation.add(desviation)
-        except:
-            pass
-        print(transfer_request)
         return response
     
-    def get_context_data(self,**kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         departure_points = DeparturePoint.objects.all()
         context['rates_list'] = Rates.objects.all()
         context['departure'] = departure_points
         return context
-    
 
 # agregar traslado (modo invitado)
 class GuestTransferCreateView(CreateView):
