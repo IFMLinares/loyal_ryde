@@ -290,8 +290,8 @@ class TransferRequest(models.Model):
     rate = models.ForeignKey(Rates, on_delete=models.CASCADE, verbose_name="Tarifa")
     service_requested = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Usuario que Llenó el Formulario", blank=True, null=True)
     user_driver = models.ForeignKey(CustomUserDriver, on_delete=models.CASCADE, verbose_name="Usuario conductor", blank=True, null=True)
-    stop_time = models.ManyToManyField(TransferStop, verbose_name="Pausa del viaje", blank=True)
-    deviation = models.ManyToManyField(Desviation, verbose_name="Desvios", blank=True)
+    stop_time = models.ManyToManyField(TransferStop, verbose_name="Pausa del viaje", blank=True, null=True)
+    deviation = models.ManyToManyField(Desviation, verbose_name="Desvios", blank=True, null=True)
     date = models.DateField(verbose_name="Fecha del traslado", blank=True, null=True)  # DD/MM/AA
     date_created = models.DateTimeField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
     hour = models.TimeField(verbose_name="Hora")  # Formato 12h
@@ -304,7 +304,7 @@ class TransferRequest(models.Model):
     airline = models.CharField(max_length=255, verbose_name="Aerolínea", blank=True, null=True)
     flight = models.CharField(max_length=255, verbose_name="Vuelo", blank=True, null=True)
     route_fly = models.CharField(max_length=255, verbose_name="Ruta de vuelo", blank=True, null=True)
-    person_to_transfer = models.ManyToManyField(PeopleTransfer, verbose_name="Persona(s) a Transferir")
+    person_to_transfer = models.ManyToManyField(PeopleTransfer, verbose_name="Persona(s) a Transferir", blank=True, null=True)
     service_authorize = models.TextField(verbose_name="Autorización del Servicio", blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Estado", blank=True, null=True, default='esperando validación' )
     executive_transfer = models.BooleanField(default=False, blank=True, null=True, verbose_name="Traslado ejecutivo")
