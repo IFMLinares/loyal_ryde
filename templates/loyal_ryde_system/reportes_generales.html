@@ -22,41 +22,10 @@
                 <div class="col-xl-12">
                     <div class="card card-xl-stretch mb-5 mb-xl-8">
                         <div class="card-header border-0 py-5">
-                            <h3 class="card-title fw-bolder">Estado de Transfer Requests</h3>
-                            <select id="company-select" class="form-select">
-                                <option value="">Select a company</option>
-                                {% for company in companies %}
-                                    <option value="{{ company }}">{{ company }}</option>
-                                {% endfor %}
-                            </select>
+                            <h3 class="card-title fw-bolder">Reporte Generales de traslados</h3>
                         </div>
                         <div class="card-body">
-                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link active" id="datatable-tab" data-bs-toggle="tab" href="#datatable" role="tab" aria-controls="datatable" aria-selected="true">DataTable</a>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="chart-tab" data-bs-toggle="tab" href="#chart" role="tab" aria-controls="chart" aria-selected="false">Chart</a>
-                                </li>
-                            </ul>
-                            <div class="tab-content" id="myTabContent">
-                                <div class="tab-pane fade show active" id="datatable" role="tabpanel" aria-labelledby="datatable-tab">
-                                    <table id="transfer-requests-table" class="table table-striped table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Status</th>
-                                                <th>Count</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Data will be populated by AJAX -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="tab-pane fade" id="chart" role="tabpanel" aria-labelledby="chart-tab">
-                                    <div id="transfer-request-status-chart" style="height: 350px;"></div>
-                                </div>
-                            </div>
+                            <div id="transfer-request-status-chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
@@ -64,17 +33,40 @@
         </div>
     </div>
 </div>
+<script id="transfer-requests-data" type="application/json">
+    {{ transfer_requests_json|safe }}
+</script>
 {% endblock content %}
 
 {% block extra_js %}
 <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-        var table = $('#transfer-requests-table').DataTable();
-        var chart = new ApexCharts(document.querySelector("#transfer-request-status-chart"), {
-            series: [],
+        var transferRequests = JSON.parse(document.getElementById('transfer-requests-data').textContent);
+        var categories = transferRequests.map(function(item) { return item.status; });
+        var seriesData = transferRequests.map(function(item) { return item.count; });
+
+        // Definir colores específicos para cada estado
+        var colorMap = {
+            'finalizada': '#28a745', // Verde
+            'cancelada': '#dc3545', // Rojo
+            'esperando validación': '#6c757d', // Gris
+            'validada': '#007bff', // Azul
+            'aprobada': '#218838', // Verde oscuro
+            'en proceso': '#155724' // Verde más oscuro
+        };
+
+        // Asignar colores a las barras basadas en los estados
+        var colors = categories.map(function(status) {
+            return colorMap[status] || '#000000'; // Color negro por defecto si no se encuentra el estado
+        });
+
+        var options = {
+            series: [{
+                name: 'Transfer Requests',
+                data: seriesData
+            }],
             chart: {
                 type: 'bar',
                 height: 350
@@ -84,10 +76,10 @@
                     horizontal: false,
                     columnWidth: '55%',
                     endingShape: 'rounded',
-                    distributed: true
+                    distributed: true // Distribuir colores
                 },
             },
-            colors: [],
+            colors: colors, // Colores personalizados para cada barra
             dataLabels: {
                 enabled: false
             },
@@ -97,7 +89,7 @@
                 colors: ['transparent']
             },
             xaxis: {
-                categories: [],
+                categories: categories,
             },
             yaxis: {
                 title: {
@@ -114,56 +106,10 @@
                     }
                 }
             }
-        });
+        };
+
+        var chart = new ApexCharts(document.querySelector("#transfer-request-status-chart"), options);
         chart.render();
-
-        $('#company-select').change(function() {
-            var company = $(this).val();
-            if (company) {
-                $.ajax({
-                    url: '',
-                    type: 'POST',
-                    data: {
-                        'company': company,
-                        'csrfmiddlewaretoken': '{{ csrf_token }}'
-                    },
-                    success: function(data) {
-                        // Update DataTable
-                        table.clear().draw();
-                        data.forEach(function(item) {
-                            table.row.add([item.status, item.count]).draw();
-                        });
-
-                        // Update Chart
-                        var categories = data.map(function(item) { return item.status; });
-                        var seriesData = data.map(function(item) { return item.count; });
-                        var colorMap = {
-                            'finalizada': '#28a745', // Verde
-                            'cancelada': '#dc3545', // Rojo
-                            'esperando validación': '#6c757d', // Gris
-                            'validada': '#007bff', // Azul
-                            'aprobada': '#218838', // Verde oscuro
-                            'en proceso': '#155724' // Verde más oscuro
-                        };
-                        var colors = categories.map(function(status) {
-                            return colorMap[status] || '#000000';
-                        });
-
-                        chart.updateOptions({
-                            xaxis: {
-                                categories: categories
-                            },
-                            colors: colors
-                        });
-
-                        chart.updateSeries([{
-                            name: 'Transfer Requests',
-                            data: seriesData
-                        }]);
-                    }
-                });
-            }
-        });
     });
 </script>
 {% endblock extra_js %}
