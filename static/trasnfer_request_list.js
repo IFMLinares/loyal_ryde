@@ -93,6 +93,6 @@ $(document).ready(function() {
     });
 
     $('#transfer_list_table').DataTable({
-        "order": [[0, "desc"]] // Ordena por la primera columna (índice 0) en orden descendente
+        // "order": [[0, "asc"]]
     });
 });

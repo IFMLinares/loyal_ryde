@@ -1,9 +1,9 @@
-{% extends "loyal_ryde_system/base/base.html" %} 
-{% load static %} 
+{% extends "loyal_ryde_system/base/base.html" %}
+{% load static %}
 
-{% block title %}Inicio{% endblock title %}
+{% block title %}Detalles del Traslado{% endblock title %}
 
-{% block extra_css %} 
+{% block extra_css %}
 <style>
     .form-check {
         display: flex;
@@ -11,331 +11,288 @@
         align-items: center;
         height: 100%;
     }
+    .card-title i {
+        color: #009ef6;
+        font-size: 20px;
+    }
 </style>
 {% endblock extra_css %}
 
 {% block content %}
-
-<!-- {{ form.as_p }} -->
-
-    <!--begin::Post-->
-    <div class="post d-flex flex-column-fluid" id="kt_post">
-        <!--begin::Container-->
-        <div id="kt_content_container" class="container-xxl">
-            <!--begin::Navbar-->
-            <div class="card mb-5 mb-xxl-12">
-                <div class="card-body pt-9 pb-0">
-                    <div class="mb-10">
-                        <form method="POST">
-                            {% csrf_token %}
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <h1>LOYAL RIDE</h1>
-                                    <h1>Transporte GGMN</h1>
-                                </div>
-                                <div class="mt-5 col-md-12">
-                                    <h3>Servicio requerido:</h3>
-                                </div>
-                                <div class="mt-5 col-md-6">
-                                    <label class="form-label" for="id_date">Fecha del traslado:</label>
-                                    <input class="form-control" placeholder="Selecciona una fecha" type="date" required value='{{ detail.date|date:"Y-m-d" }}' disabled/>
-                                </div>
-                                <div class="mt-5 col-md-6">
-                                    <label class="form-label" for="id_hour">Hora del traslado: {{ detail.hour }}</label>
-                                    <input type="time" class="form-control" id="id_hour" name="hour" required value='{{ detail.hour }}' disabled/>
-                                </div>
-                                <div class="mt-8 col-md-12">
-                                    <h3>Tipo de servicio:</h3>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-check form-check-custom form-check-solid mt-5">
-                                            {{ form.executive_transfer }}
-                                            <!-- <input class="form-check-input" type="checkbox" value="" id="id_executive_transfer"  name="executive_transfer"/> -->
-                                            <label class="form-check-label" for="id_executive_transfer">
-                                                <i class="fas fa-solid fa-car-side" style="color: #009ef6; font-size: 20px;"></i>   
-                                                TRASLADO EJECUTIVO
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check form-check-custom form-check-solid mt-5">
-                                            {{ form.encomienda }}
-                                            <!-- <input class="form-check-input" type="checkbox" value="" id="id_encomienda"  name="encomienda"/> -->
-                                            <label class="form-check-label" for="id_encomienda">
-                                                <i class="fas fa-solid fa-dolly" style="color: #009ef6; font-size: 20px;"></i>
-                                                ENCOMIENDA
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check form-check-custom form-check-solid mt-5">
-                                            {{ form.driver }}
-                                            <!-- <input class="form-check-input" type="checkbox" value="" id="id_driver"  name="driver"/> -->
-                                            <label class="form-check-label" for="id_driver">
-                                                <i class="fas fa-solid fa-user"  style="color: #009ef6; font-size: 20px;"></i>
-                                                CONDUCTOR
-                                            </label>
-                                        </div>
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <div id="kt_content_container" class="container-xxl">
+        <div class="card mb-5 mb-xxl-12">
+            <div class="card-body">
+                <div class="col-md-12 text-center pb-0">
+                    <h1 class="display-4">Detalles del Traslado</h1>
+                </div>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">General</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="route-tab" data-bs-toggle="tab" data-bs-target="#route" type="button" role="tab" aria-controls="route" aria-selected="false">Ruta</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="payment" aria-selected="false">Pago</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="driver-tab" data-bs-toggle="tab" data-bs-target="#driver" type="button" role="tab" aria-controls="driver" aria-selected="false">Conductor</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="map-tab" data-bs-toggle="tab" data-bs-target="#map-tab-content" type="button" role="tab" aria-controls="map-tab-content" aria-selected="false">Mapa</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+                        <div class="row mb-10 pt-9">
+                            <div class="col-md-4 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-calendar-alt"></i> Fecha del traslado</h5>
+                                        <p class="card-text">{{ detail.date|date:"Y-m-d" }}</p>
                                     </div>
                                 </div>
-                                <div class="mt-8 col-md-12">
-                                    <h3>
-                                        <i class="fas fa-solid fa-users" style="color: #009ef6; font-size: 20px;"></i> Lista de personas para el traslado:
-                                    </h3>
-                                </div>
-                                <div class="mt-5 col-md-6">
-                                    <label class="form-label" for="id_person_to_transfer">Persona(s):</label>
-                                    <!-- <input type="text" class="form-control" id="id_person_to_transfer" name="person_to_transfer"/> -->
-                                     <!-- {{ form.person_to_transfer }} -->
-                                    <select class="form-select" aria-label="seleccione" multiple  id="id_person_to_transfer" name="person_to_transfer" required disabled>
-                                        <option disabled>Lista de personas añadidas</option>
-                                        {% for person in detail.person_to_transfer.all %}
-                                        <option selected>{{person.name}} {{ person.company }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="mt-5 col-md-6">
-                                </div>
-                                <div class="row mb-5">
-                                    
-                                <div class="mt-8 col-md-12">
-                                    <h3><i class="fas fa-solid fa-road" style="color: #009ef6; font-size: 20px;"></i> Salida/Destino(s):</h3>
-                                </div>
-                                    <!-- <div class="col-md-6">
-                                        <div class="form-check form-check-custom form-check-solid mt-5">
-                                            <input class="form-check-input" type="checkbox" value="" id="id_in_town"  name="in_town"/>
-                                            <label class="form-check-label" for="id_in_town">
-                                                ¿ Salida no existente ? Agrega tu salida
-                                            </label>
-                                        </div>
-                                    </div> -->
-                                    <div class="col-md-4">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check form-check-custom form-check-solid mt-5">
-                                            <input class="form-check-input" type="checkbox" id="id_fly_checkbox"  name="fly_checkbox"/>
-                                            <label class="form-check-label text-dark" for="id_fly_checkbox">
-                                                <i class="fas fa-solid fa-plane-departure"  style="color: #009ef6; font-size: 20px;"></i>
-                                                ¿TU TRASLADO ES HACIA UN AEROPUERTO?
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                    </div>
-                                </div>
-
-                                <div class="row d-none mt-5" id="fly_div">
-                                    <div class="mt-8 col-md-12">
-                                        <h3>Datos del vuelo de origen:</h3>
-                                    </div>
-                                    <div class="mt-5 col-md-4">
-                                        <label class="form-label" for="id_airline">Nombre de la Aerolínea:</label>
-                                        {{ form.airline }}
-                                        <!-- <input type="text" class="form-control" id="id_airline" name="airline" /> -->
-                                    </div>
-                                    <div class="mt-5 col-md-4">
-                                        <label class="form-label" for="id_flight">Nro de Vuelo:</label>
-                                        {{ form.flight }}
-                                        <!-- <input type="text" class="form-control" id="id_flight" name="flight" /> -->
-                                    </div>
-                                    <div class="mt-5 col-md-4">
-                                        <label class="form-label" for="id_route_fly">Vuelo proveniente:</label>
-                                        {{ form.route_fly }}
-                                        <!-- <input type="text" class="form-control" id="id_route_fly" name="route_fly" /> -->
-                                    </div>
-                                    <div class="mt-5 col-md-6">
-                                    </div>
-                                </div>
-                                
-                                <div class="mt-8 col-md-12">
-                                    <h3>Ruta:</h3>
-                                </div>
-                                <div class="mt-5 col-md-4">
-                                    <label class="form-label" for="id_departure_site_route">Seleccione punto de salida:</label>
-                                    <select class="form-select" aria-label="Seleccione un punto de origen" name="departure_site_route" id="id_departure_site_route" required>
-                                            <option value="{{ detail.departure_site_route }}">{{ detail.departure_site_route }}</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="mt-5 col-md-4">
-                                    <label class="form-label" for="id_route">Dirección exacta del punto de salida:</label>
-                                    <input class="form-control" type="text" name="destination_direc" id="id_destination_direc" value="{{ detail.destination_direc }}" disabled>
-                                </div>
-                                
-                                <div class="mt-5 col-md-4">
-                                    <label class="form-label" for="id_route">Punto de referencia:</label>
-                                    <input class="form-control" type="text" name="departure_landmark" id="id_departure_landmark" value="{{ detail.departure_landmark }}" disabled>
-                                </div>
-
-                                <div class="mt-5 col-md-4">
-                                    <label class="form-label" for="id_destination_route">Destino:</label>
-                                    <select class="form-select" aria-label="Seleccione un punto de origen" name="destination_route" id="id_destination_route" required>
-                                        <option value="{{ detail.destination_route }}" selected disabled>{{ detail.destination_route }}</option>
-                                    </select>
-                                </div>
-                                <div class="mt-5 col-md-4">
-                                    <label class="form-label" for="id_route">Dirección exacta del destino:</label>
-                                    
-                                    <input class="form-control" type="text" name="departure_direc" id="id_departure_direc" value="{{ detail.departure_direc }}" disabled>
-                                </div>
-                                <div class="mt-5 col-md-4">
-                                    <label class="form-label" for="id_route">Punto de referencia:</label>
-                                    
-                                    <input class="form-control" type="text" name="destination_landmark" id="id_destination_landmark" value="{{ detail.destination_landmark }}" disabled>
-                                </div>
-
-                                
-                                
-                                <div class="mt-8 col-md-12">
-                                    <h3>¿Necesitas desvíos?</h3>
-                                </div>
-                                <div class="col-md-4 mt-2">
-                                    <button type="button" id="addWaypointBtn" class="btn btn-success btn-hover-rotate-end" >Añadir desvío</button>
-                                    <!-- btn btn-primary btn-hover-rotate-end mt-5 -->
-                                    <div id="waypointsContainer" class="mt-3">
-                                        {% for desvio in desviations %}
-                                            <div class="waypoint-div" data-index="{{ desvio.waypoint_number }}">
-                                                <div class="mt-8 col-md-12">
-                                                    <h3>Desvío #{{ desvio.waypoint_number }}</h3>
-                                                </div>
-                                                <input class="form-control" type="text" waypoint="true" placeholder="Ingrese desvío" value="{{ desvio.desviation_direc }}">
-                                                <input type="hidden" id="id_lat_{{ desvio.waypoint_number }}" name="lat_{{ desvio.waypoint_number }}" value="{{ desvio.lat }}">
-                                                <input type="hidden" id="id_long_{{ desvio.waypoint_number }}" name="lng_{{ desvio.waypoint_number }}" value="{{ desvio.long }}">
-                                                <button type="button" class="btn btn-danger mt-3" onclick="removeWaypointMarker({{ desvio.waypoint_number }})">Eliminar</button>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-
-                                
-                                <div id="map" style="height: 400px;" class="mt-xl-4">
-
-                                </div>
-                                
-                                <div class="">
-                                    {{ form.lat_1 }}
-                                    {{ form.long_1 }}
-                                    {{ form.lat_2 }}
-                                    {{ form.long_2 }}
-                                    {{ form.deviation }}
-                                    <input type="hidden" name="waypoints_numbers" id="id_waypoints_numbers" placeholder="">
-                                </div>
-
-                                <div class="mt-5 col-md-12">
-                                    <label class="form-label" for="id_payment_method">Método de Pago:</label>
-                                    
-                                    <select class="form-select" id="id_payment_method" name="payment_method" required>
-                                        <option disabled selected>{{ detail.get_payment_method_display }}</option>
-                                    </select>
-                                </div>
-
-                                <div class="row d-none" id="data_required">
-                                    
-                                    <div class="mt-8 col-md-12">
-                                        <h3>Métodos de Pago:</h3>
-                                    </div>
-                                    
-                                    <div class="mt-5 col-md-6">
-                                        <label class="form-label" for="id_ceco_grafo_pedido">CECO/GRAFO/PEDIDO::</label>
-                                        <input type="text" class="form-control" id="id_ceco_grafo_pedido" name="ceco_grafo_pedido" />
-                                    </div>
-                                    <div class="mt-5 col-md-6">
-                                        <label class="form-label" for="id_division">División:</label>
-                                        <input type="text" class="form-control" id="id_division" name="division" >
-                                    </div>
-                                </div>
-                                
-                                <div class="mt-5 col-md-12">
-                                    <label class="form-label" for="">Conductor:</label>
-                                    {% if detail.user_driver %}
-                                        {{ detail.user_driver }}
-                                    {% else %}
-                                        No hay condcutor asignado
-                                    {% endif %}
-                                </div>
-
-                                <div id="rates_div" class="row">
-                                    
-                                    <div class="mt-5 col-md-6">
-                                        <label class="btn btn-outline btn-outline-dashed btn-outline-default p-7 d-flex align-items-center mb-5" for="">
-                                            <svg class="svg-icon svg-icon-4x me-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="60" height="60" >
-                                                    <path d="M312 24V34.5c6.4 1.2 12.6 2.7 18.2 4.2c12.8 3.4 20.4 16.6 17 29.4s-16.6 20.4-29.4 17c-10.9-2.9-21.1-4.9-30.2-5c-7.3-.1-14.7 1.7-19.4 4.4c-2.1 1.3-3.1 2.4-3.5 3c-.3 .5-.7 1.2-.7 2.8c0 .3 0 .5 0 .6c.2 .2 .9 1.2 3.3 2.6c5.8 3.5 14.4 6.2 27.4 10.1l.9 .3c11.1 3.3 25.9 7.8 37.9 15.3c13.7 8.6 26.1 22.9 26.4 44.9c.3 22.5-11.4 38.9-26.7 48.5c-6.7 4.1-13.9 7-21.3 8.8V232c0 13.3-10.7 24-24 24s-24-10.7-24-24V220.6c-9.5-2.3-18.2-5.3-25.6-7.8c-2.1-.7-4.1-1.4-6-2c-12.6-4.2-19.4-17.8-15.2-30.4s17.8-19.4 30.4-15.2c2.6 .9 5 1.7 7.3 2.5c13.6 4.6 23.4 7.9 33.9 8.3c8 .3 15.1-1.6 19.2-4.1c1.9-1.2 2.8-2.2 3.2-2.9c.4-.6 .9-1.8 .8-4.1l0-.2c0-1 0-2.1-4-4.6c-5.7-3.6-14.3-6.4-27.1-10.3l-1.9-.6c-10.8-3.2-25-7.5-36.4-14.4c-13.5-8.1-26.5-22-26.6-44.1c-.1-22.9 12.9-38.6 27.7-47.4c6.4-3.8 13.3-6.4 20.2-8.2V24c0-13.3 10.7-24 24-24s24 10.7 24 24zM568.2 336.3c13.1 17.8 9.3 42.8-8.5 55.9L433.1 485.5c-23.4 17.2-51.6 26.5-80.7 26.5H192 32c-17.7 0-32-14.3-32-32V416c0-17.7 14.3-32 32-32H68.8l44.9-36c22.7-18.2 50.9-28 80-28H272h16 64c17.7 0 32 14.3 32 32s-14.3 32-32 32H288 272c-8.8 0-16 7.2-16 16s7.2 16 16 16H392.6l119.7-88.2c17.8-13.1 42.8-9.3 55.9 8.5zM193.6 384l0 0-.9 0c.3 0 .6 0 .9 0z"/>
-                                            </svg>
-                                            <span class="d-block fw-bold text-start">
-                                                <span class="text-dark fw-bolder d-block fs-3">
-                                                    Tarifa
-                                                </span>
-                                                <span class="text-dark">{{ detail.rate.route.route_name|title }}</span> <br>
-                                                <span class="text-dark">Precio Base: </span> <span style="color:green">{{ detail.rate.price }}$</span><br>
-                                                <span class="text-dark">Precio de espera por hora (diurna) C/U: </span> <span style="color:green">{{ detail.rate.daytime_waiting_time }}$<br>
-                                                <span class="text-dark">Precio de espera por hora (noctura) C/U: </span> <span style="color:green">{{ detail.rate.nightly_waiting_time }}$</span><br>
-                                                <span class="text-dark">Precio por desvio local C/U: </span> <span style="color:green">{{ detail.rate.detour_local }}$</span><br>
-                                            </br>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="mt-5 col-md-12">
-                                    <div class="col-md-12">
-                                        <h3>Observaciones:</h3>
-                                    </div>
-                                    {{ form.observations }}
-                                </div>
-                                
-                                <input type="hidden" name="status" id="status" value="{{form.instance.status}}">
-
                             </div>
-                        </form>
+                            <div class="col-md-4 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-clock"></i> Hora del traslado</h5>
+                                        <p class="card-text">{{ detail.hour }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-exchange-alt"></i> Ida y Vuelta</h5>
+                                        {% if detail.is_round_trip %}
+                                        Si
+                                        {%  else %}
+                                        No
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-car-side"></i> Tipo de servicio</h5>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-check form-check-custom form-check-solid mt-5">
+                                                    <input class="form-check-input" type="checkbox" {% if detail.executive_transfer %}checked{% endif %} disabled />
+                                                    <label class="form-check-label">TRASLADO EJECUTIVO</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check form-check-custom form-check-solid mt-5">
+                                                    <input class="form-check-input" type="checkbox" {% if detail.encomienda %}checked{% endif %} disabled />
+                                                    <label class="form-check-label">ENCOMIENDA</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check form-check-custom form-check-solid mt-5">
+                                                    <input class="form-check-input" type="checkbox" {% if detail.driver %}checked{% endif %} disabled />
+                                                    <label class="form-check-label">CONDUCTOR</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-users"></i> Lista de personas para el traslado</h5>
+                                        <ul class="list-group">
+                                            {% for person in detail.person_to_transfer.all %}
+                                            <li class="list-group-item">{{ person.name }} {{ person.company }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="route" role="tabpanel" aria-labelledby="route-tab">
+                        <div class="row mb-10 pt-9">
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-road"></i> Salida/Destino(s)</h5>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Seleccione punto de salida:</label>
+                                                <p class="form-control-plaintext">{{ detail.departure_site_route }}</p>
+                                            </div>
+                                            <div class="col-md4">
+                                                <label class="form-label">Dirección exacta del punto de salida:</label>
+                                                <p class="form-control-plaintext">{{ detail.departure_direc }}</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Punto de referencia:</label>
+                                                <p class="form-control-plaintext">{{ detail.departure_landmark }}</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Destino:</label>
+                                                <p class="form-control-plaintext">{{ detail.destination_route }}</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Dirección exacta del destino:</label>
+                                                <p class="form-control-plaintext">{{ detail.destination_direc }}</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Punto de referencia:</label>
+                                                <p class="form-control-plaintext">{{ detail.destination_landmark }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if detail.fly_checkbox %}
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-plane"></i> Información del Vuelo</h5>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Aerolínea:</label>
+                                                <p class="form-control-plaintext">{{ detail.airline }}</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Vuelo:</label>
+                                                <p class="form-control-plaintext">{{ detail.flight }}</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Ruta de vuelo:</label>
+                                                <p class="form-control-plaintext">{{ detail.route_fly }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-random"></i> Desvíos</h5>
+                                        {% if detail.deviation.all %}
+                                        <div id="waypointsContainer" class="mt-3">
+                                            {% for desvio in detail.deviation.all %}
+                                            <div class="waypoint-div">
+                                                <h6>Desvío #{{ desvio.waypoint_number }}</h6>
+                                                <p class="form-control-plaintext">{{ desvio.desviation_direc }}</p>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        <p>No hay desvíos.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="payment" role="tabpanel" aria-labelledby="payment-tab">
+                        <div class="row mb-10 pt-9">
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-credit-card"></i> Método de Pago</h5>
+                                        <p class="card-text">{{ detail.get_payment_method_display }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-dollar-sign"></i> Tarifa</h5>
+                                        <p class="card-text">
+                                            <span class="text-dark">{{ detail.rate.route.route_name|title }}</span> <br>
+                                            <span class="text-dark">Precio Base: </span> <span style="color:green">{{ detail.rate.price }}$</span><br>
+                                            <span class="text-dark">Precio de espera por hora (diurna) C/U: </span> <span style="color:green">{{ detail.rate.daytime_waiting_time }}$<br>
+                                            <span class="text-dark">Precio de espera por hora (noctura) C/U: </span> <span style="color:green">{{ detail.rate.nightly_waiting_time }}$</span><br>
+                                            <span class="text-dark">Precio por desvio local C/U: </span> <span style="color:green">{{ detail.rate.detour_local }}$</span><br>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="driver" role="tabpanel" aria-labelledby="driver-tab">
+                        <div class="row mb-10 pt-9">
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-user"></i> Conductor</h5>
+                                        <p class="card-text">
+                                            {% if detail.user_driver %}
+                                                {{ detail.user_driver }}
+                                            {% else %}
+                                                No hay conductor asignado
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-sticky-note"></i> Observaciones</h5>
+                                        <p class="card-text">{{ detail.observations }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="map-tab-content" role="tabpanel" aria-labelledby="map-tab">
+                        <div class="row mb-10 pt-9">
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-map"></i> Mapa del recorrido</h5>
+                                        <div id="map" style="height: 400px;"></div>
+                                        <!-- Hidden fields for map functionality -->
+                                        <div class="d-none">
+                                            <select class="form-select" aria-label="Seleccione un punto de origen" name="departure_site_route" id="id_departure_site_route" required>
+                                                <option value="{{ detail.departure_site_route }}">{{ detail.departure_site_route }}</option>
+                                            </select>
+                                            <input class="form-control" type="text" name="destination_direc" id="id_destination_direc" value="{{ detail.destination_direc }}" disabled />
+                                            <select class="form-select" aria-label="Seleccione un punto de origen" name="destination_route" id="id_destination_route" required>
+                                                <option value="{{ detail.destination_route }}" selected disabled>{{ detail.destination_route }}</option>
+                                            </select>
+                                            <input class="form-control" type="text" name="departure_direc" id="id_departure_direc" value="{{ detail.departure_direc }}" disabled />
+                                            <div id="waypointsContainer" class="mt-3">
+                                                {% for desvio in desviations %}
+                                                <div class="waypoint-div" data-index="{{ desvio.waypoint_number }}">
+                                                    <input class="form-control" type="text" waypoint="true" placeholder="Ingrese desvío" value="{{ desvio.desviation_direc }}" />
+                                                    <input type="hidden" id="id_lat_{{ desvio.waypoint_number }}" name="lat_{{ desvio.waypoint_number }}" value="{{ desvio.lat }}" />
+                                                    <input type="hidden" id="id_long_{{ desvio.waypoint_number }}" name="lng_{{ desvio.waypoint_number }}" value="{{ desvio.long }}" />
+                                                    <button type="button" class="btn btn-danger mt-3" onclick="removeWaypointMarker({{ desvio.waypoint_number }})">Eliminar</button>
+                                                </div>
+                                                {% endfor %}
+                                                {{ form.lat_1 }} {{ form.long_1 }} {{ form.lat_2 }} {{ form.long_2 }} {{ form.deviation }}
+                                                <input type="hidden" name="waypoints_numbers" id="id_waypoints_numbers" placeholder="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!--end::Navbar-->
         </div>
-        <!--end::Container-->
+        <!--end::Navbar-->
     </div>
+    <!--end::Container-->
+</div>
+{% endblock content %}
 
-{% endblock content %} 
-
-{% block extra_js %} 
-
+{% block extra_js %}
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>
 <script src="{% static 'transfer_form.js' %}"></script>
-<script>
-let executive_transfer = '{{ detail.executive_transfer }}'
-let encomienda = '{{ detail.encomienda }}'
-let driver = '{{ detail.driver }}'
-let in_town = '{{ detail.in_town }}'
-let outside_town = '{{ detail.outside_town }}'
-let full_day = '{{ detail.full_day }}'
-let half_day = '{{ detail.half_day }}'
-
-if( executive_transfer === 'True' ){
-    $('#id_executive_transfer').attr('checked', true)
-}
-if( encomienda === 'True' ){
-    $('#id_encomienda').attr('checked', true)
-}
-
-if( driver === 'True' ){
-    $('#id_driver').attr('checked', true)
-}
-
-if( in_town === 'True' ){
-    $('#id_in_town').attr('checked', true)
-}
-
-if( outside_town === 'True' ){
-    $('#id_outside_town').attr('checked', true)
-}
-
-if(full_day  === 'True' ){
-    $('#id_full_day').attr('checked', true)
-}
-
-if(half_day  === 'True' ){
-    $('#id_half_day').attr('checked', true)
-}
-</script>
 {% endblock extra_js %}

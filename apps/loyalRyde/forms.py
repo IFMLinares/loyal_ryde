@@ -51,6 +51,7 @@ class TransferRequestForm(ModelForm):
             'is_round_trip': CheckboxInput(),
             'id_fly_checkbox': CheckboxInput(),
             'person_to_transfer': SelectMultiple(),
+            'rate': Select(attrs={'class': 'form-control'}),
             # 'destination_direc': TextInput(attrs={'autocomplete': 'off'}),
             # 'departure_direc': TextInput(attrs={'autocomplete': 'off'})
         }

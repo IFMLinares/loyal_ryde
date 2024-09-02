@@ -278,9 +278,14 @@
                                 </div>
                                 <div class="mt-5 col-md-6 d-none" id="discounted_price_container">
                                     <label class="form-label" for="id_discounted_price">Precio con Descuento:</label>
-                                    <input type="text" class="form-control" id="id_discounted_price" name="discounted_price" readonly value="{{ form.instance.discounted_price }}">
+                                    <input type="text" class="form-control" id="id_discounted_price" name="discounted_price" readonly value="0">
                                 </div>
-
+                                <select class="form-select" name="rate" id="id_rate">
+                                    <option disabled selected>Seleccione una tarifa</option>
+                                    {% for rates in rates_list %}
+                                        <option value="{{ rates.id }}">{{ rates }}</option>
+                                    {% endfor %}
+                                </select>
                                 
 
                                 <div class="mt-5 col-md-12">
@@ -393,7 +398,7 @@ $(document).ready(function () {
         const arrivalId = $("#id_destination_route").val();
         const nro = $('#id_person_to_transfer option:selected').length;
         $.ajax({
-            url: "{% url 'core:rates_ajax' %}",  // URL de la vista Django
+        url: "{% url 'core:rates_ajax' %}",  // URL de la vista Django
             type: "GET",
             data: {
                 departure_id: departureId,
@@ -415,7 +420,7 @@ $(document).ready(function () {
                                 </svg>
                                 <span class="d-block fw-bold text-start">
                                     <span class="text-dark fw-bolder d-block fs-3">
-                                        <input type="radio" class="form-check-input rate-radio" name="rate" value="${tarifa.rate_price}" data-round-trip-price="${tarifa.rate_price_round_trip}" required/> Tarifa ${tarifa.rate_id}: ${tarifa.rate_vehicle}
+                                        <input type="radio" class="form-check-input rate-radio" name="rate-checkbox" value="${tarifa.rate_price}" data-rate-id="${tarifa.rate_id}" data-round-trip-price="${tarifa.rate_price_round_trip}" required/> Tarifa ${tarifa.rate_id}: ${tarifa.rate_vehicle}
                                     </span>
                                     <span class="text-dark">${tarifa.rate_route}</span> <br>
                                     <span class="text-dark">Tipo de Vehiculo: ${tarifa.rate_vehicle}</span><br>
@@ -436,6 +441,7 @@ $(document).ready(function () {
                 // Añadir evento para actualizar el precio con la tarifa seleccionada
                 $(".rate-radio").change(function () {
                     updatePrice();
+                    updateSelectRate($(this).data("rate-id"));
                 });
 
                 // Añadir evento para actualizar el precio cuando se cambia el checkbox de ida y vuelta
@@ -445,7 +451,7 @@ $(document).ready(function () {
 
                 // Función para actualizar el precio
                 function updatePrice() {
-                    const selectedRate = $("input[name='rate']:checked");
+                    const selectedRate = $("input[name='rate-checkbox']:checked");
                     if (selectedRate.length > 0) {
                         const selectedPrice = selectedRate.val();
                         const roundTripPrice = selectedRate.data("round-trip-price");
@@ -466,6 +472,11 @@ $(document).ready(function () {
                         }
                     }
                 }
+
+                // Función para actualizar el campo select con la tarifa seleccionada
+                function updateSelectRate(rateId) {
+                    $("#id_rate").val(rateId);
+                }
             },
             error: function () {
                 // Maneja el error si no se encuentra una tarifa
@@ -473,6 +484,7 @@ $(document).ready(function () {
                 $("#precio_ida_vuelta").text("No disponible");
             }
         });
+
     });
 
     // Añadir evento para actualizar el precio cuando se cambia el checkbox de ida y vuelta

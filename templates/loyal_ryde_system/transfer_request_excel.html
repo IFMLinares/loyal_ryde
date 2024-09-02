@@ -21,19 +21,16 @@
                             <thead>
                                 <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
                                     <th>Fecha</th>
-                                    <th>Dia</th>
                                     <th>Hora</th>
-                                    <th>Pasajero</th>
+                                    <!-- <th>Pasajero</th> -->
                                     <th>Origen</th>
                                     <th>Destino</th>
-                                    <th>Descripcion</th>
-                                    <th>MONTO TRASLADO INICIAL US$</th>
-                                    <th>Horas Espera Cant</th>
-                                    <th>Horas Espera Monto US$</th>
-                                    <th>Desvios/Traslados Cant</th>
-                                    <th>Desvios/Traslados Monto US$</th>
-                                    <th>Lugar</th>
-                                    <th>Total Monto Traslado US$</th>
+                                    <!-- <th>Descripcion</th> -->
+                                    <th>Monto base $</th>
+                                    <th>Tiempo de espera</th>
+                                    <th>Desvios</th>
+                                    <!-- <th>Lugar</th> -->
+                                    <th>Monto total $</th>
                                     <th>GRAFO/CECO</th>
                                     <th>Solicitante</th>
                                 </tr>
@@ -42,21 +39,18 @@
                                 {% for transfer_request in transfer_requests %}
                                     <tr>
                                         <td class="text-center">{{ transfer_request.date|date:'d/m/Y' }}</td>
-                                        <td class="text-center">{{ transfer_request.date|date:'l' }}</td>
                                         <td class="text-center">{{ transfer_request.hour|date:'G:i' }}</td>
-                                        <td class="text-center">{{ transfer_request.passenger.name }}</td>
+                                        <!-- <td class="text-center">{{ transfer_request.passenger.name }}</td> -->
                                         <td class="text-center">{{ transfer_request.departure_site_route }}</td>
                                         <td class="text-center">{{ transfer_request.destination_route }}</td>
-                                        <td class="text-center">{{ transfer_request.description }}</td>
-                                        <td class="text-center">{{ transfer_request.initial_transfer_amount }}</td>
+                                        <!-- <td class="text-center">{{ transfer_request.description }}</td> -->
                                         <td class="text-center">{{ transfer_request.waiting_hours_count }}</td>
                                         <td class="text-center">{{ transfer_request.waiting_hours_amount }}</td>
                                         <td class="text-center">{{ transfer_request.diversions_count }}</td>
-                                        <td class="text-center">{{ transfer_request.diversions_amount }}</td>
-                                        <td class="text-center">{{ transfer_request.diversion_place }}</td>
+                                        <!-- <td class="text-center">{{ transfer_request.diversion_place }}</td> -->
                                         <td class="text-center">{{ transfer_request.total_transfer_amount }}</td>
                                         <td class="text-center">{{ transfer_request.grafo_ceco }}</td>
-                                        <td class="text-center">{{ transfer_request.service_requested.username }}</td>
+                                        <td class="text-center">{{ transfer_request.service_requested.company.name }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

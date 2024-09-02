@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,7 +13,7 @@ from django.utils.crypto import get_random_string
 from rest_framework import status
 
 from ..loyalRyde.models import CustomUser, CustomUserDriver,TransferStop, Desviation, TransferRequest, OTPCode
-from .serializers import UserSerializers, CustomUserDriverSerializer,TransferStopSerializer, DesviationSerializer
+from .serializers import UserSerializers, CustomUserDriverSerializer,TransferStopSerializer, DesviationSerializer,TransferRequestSerializer
 
 class UserView(APIView):
 
@@ -120,7 +121,6 @@ class SendOTPView(APIView):
             return Response({"message": "OTP code sent to your email."}, status=status.HTTP_200_OK)
         return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
     
-
 class ValidateOTPView(APIView):
     def post(self, request, format=None):
         email = request.data.get('email')
@@ -133,7 +133,6 @@ class ValidateOTPView(APIView):
                 return Response({"message": "OTP code is valid."}, status=status.HTTP_200_OK)
             return Response({"error": "Invalid OTP code."}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class ChangePasswordView(APIView):
     def post(self, request, format=None):
@@ -151,3 +150,39 @@ class ChangePasswordView(APIView):
                 return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
             return Response({"error": "Invalid OTP code."}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+    
+class CustomUserDriverImageUploadView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, format=None):
+        user_driver_id = request.data.get('user_driver_id')
+        user_driver = get_object_or_404(CustomUserDriver, id=user_driver_id)
+        
+        serializer = CustomUserDriverSerializer(user_driver, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class UserTransferRequestsView(APIView):
+    def post(self, request, format=None):
+        user_id = request.data.get('user_id')
+        if not user_id:
+            return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get the CustomUser object
+        user = get_object_or_404(CustomUser, id=user_id)
+        # print(f"User found: {user}")
+
+        # Get the CustomUserDriver object associated with the CustomUser
+        user_driver = get_object_or_404(CustomUserDriver, user=user)
+        # print(f"UserDriver found: {user_driver}")
+
+        # Get all TransferRequest objects where the driver is the CustomUserDriver
+        transfer_requests = TransferRequest.objects.filter(user_driver=user_driver)
+        # print(f"TransferRequests found: {transfer_requests}")
+
+        # Serialize the TransferRequest objects
+        serializer = TransferRequestSerializer(transfer_requests, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)

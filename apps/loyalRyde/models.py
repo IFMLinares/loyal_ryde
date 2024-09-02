@@ -124,6 +124,7 @@ class CustomUserDriver(models.Model):
     passengers_numbers = models.IntegerField(verbose_name="Número maximo de Pasajeros", blank=True, null=True)
     type = models.ForeignKey(FleetType, on_delete=models.CASCADE, verbose_name="Tipo de vehiculo")
     image = models.ImageField(upload_to='driver/', blank=True, null=True, verbose_name="Foto")
+    license = models.ImageField(upload_to='driver/', blank=True, null=True, verbose_name="Foto")
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}. Telefono: {self.user.phone} . {self.marca} {self.model} {self.color} {self.plaque}. "
@@ -326,7 +327,7 @@ class TransferRequest(models.Model):
     discount_coupon = models.ForeignKey(DiscountCoupon, on_delete=models.SET_NULL, null=True, blank=True)
     is_round_trip = models.BooleanField(default=False, verbose_name="Ida y Vuelta")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio", default=0.00)
-    discounted_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio con Descuento", default=0.00)
+    discounted_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio con Descuento", default=0, blank=True, null=True)
     discount_coupon = models.ForeignKey(DiscountCoupon, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Cupón de Descuento")
 
     def apply_discount(self):
@@ -412,3 +413,4 @@ class TransferRequest(models.Model):
     class Meta:
         verbose_name = 'Solicitud de traslado'
         verbose_name_plural = 'Solicitudes de traslado'
+        ordering = ["-date_created"]

@@ -17,4 +17,6 @@ urlpatterns = [
     path('send-otp/', SendOTPView.as_view(), name='send_otp'),
     path('validate-otp/', ValidateOTPView.as_view(), name='validate_otp'),
     path('change-password/', ChangePasswordView.as_view(), name='change_password'),
+    path('upload-driver-image/', CustomUserDriverImageUploadView.as_view(), name='upload-driver-image'),
+    path('user-transfer-requests/', UserTransferRequestsView.as_view(), name='user-transfer-requests'),
 ]

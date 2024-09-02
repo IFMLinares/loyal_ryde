@@ -115,37 +115,39 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('core:transfer_request_list')
 
     def form_valid(self, form):
-        transfer_request = form.save(commit=False)
-        rate = Rates.objects.get(id=form.cleaned_data['rate'])
-        if form.cleaned_data['is_round_trip']:
-            transfer_request.price = rate.driver_price_round_trip
-        else:
-            transfer_request.price = rate.driver_price
-
-        coupon = form.cleaned_data.get('discount_code')
-        if coupon:
-            if coupon.discount_type == 'percentage':
-                discount = transfer_request.price * (coupon.discount_value / 100)
+            transfer_request = form.save(commit=False)
+            rate_id = form.cleaned_data['rate'].id  # Asegúrate de obtener el ID del objeto Rates
+            rate = Rates.objects.get(id=rate_id)
+            if form.cleaned_data['is_round_trip']:
+                transfer_request.price = rate.price_round_trip
             else:
-                discount = coupon.discount_value
-            transfer_request.discounted_price = transfer_request.price - discount
-            transfer_request.discount_coupon = coupon
-        else:
-            transfer_request.discounted_price = transfer_request.price
+                transfer_request.price = rate.price
 
-        transfer_request.save()
-        return super().form_valid(form)
+            coupon = form.cleaned_data.get('discount_code')
+            if coupon:
+                if coupon.discount_type == 'percentage':
+                    discount = transfer_request.price * (coupon.discount_value / 100)
+                else:
+                    discount = coupon.discount_value
+                transfer_request.discounted_price = transfer_request.price - discount
+                transfer_request.discount_coupon = coupon
+            else:
+                transfer_request.discounted_price = transfer_request.price
 
+            transfer_request.save()
+            return super().form_valid(form)
     def post(self, request, *args, **kwargs):
+        
+        print(request.POST)
         # Obtén la fecha directamente del POST
         fecha = request.POST.get('date')
 
         # Convierte la fecha al formato que Django espera
         fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
-
         # Actualiza la fecha en los datos del POST
         request.POST = request.POST.copy()
         request.POST['date'] = fecha
+        print(request.POST)
 
         # Llama al método post original para guardar el TransferRequest
         response = super().post(request, *args, **kwargs)
@@ -177,13 +179,10 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
         departure_points = DeparturePoint.objects.all()
+        context['rates_list'] = Rates.objects.all()
         context['departure'] = departure_points
         return context
     
-    def get_form(self, form_class=None):
-            form = super().get_form(form_class)
-            form.exclude_user_driver(self.request.user)
-            return form
 
 # agregar traslado (modo invitado)
 class GuestTransferCreateView(CreateView):
@@ -241,8 +240,6 @@ class TransferRequestDetailview(LoginRequiredMixin, DetailView):
         context['departure'] = departure_points
         context['desviations'] = self.object.deviation.all()
         return context
-
-        return super().post(request, *args, **kwargs)
 
 class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
     model = TransferRequest
