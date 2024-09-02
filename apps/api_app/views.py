@@ -13,7 +13,7 @@ from django.utils.crypto import get_random_string
 from rest_framework import status
 
 from ..loyalRyde.models import CustomUser, CustomUserDriver,TransferStop, Desviation, TransferRequest, OTPCode
-from .serializers import UserSerializers, CustomUserDriverSerializer,TransferStopSerializer, DesviationSerializer,TransferRequestSerializer
+from .serializers import UserSerializers, CustomUserDriverSerializer,TransferStopSerializer, DesviationSerializer,TransferRequestSerializer,TransferRequestStatusUpdateSerializer
 
 class UserView(APIView):
 
@@ -186,3 +186,17 @@ class UserTransferRequestsView(APIView):
         serializer = TransferRequestSerializer(transfer_requests, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class UpdateTransferRequestStatusView(APIView):
+    def post(self, request, format=None):
+        serializer = TransferRequestStatusUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            transfer_request_id = serializer.validated_data['id']
+            new_status = serializer.validated_data['status']
+
+            transfer_request = get_object_or_404(TransferRequest, id=transfer_request_id)
+            transfer_request.status = new_status
+            transfer_request.save()
+
+            return Response({"id": transfer_request.id, "status": transfer_request.status}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

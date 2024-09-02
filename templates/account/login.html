@@ -14,8 +14,8 @@
 								<h1 class="text-dark mb-3">Inicia sesión en Loyal Ride</h1>
 								<!--end::Title-->
 								<!--begin::Link-->
-								<div class="text-gray-400 fw-bold fs-4">No tienes cuenta?
-								<a href="#" class="link-primary fw-bolder">Crear una cuenta</a></div>
+								<!-- <div class="text-gray-400 fw-bold fs-4">No tienes cuenta?
+								<a href="#" class="link-primary fw-bolder">Crear una cuenta</a></div> -->
 								<!--end::Link-->
 							</div>
 							<!--begin::Heading-->
@@ -37,7 +37,7 @@
 									<label class="form-label fw-bolder text-dark fs-6 mb-0">Contraseña</label>
 									<!--end::Label-->
 									<!--begin::Link-->
-									<a href="../../demo1/dist/authentication/layouts/dark/password-reset.html" class="link-primary fs-6 fw-bolder">Olvidaste tu contraseña?</a>
+									<a href="{% url 'account_reset_password' %}" class="link-primary fs-6 fw-bolder">Olvidaste tu contraseña?</a>
 									<!--end::Link-->
 								</div>
 								<!--end::Wrapper-->

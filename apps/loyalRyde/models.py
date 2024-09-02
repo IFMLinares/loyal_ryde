@@ -20,15 +20,6 @@ payment_method_choices = [
         (3, 'TARJETA DE CRÉDITO'),
     ]
 
-STATUS_CHOICES = [
-        ('esperando validación', 'Esperando Validación'),
-        ('validada', 'Validada'),
-        ('aprobada', 'Aprobada'),
-        ('en proceso', 'En Proceso'),
-        ('finalizada', 'Finalizada'),
-        ('cancelada', 'Cancelada'),
-    ]
-
 TYPES_CHOICES = [
     ('Traslado Ejecutivo', 'Traslado Ejecutivo'),
     ('Encomienda', 'Encomienda'),
@@ -286,6 +277,16 @@ class Desviation(models.Model):
         return f"{self.id}-{self.desviation_number}-{self.waypoint_number}"
 
 class TransferRequest(models.Model):
+    
+    STATUS_CHOICES = [
+            ('esperando validación', 'Esperando Validación'),
+            ('validada', 'Validada'),
+            ('aprobada', 'Aprobada'),
+            ('en proceso', 'En Proceso'),
+            ('finalizada', 'Finalizada'),
+            ('cancelada', 'Cancelada'),
+        ]
+
     rate = models.ForeignKey(Rates, on_delete=models.CASCADE, verbose_name="Tarifa")
     service_requested = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Usuario que Llenó el Formulario", blank=True, null=True)
     user_driver = models.ForeignKey(CustomUserDriver, on_delete=models.CASCADE, verbose_name="Usuario conductor", blank=True, null=True)
@@ -324,10 +325,11 @@ class TransferRequest(models.Model):
     long_2= models.CharField(max_length=255, verbose_name="Longitud Final", blank=True, null=True)
     company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
     observations = models.TextField(blank=True, null=True, verbose_name='Observaciones')
-    discount_coupon = models.ForeignKey(DiscountCoupon, on_delete=models.SET_NULL, null=True, blank=True)
+    # discount_coupon = models.ForeignKey(DiscountCoupon, on_delete=models.SET_NULL, null=True, blank=True)
     is_round_trip = models.BooleanField(default=False, verbose_name="Ida y Vuelta")
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio", default=0.00)
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio", default=0.00,blank=True, null=True)
     discounted_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio con Descuento", default=0, blank=True, null=True)
+    final_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio Final", default=0, blank=True, null=True)
     discount_coupon = models.ForeignKey(DiscountCoupon, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Cupón de Descuento")
 
     def apply_discount(self):
@@ -401,6 +403,7 @@ class TransferRequest(models.Model):
                 self.enviar_id_a_usuario()
             else:
                 print("No se selecciono conductor")
+        self.final_price += (self.deviation.all().count() * self.rate.detour_local)
 
         # Llama al método save original para guardar normalmente
         super().save(*args, **kwargs)

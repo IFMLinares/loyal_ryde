@@ -45,6 +45,9 @@ urlpatterns = [
     path('discount-coupon/update/<int:pk>/', DiscountCouponUpdateView.as_view(), name='discount_coupon_update'),
     path('discount-coupon/detail/<int:pk>/', DiscountCouponDetailView.as_view(), name='discount_coupon_detail'),
     path('discount-coupon/delete/', delete_coupon, name='discount_coupon_delete'),
+    path('reports/excel/', TransferRequestExcelView.as_view(), name='transfer_request_excel'),
+    path('reports/generales/', GeneralReportsView.as_view(), name='reportes_generales'),
+    path('reports/company/', FilteredTransferRequestsView.as_view(), name='reports_company'),
     
     
     
@@ -58,7 +61,6 @@ urlpatterns = [
     path("transfer-request/rates", get_rates, name="rates_ajax"),
     path('verify-discount-code/', verify_discount_code, name='verify_discount_code'),
     path('ajax/transfer-month/', transfer_requests_per_month, name='transfer_month'),
-    path('transfer-request/excel/', TransferRequestExcelView.as_view(), name='transfer_request_excel'),
     
     
 ]

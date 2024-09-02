@@ -42,3 +42,8 @@ class TransferRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = TransferRequest
         fields = '__all__'
+
+class TransferRequestStatusUpdateSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    status = serializers.ChoiceField(choices=TransferRequest.STATUS_CHOICES)
+    

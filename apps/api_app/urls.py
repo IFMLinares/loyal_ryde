@@ -19,4 +19,5 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view(), name='change_password'),
     path('upload-driver-image/', CustomUserDriverImageUploadView.as_view(), name='upload-driver-image'),
     path('user-transfer-requests/', UserTransferRequestsView.as_view(), name='user-transfer-requests'),
+    path('update-transfer-request-status/', UpdateTransferRequestStatusView.as_view(), name='update_transfer_request_status'),
 ]

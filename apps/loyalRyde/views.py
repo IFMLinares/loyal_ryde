@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.utils import timezone
 import calendar
+import json
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.shortcuts import render
@@ -125,6 +126,7 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
 
             coupon = form.cleaned_data.get('discount_code')
             if coupon:
+                transfer_request.discount_coupon = coupon.pk
                 if coupon.discount_type == 'percentage':
                     discount = transfer_request.price * (coupon.discount_value / 100)
                 else:
@@ -134,6 +136,9 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
             else:
                 transfer_request.discounted_price = transfer_request.price
 
+            waypoints_numbers = form.cleaned_data.get('waypoints_numbers', 0)
+            if waypoints_numbers > 0:
+                transfer_request.final_price += (waypoints_numbers * rate.detour_local)
             transfer_request.save()
             return super().form_valid(form)
     def post(self, request, *args, **kwargs):
@@ -267,18 +272,29 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
         transfer_request = self.object
 
         # Procesa los desvíos adicionales
-        waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
+        try:
+            waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
+        except ValueError:
+            waypoints_numbers = 0
+            print("Error: waypoints_numbers no es un entero válido")
+
         for i in range(3, 3 + waypoints_numbers):
             lat = request.POST.get(f'lat_{i}')
             lng = request.POST.get(f'lng_{i}')
             if lat and lng:
-                desviation = Desviation.objects.create(
-                    desviation_number=i - 2,
-                    waypoint_number=i,
-                    lat=lat,
-                    long=lng
-                )
-                transfer_request.deviation.add(desviation)
+                try:
+                    desviation = Desviation.objects.create(
+                        desviation_number=i - 2,
+                        waypoint_number=i,
+                        lat=lat,
+                        long=lng
+                    )
+                    transfer_request.deviation.add(desviation)
+                except Exception as e:
+                    print(f"Error al crear desvío {i - 2}: {e}")
+            else:
+                print(f"Latitud o longitud faltante para el desvío {i - 2}")
+
         print(transfer_request)
         return response
     
@@ -599,12 +615,12 @@ class CompnayAdd(LoginRequiredMixin, CreateView):
 
 class TransferRequestExcelView(LoginRequiredMixin, ListView):
     model = TransferRequest
-    template_name = 'loyal_ryde_system/transfer_request_excel.html'
+    template_name = 'loyal_ryde_system/report_travels.html'
     context_object_name = 'transfer_requests'
 
-    # def get_queryset(self):
-    #     # Filtra los traslados para el mes y año específicos
-    #     return TransferRequest.objects.filter(date__year=2024, date__month=6)
+    def get_queryset(self):
+        # Filtra los traslados para el mes y año específicos
+        return TransferRequest.objects.filter(status='finalizada')
 
     def get(self, request, *args, **kwargs):
         if 'export' in request.GET:
@@ -629,9 +645,9 @@ class TransferRequestExcelView(LoginRequiredMixin, ListView):
                     'Desvios/Traslados Cant': tr.deviation.count(),
                     'Desvios/Traslados Monto US$': tr.deviation.count() * tr.rate.detour_local,
                     'Lugar': tr.departure_direc,
-                    'Total Monto Traslado US$': tr.price,
+                    'Total Monto Traslado US$': tr.final_price,
                     'GRAFO/CECO': tr.ceco_grafo_pedido,
-                    'Solicitante': tr.service_requested.username,
+                    # 'Solicitante': tr.service_requested.company.name,
                 })
         df = pd.DataFrame(data)
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -639,6 +655,28 @@ class TransferRequestExcelView(LoginRequiredMixin, ListView):
         df.to_excel(response, index=False)
         return response
 
+class GeneralReportsView(TemplateView):
+    template_name = 'loyal_ryde_system/reportes_generales.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        transfer_requests = list(TransferRequest.objects.values('status').annotate(count=Count('status')))
+        context['transfer_requests_json'] = json.dumps(transfer_requests)
+        return context
+
+
+class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
+    template_name = 'loyal_ryde_system/filtered_transfer_requests.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['companies'] = TransferRequest.objects.values_list('company', flat=True).distinct()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        company = request.POST.get('company')
+        transfer_requests = TransferRequest.objects.filter(company=company).values('status').annotate(count=Count('status'))
+        return JsonResponse(list(transfer_requests), safe=False)
 
 # AJAX FUNCTIONS
 @csrf_exempt

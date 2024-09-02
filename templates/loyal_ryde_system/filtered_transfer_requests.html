@@ -1,0 +1,168 @@
+{% extends "loyal_ryde_system/base/base.html" %}
+{% load static %}
+
+{% block title %}Filtered Transfer Requests{% endblock title %}
+
+{% block extra_css %}
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+
+{% block content %}
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <div class="toolbar" id="kt_toolbar">
+        <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
+            <div class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
+                <h1 class="d-flex text-dark fw-bolder fs-3 align-items-center my-1">Filtered Transfer Requests</h1>
+            </div>
+        </div>
+    </div>
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+        <div id="kt_content_container" class="container-xxl">
+            <div class="row gy-5 g-xl-8">
+                <div class="col-xl-12">
+                    <div class="card card-xl-stretch mb-5 mb-xl-8">
+                        <div class="card-header border-0 py-5">
+                            <h3 class="card-title fw-bolder">Select Company</h3>
+                            <select id="company-select" class="form-select">
+                                <option value="">Select a company</option>
+                                {% for company in companies %}
+                                    <option value="{{ company }}">{{ company }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link active" id="datatable-tab" data-bs-toggle="tab" href="#datatable" role="tab" aria-controls="datatable" aria-selected="true">DataTable</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="chart-tab" data-bs-toggle="tab" href="#chart" role="tab" aria-controls="chart" aria-selected="false">Chart</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="datatable" role="tabpanel" aria-labelledby="datatable-tab">
+                                    <table id="transfer-requests-table" class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Status</th>
+                                                <th>Count</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Data will be populated by AJAX -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="tab-pane fade" id="chart" role="tabpanel" aria-labelledby="chart-tab">
+                                    <div id="transfer-request-status-chart" style="height: 350px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    $(document).ready(function() {
+        var table = $('#transfer-requests-table').DataTable();
+        var chart = new ApexCharts(document.querySelector("#transfer-request-status-chart"), {
+            series: [],
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    endingShape: 'rounded',
+                    distributed: true
+                },
+            },
+            colors: [],
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            xaxis: {
+                categories: [],
+            },
+            yaxis: {
+                title: {
+                    text: 'Count'
+                }
+            },
+            fill: {
+                opacity: 1
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return val + " requests"
+                    }
+                }
+            }
+        });
+        chart.render();
+
+        $('#company-select').change(function() {
+            var company = $(this).val();
+            if (company) {
+                $.ajax({
+                    url: '',
+                    type: 'POST',
+                    data: {
+                        'company': company,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(data) {
+                        // Update DataTable
+                        table.clear().draw();
+                        data.forEach(function(item) {
+                            table.row.add([item.status, item.count]).draw();
+                        });
+
+                        // Update Chart
+                        var categories = data.map(function(item) { return item.status; });
+                        var seriesData = data.map(function(item) { return item.count; });
+                        var colors = categories.map(function(status) {
+                            var colorMap = {
+                                'finalizados': '#28a745', // Verde
+                                'cancelados': '#dc3545', // Rojo
+                                'esperando validación': '#6c757d', // Gris
+                                'validados': '#007bff', // Azul
+                                'aprobados': '#218838', // Verde oscuro
+                                'en proceso': '#155724' // Verde más oscuro
+                            };
+                            return colorMap[status] || '#000000';
+                        });
+
+                        chart.updateOptions({
+                            xaxis: {
+                                categories: categories
+                            },
+                            colors: colors
+                        });
+
+                        chart.updateSeries([{
+                            name: 'Transfer Requests',
+                            data: seriesData
+                        }]);
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock extra_js %}

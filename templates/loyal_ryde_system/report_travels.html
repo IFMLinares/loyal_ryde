@@ -13,7 +13,7 @@
         <div class="card mb-5 mb-xxl-12">
             <div class="card-body">
                 <div class="col-md-12 text-center pb-0">
-                    <h1>Lista de traslados Transporte GGMN - Mes 6-2024</h1>
+                    <h1>Reporte de traslados GGMN</h1>
                 </div>
                 <div class="mb-10 pt-9">
                     <div class="table-responsive">
@@ -27,7 +27,7 @@
                                     <th>Destino</th>
                                     <!-- <th>Descripcion</th> -->
                                     <th>Monto base $</th>
-                                    <th>Tiempo de espera</th>
+                                    <!-- <th>Tiempo de espera</th> -->
                                     <th>Desvios</th>
                                     <!-- <th>Lugar</th> -->
                                     <th>Monto total $</th>
@@ -44,11 +44,11 @@
                                         <td class="text-center">{{ transfer_request.departure_site_route }}</td>
                                         <td class="text-center">{{ transfer_request.destination_route }}</td>
                                         <!-- <td class="text-center">{{ transfer_request.description }}</td> -->
-                                        <td class="text-center">{{ transfer_request.waiting_hours_count }}</td>
-                                        <td class="text-center">{{ transfer_request.waiting_hours_amount }}</td>
-                                        <td class="text-center">{{ transfer_request.diversions_count }}</td>
+                                        <td class="text-center">{{ transfer_request.price }}</td>
+                                        <!-- <td class="text-center">{{ transfer_request.waiting_hours_amount }}</td> -->
+                                        <td class="text-center">{{ transfer_request.deviation.count }}</td>
                                         <!-- <td class="text-center">{{ transfer_request.diversion_place }}</td> -->
-                                        <td class="text-center">{{ transfer_request.total_transfer_amount }}</td>
+                                        <td class="text-center">{{ transfer_request.final_price }}</td>
                                         <td class="text-center">{{ transfer_request.grafo_ceco }}</td>
                                         <td class="text-center">{{ transfer_request.service_requested.company.name }}</td>
                                     </tr>

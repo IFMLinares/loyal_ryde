@@ -237,6 +237,21 @@
                                 <label class="form-label" for="">Conductor:</label>
                                 {{ form.user_driver }}
                             </div>
+                            
+                            <div class="row pb-xl-3">
+                                <div class="mt-8 col-md-12">
+                                    <h3>Tarifas del viaje:</h3>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-check form-check-custom form-check-solid mt-5">
+                                        {{ form.is_round_trip }}
+                                        <label class="form-check-label text-dark" for="id_is_round_trip">
+                                            <i class="fas fa-exchange-alt"  style="color: #009ef6; font-size: 20px;"></i>
+                                            ¿Seleccionar viaje ida y vuelta?
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                             <div id="rates_div" class="row">
                                 <div class="mt-5 col-md-12">
                                     <label class="form-label" for="id_payment_method">Tarifas:</label>
@@ -245,23 +260,23 @@
                             </div>
                             
                             <div class="mt-5 col-md-6">
-                                <label class="form-label" for="id_is_round_trip">Ida y Vuelta:</label>
-                                {{ form.is_round_trip }}
+                                <label class="form-label" for="id_price">Precio Base:</label>
+                                {{form.price}}
                             </div>
+
                             <div class="mt-5 col-md-6">
                                 <label class="form-label" for="id_discount_code">Código de Descuento:</label>
-                                <input type="text" class="form-control" id="id_discount_code" name="discount_code" placeholder="Ingresa tu código de descuento">
+                                {{ form.discount_coupon }}
                                 <div id="discount_message" class="mt-2"></div>
-                            </div>
-                            <div class="mt-5 col-md-6">
-                                <label class="form-label" for="id_price">Precio Base:</label>
-                                <input type="text" class="form-control" id="id_price" name="price" readonly value="{{ form.instance.price }}">
                             </div>
                             <div class="mt-5 col-md-6 d-none" id="discounted_price_container">
                                 <label class="form-label" for="id_discounted_price">Precio con Descuento:</label>
-                                <input type="text" class="form-control" id="id_discounted_price" name="discounted_price" readonly value="0">
+                                {{ form.discounted_price }}
                             </div>
-            
+                            <div class="mt-5 col-md-6">
+                                <label class="form-label" for="id_final_price">Precio Estimado:</label>
+                                {{ form.final_price }}
+                            </div>
                             <div class="mt-5 col-md-12">
                                 <div class="col-md-12">
                                     <h3>Observaciones:</h3>
@@ -323,6 +338,7 @@ $(document).ready(function () {
                     discountMessage.html('<span class="text-danger">Error al verificar el código de descuento.</span>');
                     discountedPriceContainer.addClass('d-none');
                     discountedPriceInput.val('');
+                    $('#id_final_price').val($('#id_price').val());
                 }
             });
         } else {
@@ -431,8 +447,10 @@ $(document).ready(function () {
 
                         if (isRoundTrip) {
                             $("#id_price").val(roundTripPrice);
+                            $("#id_final_price").val(roundTripPrice);
                         } else {
                             $("#id_price").val(selectedPrice);
+                            $("#id_final_price").val(selectedPrice);
                         }
 
                         // Si hay un descuento válido, actualizar el precio con descuento
@@ -441,6 +459,7 @@ $(document).ready(function () {
                             const discount = parseFloat(discountValue[1]) / 100;
                             const discountedPrice = isRoundTrip ? roundTripPrice * (1 - discount) : selectedPrice * (1 - discount);
                             $("#id_discounted_price").val(discountedPrice.toFixed(2));
+                            $("#id_final_price").val(discountedPrice.toFixed(2));
                         }
                     }
                 }
@@ -500,6 +519,7 @@ $(document).ready(function () {
             }
 
             $("#id_discounted_price").val(discountedPrice.toFixed(2));
+            $("#id_final_price").val(discountedPrice.toFixed(2));
         }
     }
 });
