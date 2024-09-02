@@ -669,13 +669,16 @@ class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['companies'] = Company.objects.values('name').distinct()
+        context['companies'] = TransferRequest.objects.values_list('company', flat=True).distinct()
         return context
 
     def post(self, request, *args, **kwargs):
         company_name = request.POST.get('company')
-        transfer_requests = TransferRequest.objects.filter(company=company_name).values('status').annotate(count=Count('status'))
-        return JsonResponse(list(transfer_requests), safe=False)
+        transfer_requests = TransferRequest.objects.filter(company=company_name).values(
+            'status'
+        ).annotate(count=Count('status'))
+        data = list(transfer_requests)
+        return JsonResponse(data, safe=False)
 
 # AJAX FUNCTIONS
 @csrf_exempt

@@ -26,17 +26,20 @@
                             <select id="company-select" class="form-select">
                                 <option value="">Select a company</option>
                                 {% for company in companies %}
-                                    <option value="{{ company.name }}">{{ company.name }}</option>
+                                    <option value="{{ company }}">{{ company }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="card-body">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link active" id="datatable-tab" data-bs-toggle="tab" href="#datatable" role="tab" aria-controls="datatable" aria-selected="true">DataTable</a>
+                                    <a class="nav-link active" id="datatable-tab" data-bs-toggle="tab" href="#datatable" role="tab" aria-controls="datatable" aria-selected="true">Tabla</a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="chart-tab" data-bs-toggle="tab" href="#chart" role="tab" aria-controls="chart" aria-selected="false">Chart</a>
+                                    <a class="nav-link" id="chart-tab" data-bs-toggle="tab" href="#chart" role="tab" aria-controls="chart" aria-selected="false">Grafico de Barras</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="pie-chart-tab" data-bs-toggle="tab" href="#pie-chart" role="tab" aria-controls="pie-chart" aria-selected="false">Grafico Circular</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
@@ -56,6 +59,9 @@
                                 <div class="tab-pane fade" id="chart" role="tabpanel" aria-labelledby="chart-tab">
                                     <div id="transfer-request-status-chart" style="height: 350px;"></div>
                                 </div>
+                                <div class="tab-pane fade" id="pie-chart" role="tabpanel" aria-labelledby="pie-chart-tab">
+                                    <div id="transfer-request-pie-chart" style="height: 350px;"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -72,7 +78,7 @@
 <script>
     $(document).ready(function() {
         var table = $('#transfer-requests-table').DataTable();
-        var chart = new ApexCharts(document.querySelector("#transfer-request-status-chart"), {
+        var barChart = new ApexCharts(document.querySelector("#transfer-request-status-chart"), {
             series: [],
             chart: {
                 type: 'bar',
@@ -114,7 +120,28 @@
                 }
             }
         });
-        chart.render();
+        barChart.render();
+
+        var pieChart = new ApexCharts(document.querySelector("#transfer-request-pie-chart"), {
+            series: [],
+            chart: {
+                type: 'pie',
+                height: 350
+            },
+            labels: [],
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }]
+        });
+        pieChart.render();
 
         $('#company-select').change(function() {
             var company = $(this).val();
@@ -133,7 +160,7 @@
                             table.row.add([item.status, item.count]).draw();
                         });
 
-                        // Update Chart
+                        // Update Bar Chart
                         var categories = data.map(function(item) { return item.status; });
                         var seriesData = data.map(function(item) { return item.count; });
                         var colorMap = {
@@ -148,17 +175,24 @@
                             return colorMap[status] || '#000000';
                         });
 
-                        chart.updateOptions({
+                        barChart.updateOptions({
                             xaxis: {
                                 categories: categories
                             },
                             colors: colors
                         });
 
-                        chart.updateSeries([{
+                        barChart.updateSeries([{
                             name: 'Transfer Requests',
                             data: seriesData
                         }]);
+
+                        // Update Pie Chart
+                        pieChart.updateOptions({
+                            labels: categories
+                        });
+
+                        pieChart.updateSeries(seriesData);
                     }
                 });
             }

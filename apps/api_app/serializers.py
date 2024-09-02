@@ -18,6 +18,9 @@ class UserSerializers(serializers.ModelSerializer):
         fields = '__all__' 
 
 class CustomUserDriverSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(max_length=None, use_url=True)
+    license = serializers.ImageField(max_length=None, use_url=True)
+
     class Meta:
         model = CustomUserDriver
         fields = '__all__'
