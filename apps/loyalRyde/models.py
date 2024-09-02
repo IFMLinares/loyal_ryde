@@ -351,12 +351,8 @@ class TransferRequest(models.Model):
             # Obtener el nombre y apellido del usuario
             user = self.service_requested
             user_full_name = f"{user.first_name} {user.last_name}"
-
-            # Obtener la URL completa de la imagen de la empresa
-            if user.company and user.company.image:
-                company_image_url = f"{settings.SITE_DOMAIN}{user.company.image.url}"
-            else:
-                company_image_url = ""
+                
+            company_image_url = {user.company.image.url}
 
             # Obtener la información completa de las personas a trasladar
             persons_to_transfer = list(self.person_to_transfer.values('name', 'phone', 'company'))
