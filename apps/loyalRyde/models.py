@@ -404,7 +404,7 @@ class TransferRequest(models.Model):
                 self.enviar_id_a_usuario()
             else:
                 print("No se selecciono conductor")
-        self.final_price += (self.deviation.all().count() * self.rate.detour_local)
+        # self.final_price += (self.deviation.all().count() * self.rate.detour_local)
 
         # Llama al método save original para guardar normalmente
         super().save(*args, **kwargs)

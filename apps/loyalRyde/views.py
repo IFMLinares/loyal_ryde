@@ -197,7 +197,6 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         context['rates_list'] = Rates.objects.all()
         context['departure'] = departure_points
         return context
-    
 
 # agregar traslado (modo invitado)
 class GuestTransferCreateView(CreateView):
