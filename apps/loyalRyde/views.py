@@ -664,18 +664,17 @@ class GeneralReportsView(TemplateView):
         context['transfer_requests_json'] = json.dumps(transfer_requests)
         return context
 
-
 class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
     template_name = 'loyal_ryde_system/filtered_transfer_requests.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['companies'] = TransferRequest.objects.values_list('company', flat=True).distinct()
+        context['companies'] = Company.objects.values('name').distinct()
         return context
 
     def post(self, request, *args, **kwargs):
-        company = request.POST.get('company')
-        transfer_requests = TransferRequest.objects.filter(company=company).values('status').annotate(count=Count('status'))
+        company_name = request.POST.get('company')
+        transfer_requests = TransferRequest.objects.filter(company=company_name).values('status').annotate(count=Count('status'))
         return JsonResponse(list(transfer_requests), safe=False)
 
 # AJAX FUNCTIONS

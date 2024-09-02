@@ -26,7 +26,7 @@
                             <select id="company-select" class="form-select">
                                 <option value="">Select a company</option>
                                 {% for company in companies %}
-                                    <option value="{{ company }}">{{ company }}</option>
+                                    <option value="{{ company.name }}">{{ company.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -136,15 +136,15 @@
                         // Update Chart
                         var categories = data.map(function(item) { return item.status; });
                         var seriesData = data.map(function(item) { return item.count; });
+                        var colorMap = {
+                            'finalizada': '#28a745', // Verde
+                            'cancelada': '#dc3545', // Rojo
+                            'esperando validación': '#6c757d', // Gris
+                            'validada': '#007bff', // Azul
+                            'aprobada': '#218838', // Verde oscuro
+                            'en proceso': '#155724' // Verde más oscuro
+                        };
                         var colors = categories.map(function(status) {
-                            var colorMap = {
-                                'finalizados': '#28a745', // Verde
-                                'cancelados': '#dc3545', // Rojo
-                                'esperando validación': '#6c757d', // Gris
-                                'validados': '#007bff', // Azul
-                                'aprobados': '#218838', // Verde oscuro
-                                'en proceso': '#155724' // Verde más oscuro
-                            };
                             return colorMap[status] || '#000000';
                         });
 

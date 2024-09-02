@@ -1,7 +1,7 @@
 {% extends "loyal_ryde_system/base/base.html" %}
 {% load static %}
 
-{% block title %}Filtered Transfer Requests{% endblock title %}
+{% block title %}Reportes Generales{% endblock title %}
 
 {% block extra_css %}
 <link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
@@ -12,7 +12,7 @@
     <div class="toolbar" id="kt_toolbar">
         <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
             <div class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
-                <h1 class="d-flex text-dark fw-bolder fs-3 align-items-center my-1">Filtered Transfer Requests</h1>
+                <h1 class="d-flex text-dark fw-bolder fs-3 align-items-center my-1">Reportes Generales</h1>
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
                 <div class="col-xl-12">
                     <div class="card card-xl-stretch mb-5 mb-xl-8">
                         <div class="card-header border-0 py-5">
-                            <h3 class="card-title fw-bolder">Select Company</h3>
+                            <h3 class="card-title fw-bolder">Estado de Transfer Requests</h3>
                             <select id="company-select" class="form-select">
                                 <option value="">Select a company</option>
                                 {% for company in companies %}
@@ -137,15 +137,15 @@
                         // Update Chart
                         var categories = data.map(function(item) { return item.status; });
                         var seriesData = data.map(function(item) { return item.count; });
+                        var colorMap = {
+                            'finalizada': '#28a745', // Verde
+                            'cancelada': '#dc3545', // Rojo
+                            'esperando validación': '#6c757d', // Gris
+                            'validada': '#007bff', // Azul
+                            'aprobada': '#218838', // Verde oscuro
+                            'en proceso': '#155724' // Verde más oscuro
+                        };
                         var colors = categories.map(function(status) {
-                            var colorMap = {
-                                'finalizada': '#28a745', // Verde
-                                'cancelada': '#dc3545', // Rojo
-                                'esperando validación': '#6c757d', // Gris
-                                'validada': '#007bff', // Azul
-                                'aprobada': '#218838', // Verde oscuro
-                                'en proceso': '#155724' // Verde más oscuro
-                            };
                             return colorMap[status] || '#000000';
                         });
 

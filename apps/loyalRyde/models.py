@@ -372,6 +372,7 @@ class TransferRequest(models.Model):
 
             # Añadir los desvíos al diccionario de la transferencia
             serialized_transfer_data['fields']['deviations'] = serialized_deviations_data
+            serialized_transfer_data['fields']['id'] = self.id
 
             rates = {
                 "driver_gain": str(self.rate.driver_price)
