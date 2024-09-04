@@ -20,4 +20,5 @@ urlpatterns = [
     path('upload-driver-image/', CustomUserDriverImageUploadView.as_view(), name='upload-driver-image'),
     path('user-transfer-requests/', UserTransferRequestsView.as_view(), name='user-transfer-requests'),
     path('update-transfer-request-status/', UpdateTransferRequestStatusView.as_view(), name='update_transfer_request_status'),
+    path('upload-comprobante/', UploadComprobanteView.as_view(), name='upload-comprobante'),
 ]

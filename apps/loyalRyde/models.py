@@ -325,19 +325,24 @@ class TransferRequest(models.Model):
     long_2= models.CharField(max_length=255, verbose_name="Longitud Final", blank=True, null=True)
     company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
     observations = models.TextField(blank=True, null=True, verbose_name='Observaciones')
-    # discount_coupon = models.ForeignKey(DiscountCoupon, on_delete=models.SET_NULL, null=True, blank=True)
     is_round_trip = models.BooleanField(default=False, verbose_name="Ida y Vuelta")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio", default=0.00,blank=True, null=True)
     discounted_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio con Descuento", default=0, blank=True, null=True)
     final_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio Final", default=0, blank=True, null=True)
     discount_coupon = models.ForeignKey(DiscountCoupon, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Cupón de Descuento")
+    comprobante = models.ImageField(upload_to='comprobantes/', blank=True, null=True, verbose_name="Comprobante del Viaje")
 
     def apply_discount(self):
         if self.discount_coupon and self.discount_coupon.is_valid():
+            # Verificar que la empresa del cupón coincida con la empresa de la orden
+            if self.discount_coupon.company != self.company:
+                return self.rate.price  # Retornar el precio original si la empresa no coincide
+
             if self.discount_coupon.discount_type == 'percentage':
-                discount_amount = (self.rate.price * self.discount_coupon.discount_value) / 100
+                discount_amount = self.rate.price * (self.discount_coupon.discount_value / 100)
             else:
                 discount_amount = self.discount_coupon.discount_value
+
             return max(self.rate.price - discount_amount, 0)
         return self.rate.price
 
@@ -396,7 +401,6 @@ class TransferRequest(models.Model):
         except: 
             self.company = None
         # Validación personalizada antes de guardar
-        print("No se selecciono conductor")
         if self.status == 'aprobada':
             # Realiza la funcionalidad adicional que necesitas
             if self.user_driver:
@@ -404,7 +408,12 @@ class TransferRequest(models.Model):
                 self.enviar_id_a_usuario()
             else:
                 print("No se selecciono conductor")
-        # self.final_price += (self.deviation.all().count() * self.rate.detour_local)
+        if not self.pk:
+            super().save(*args, **kwargs)
+
+        
+        self.apply_discount()
+        self.final_price += (self.deviation.all().count() * self.rate.detour_local)
 
         # Llama al método save original para guardar normalmente
         super().save(*args, **kwargs)

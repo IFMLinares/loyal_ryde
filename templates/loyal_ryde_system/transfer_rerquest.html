@@ -171,7 +171,7 @@
                                 </div>
                                 <div class="mt-5 col-md-4">
                                     <label class="form-label" for="id_departure_site_route">Seleccione punto de salida:</label>
-                                    <select class="form-select" aria-label="Seleccione un punto de origen" name="departure_site_route" id="id_departure_site_route" required>
+                                    <select class="form-select" aria-label="Seleccione un punto de origen" name="departure_site_route" id="id_departure_site_route" required data-control="select2">
                                         <option disabled selected>Seleccione un punto de origen</option>
                                         {% for opcion in departure %}
                                             <option value="{{ opcion.name }}">{{ opcion.name }}</option>
@@ -193,7 +193,7 @@
 
                                 <div class="mt-5 col-md-4">
                                     <label class="form-label" for="id_destination_route">Destino:</label>
-                                    <select class="form-select" aria-label="Seleccione un punto de origen" name="destination_route" id="id_destination_route" required>
+                                    <select class="form-select" aria-label="Seleccione un punto de origen" name="destination_route" id="id_destination_route" required data-control="select2">
                                         <option disabled selected>Seleccione un punto de Destino</option>
                                     </select>
                                 </div>
@@ -292,12 +292,12 @@
 
                                 <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_discount_code">Código de Descuento:</label>
-                                    <input type="text" class="form-control" id="id_discount_code" name="discount_code" placeholder="Ingresa tu código de descuento">
+                                    <input type="text" class="form-control" id="id_discount_code" name="discount_code" placeholder="Ingresa tu código de descuento" disabled>
                                     <div id="discount_message" class="mt-2"></div>
                                 </div>
                                 <div class="mt-5 col-md-6 d-none" id="discounted_price_container">
                                     <label class="form-label" for="id_discounted_price">Precio con Descuento:</label>
-                                    <input type="text" class="form-control" id="id_discounted_price" name="discounted_price" readonly value="0">
+                                    <input type="text" class="form-control" id="id_discounted_price" name="discounted_price" readonly value="0" >
                                 </div>
                                 <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_final_price">Precio Estimado:</label>

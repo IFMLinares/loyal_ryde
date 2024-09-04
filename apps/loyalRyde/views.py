@@ -130,17 +130,6 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
             transfer_request.price = rate.price
 
         # Aplica el cupón de descuento si existe
-        coupon = form.cleaned_data.get('discount_code')
-        if coupon:
-            transfer_request.discount_coupon = coupon.pk
-            if coupon.discount_type == 'percentage':
-                discount = transfer_request.price * (coupon.discount_value / 100)
-            else:
-                discount = coupon.discount_value
-            transfer_request.discounted_price = transfer_request.price - discount
-            transfer_request.discount_coupon = coupon
-        else:
-            transfer_request.discounted_price = transfer_request.price
 
         # Calcula el precio final basado en los desvíos
         waypoints_numbers = form.cleaned_data.get('waypoints_numbers', 0)
@@ -153,7 +142,6 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         # Obtén la fecha directamente del POST
         fecha = request.POST.get('date')
 
@@ -162,15 +150,14 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         # Actualiza la fecha en los datos del POST
         request.POST = request.POST.copy()
         request.POST['date'] = fecha
-        print(request.POST)
 
         # Llama al método post original para guardar el TransferRequest
         response = super().post(request, *args, **kwargs)
 
         # Obtén el objeto TransferRequest recién creado
         transfer_request = self.object
-
         # Procesa los desvíos adicionales
+
         try:
             waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
             for i in range(3, 3 + waypoints_numbers):
@@ -188,7 +175,6 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
                     transfer_request.deviation.add(desviation)
         except:
             pass
-        print(transfer_request)
         return response
 
     def get_context_data(self, **kwargs):
@@ -678,17 +664,25 @@ class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['companies'] = TransferRequest.objects.values_list('company', flat=True).distinct()
+        context['companies'] = Company.objects.values_list('name', flat=True).distinct()
         return context
 
     def post(self, request, *args, **kwargs):
         company_name = request.POST.get('company')
-        transfer_requests = TransferRequest.objects.filter(company=company_name).values(
-            'status'
-        ).annotate(count=Count('status'))
-        data = list(transfer_requests)
-        return JsonResponse(data, safe=False)
-
+        if company_name:
+            company = Company.objects.filter(name=company_name).first()
+            if company:
+                data = {
+                    'name': company.name,
+                    'email': company.email,
+                    'rif': company.rif,
+                    'address': company.address,
+                    'phone': company.phone,
+                    'image': company.image.url if company.image else None,
+                    'transfer_requests': list(TransferRequest.objects.filter(company=company).values('status').annotate(count=Count('status')))
+                }
+                return JsonResponse(data)
+        return JsonResponse({'error': 'Company not found'}, status=404)
 # AJAX FUNCTIONS
 @csrf_exempt
 def get_people_transfer(request):

@@ -141,7 +141,7 @@ class AddRateForm(ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         for form in  self.visible_fields():
-            if form.name == 'route' or form.name== 'vehicle':
+            if form.name == 'route' or form.name== 'type_vehicle':
                 form.field.widget.attrs['class'] = 'form-select mb-2'
                 form.field.widget.attrs['data-control'] = 'select2'
                 form.field.widget.attrs['data-hide-search'] = 'true'

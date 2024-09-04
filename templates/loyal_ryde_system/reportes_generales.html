@@ -64,7 +64,7 @@
 
         var options = {
             series: [{
-                name: 'Transfer Requests',
+                name: 'Traslados',
                 data: seriesData
             }],
             chart: {
@@ -93,7 +93,7 @@
             },
             yaxis: {
                 title: {
-                    text: 'Count'
+                    text: 'Cantidad de traslados'
                 }
             },
             fill: {
@@ -102,7 +102,7 @@
             tooltip: {
                 y: {
                     formatter: function (val) {
-                        return val + " requests"
+                        return val
                     }
                 }
             }

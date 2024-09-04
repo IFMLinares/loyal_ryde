@@ -200,3 +200,21 @@ class UpdateTransferRequestStatusView(APIView):
 
             return Response({"id": transfer_request.id, "status": transfer_request.status}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class UploadComprobanteView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, format=None):
+        transfer_request_id = request.data.get('id')
+        comprobante = request.FILES.get('comprobante')
+
+        if not transfer_request_id or not comprobante:
+            return Response({"error": "ID del TransferRequest y comprobante son requeridos"}, status=status.HTTP_400_BAD_REQUEST)
+
+        transfer_request = get_object_or_404(TransferRequest, id=transfer_request_id)
+        transfer_request.comprobante = comprobante
+        transfer_request.status = 'finalizada'
+        transfer_request.save()
+
+        return Response({"message": "Comprobante subido y estado actualizado a finalizada"}, status=status.HTTP_200_OK)
