@@ -5,6 +5,7 @@
 
 {% block extra_css %}
 <link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet" />
 {% endblock extra_css %}
 
 {% block content %}
@@ -13,6 +14,21 @@
         <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
             <div class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
                 <h1 class="d-flex text-dark fw-bolder fs-3 align-items-center my-1">Reportes Generales</h1>
+            </div>
+            <div class="d-flex align-items-center">
+                <input type="text" id="start_date" class="form-control me-2" placeholder="Fecha de inicio" />
+                <input type="text" id="end_date" class="form-control me-2" placeholder="Fecha de fin" />
+                <select id="company_name" class="form-control me-2">
+                    <option value="Todas">Todas</option>
+                    {% for company in companies %}
+                        <option value="{{ company.name }}" {% if company.name == selected_company %}selected{% endif %}>{{ company.name }}</option>
+                    {% endfor %}
+                </select>
+                <button id="filter_button" class="btn btn-primary me-2">Filtrar</button>
+                <button id="clear_filters_button" class="btn btn-secondary me-2">Limpiar Filtros</button>
+                <div id="loader" class="spinner-border text-primary" role="status" style="display: none;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
         </div>
     </div>
@@ -41,75 +57,123 @@
 {% block extra_js %}
 <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script>
     $(document).ready(function() {
-        var transferRequests = JSON.parse(document.getElementById('transfer-requests-data').textContent);
-        var categories = transferRequests.map(function(item) { return item.status; });
-        var seriesData = transferRequests.map(function(item) { return item.count; });
-
-        // Definir colores específicos para cada estado
-        var colorMap = {
-            'finalizada': '#28a745', // Verde
-            'cancelada': '#dc3545', // Rojo
-            'esperando validación': '#6c757d', // Gris
-            'validada': '#007bff', // Azul
-            'aprobada': '#218838', // Verde oscuro
-            'en proceso': '#155724' // Verde más oscuro
-        };
-
-        // Asignar colores a las barras basadas en los estados
-        var colors = categories.map(function(status) {
-            return colorMap[status] || '#000000'; // Color negro por defecto si no se encuentra el estado
+        $('#start_date').datepicker({
+            format: 'yyyy-mm-dd'
+        });
+        $('#end_date').datepicker({
+            format: 'yyyy-mm-dd'
         });
 
-        var options = {
-            series: [{
-                name: 'Traslados',
-                data: seriesData
-            }],
-            chart: {
-                type: 'bar',
-                height: 350
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '55%',
-                    endingShape: 'rounded',
-                    distributed: true // Distribuir colores
+        var chart;
+
+        function updateChartAndTable(data) {
+            var categories = data.map(function(item) { return item.status; });
+            var seriesData = data.map(function(item) { return item.count; });
+
+            var colorMap = {
+                'finalizada': '#28a745',
+                'cancelada': '#dc3545',
+                'esperando validación': '#6c757d',
+                'validada': '#007bff',
+                'aprobada': '#218838',
+                'en proceso': '#155724'
+            };
+
+            var colors = categories.map(function(status) {
+                return colorMap[status] || '#000000';
+            });
+
+            var options = {
+                series: [{
+                    name: 'Traslados',
+                    data: seriesData
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350
                 },
-            },
-            colors: colors, // Colores personalizados para cada barra
-            dataLabels: {
-                enabled: false
-            },
-            stroke: {
-                show: true,
-                width: 2,
-                colors: ['transparent']
-            },
-            xaxis: {
-                categories: categories,
-            },
-            yaxis: {
-                title: {
-                    text: 'Cantidad de traslados'
-                }
-            },
-            fill: {
-                opacity: 1
-            },
-            tooltip: {
-                y: {
-                    formatter: function (val) {
-                        return val
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded',
+                        distributed: true
+                    },
+                },
+                colors: colors,
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: categories,
+                },
+                yaxis: {
+                    title: {
+                        text: 'Cantidad de traslados'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val
+                        }
                     }
                 }
-            }
-        };
+            };
 
-        var chart = new ApexCharts(document.querySelector("#transfer-request-status-chart"), options);
-        chart.render();
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new ApexCharts(document.querySelector("#transfer-request-status-chart"), options);
+            chart.render();
+        }
+
+        $('#filter_button').click(function() {
+            var startDate = $('#start_date').val();
+            var endDate = $('#end_date').val();
+            var companyName = $('#company_name').val();
+
+            $('#loader').show();
+
+            $.ajax({
+                url: '{% url "core:reportes_generales" %}',
+                data: {
+                    start_date: startDate,
+                    end_date: endDate,
+                    company_name: companyName
+                },
+                success: function(response) {
+                    var transferRequests = JSON.parse(response.transfer_requests_json);
+                    updateChartAndTable(transferRequests);
+                    $('#loader').hide();
+                },
+                error: function() {
+                    $('#loader').hide();
+                }
+            });
+        });
+
+        $('#clear_filters_button').click(function() {
+            $('#start_date').val('');
+            $('#end_date').val('');
+            $('#company_name').val('Todas');
+            $('#filter_button').click();
+        });
+
+        var transferRequests = JSON.parse(document.getElementById('transfer-requests-data').textContent);
+        updateChartAndTable(transferRequests);
     });
 </script>
 {% endblock extra_js %}

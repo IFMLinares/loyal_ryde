@@ -26,7 +26,10 @@ from django.utils.timezone import now
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 import pandas as pd
-
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Alignment
+from io import BytesIO
 
 
 from .forms import *
@@ -608,57 +611,123 @@ class CompnayAdd(LoginRequiredMixin, CreateView):
         return response
 
 
+
 class TransferRequestExcelView(LoginRequiredMixin, ListView):
     model = TransferRequest
     template_name = 'loyal_ryde_system/report_travels.html'
     context_object_name = 'transfer_requests'
 
     def get_queryset(self):
-        # Filtra los traslados para el mes y año específicos
+        # Filtra los datos para incluir solo aquellos con el estado "finalizada"
         return TransferRequest.objects.filter(status='finalizada')
 
     def get(self, request, *args, **kwargs):
-        if 'export' in request.GET:
+        if request.GET.get('export') == 'true':
             return self.export_to_excel()
         return super().get(request, *args, **kwargs)
 
     def export_to_excel(self):
         transfer_requests = self.get_queryset()
-        data = []
-        for tr in transfer_requests:
-            for person in tr.person_to_transfer.all():
-                data.append({
-                    'Fecha': tr.date.strftime('%d/%m/%Y'),
-                    'Dia': tr.date.strftime('%A'),
-                    'Hora': tr.hour.strftime('%H:%M'),
-                    'Pasajero': person.name,
-                    'Origen': tr.departure_site_route,
-                    'Destino': tr.destination_route,
-                    'MONTO TRASLADO INICIAL US$': tr.price,
-                    'Horas Espera Cant': tr.stop_time.count(),
-                    'Horas Espera Monto US$': sum(stop.total_time.total_seconds() / 3600 for stop in tr.stop_time.all()) * tr.rate.daytime_waiting_time,
-                    'Desvios/Traslados Cant': tr.deviation.count(),
-                    'Desvios/Traslados Monto US$': tr.deviation.count() * tr.rate.detour_local,
-                    'Lugar': tr.departure_direc,
-                    'Total Monto Traslado US$': tr.final_price,
-                    'GRAFO/CECO': tr.ceco_grafo_pedido,
-                    # 'Solicitante': tr.service_requested.company.name,
-                })
-        df = pd.DataFrame(data)
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=solicitud_traslados_mes_6_2024.xlsx'
-        df.to_excel(response, index=False)
-        return response
 
+        # Crear un nuevo libro de trabajo y una hoja
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Transfer Requests"
+
+        # Escribir los encabezados
+        headers = [
+            "Fecha", "Dia", "Hora", "Pasajero", "Origen", "Destino", 
+            "MONTO base $", "Horas Espera Cant.", 
+            "Horas Espera $", "Desvios Cant", 
+            "Desvios US$", "Lugar", 
+            "Total US$", "GRAFO/CECO", "Solicitante"
+        ]
+        ws.append(headers)
+
+        # Escribir los datos
+        for transfer_request in transfer_requests:
+            for person in transfer_request.person_to_transfer.all():
+                ws.append([
+                    transfer_request.date.strftime('%d/%m/%Y') if transfer_request.date else '',
+                    transfer_request.date.strftime('%A') if transfer_request.date else '',
+                    transfer_request.hour.strftime('%H:%M') if transfer_request.hour else '',
+                    person.name if person else '',
+                    transfer_request.departure_site_route if transfer_request.departure_site_route else '',
+                    transfer_request.destination_route if transfer_request.destination_route else '',
+                    transfer_request.price if transfer_request.price else '',
+                    transfer_request.stop_time.count() if transfer_request.stop_time else '',
+                    sum(stop.total_time.total_seconds() / 3600 for stop in transfer_request.stop_time.all()) * transfer_request.rate.daytime_waiting_time if transfer_request.stop_time and transfer_request.rate.daytime_waiting_time else '',
+                    transfer_request.deviation.count() if transfer_request.deviation else '',
+                    transfer_request.deviation.count() * transfer_request.rate.detour_local if transfer_request.deviation and transfer_request.rate.detour_local else '',
+                    transfer_request.departure_direc if transfer_request.departure_direc else '',
+                    transfer_request.final_price if transfer_request.final_price else '',
+                    transfer_request.ceco_grafo_pedido if transfer_request.ceco_grafo_pedido else '',
+                    transfer_request.service_requested.company.name if transfer_request.service_requested and transfer_request.service_requested.company else ''
+                ])
+
+        # Ajustar el ancho de las columnas
+        for col in ws.columns:
+            max_length = 0
+            column = col[0].column_letter  # Obtiene la letra de la columna
+            for cell in col:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(cell.value)
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            ws.column_dimensions[column].width = adjusted_width
+
+        # Alinear el contenido de las celdas al centro
+        for row in ws.iter_rows():
+            for cell in row:
+                cell.alignment = Alignment(horizontal='center', vertical='center')
+
+        # Guardar el archivo en un objeto BytesIO
+        response = BytesIO()
+        wb.save(response)
+        response.seek(0)
+
+        # Crear la respuesta HTTP
+        response = HttpResponse(response, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=solicitud_traslados_finalizados.xlsx'
+        return response
 class GeneralReportsView(TemplateView):
     template_name = 'loyal_ryde_system/reportes_generales.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        transfer_requests = list(TransferRequest.objects.values('status').annotate(count=Count('status')))
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+        company_name = self.request.GET.get('company_name', 'Todas')
+
+        transfer_requests = TransferRequest.objects.all()
+        if start_date and end_date:
+            transfer_requests = transfer_requests.filter(date__range=[start_date, end_date])
+        if company_name and company_name != 'Todas':
+            transfer_requests = transfer_requests.filter(company=company_name)
+
+        transfer_requests = list(transfer_requests.values('status').annotate(count=Count('status')))
         context['transfer_requests_json'] = json.dumps(transfer_requests)
+        context['companies'] = Company.objects.all()
+        context['selected_company'] = company_name
         return context
 
+    def get(self, request, *args, **kwargs):
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            start_date = request.GET.get('start_date')
+            end_date = request.GET.get('end_date')
+            company_name = request.GET.get('company_name', 'Todas')
+
+            transfer_requests = TransferRequest.objects.all()
+            if start_date and end_date:
+                transfer_requests = transfer_requests.filter(date__range=[start_date, end_date])
+            if company_name and company_name != 'Todas':
+                transfer_requests = transfer_requests.filter(company=company_name)
+
+            transfer_requests = list(transfer_requests.values('status').annotate(count=Count('status')))
+            return JsonResponse({'transfer_requests_json': json.dumps(transfer_requests)})
+        return super().get(request, *args, **kwargs)
 class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
     template_name = 'loyal_ryde_system/filtered_transfer_requests.html'
 
