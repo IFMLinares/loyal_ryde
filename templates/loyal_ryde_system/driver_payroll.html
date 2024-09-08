@@ -1,0 +1,85 @@
+{% extends "loyal_ryde_system/base/base.html" %}
+{% load static %}
+
+{% block title %}Nómina de Conductores{% endblock title %}
+
+{% block extra_css %}
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css"/>
+<style>
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .table th {
+        white-space: nowrap;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <div id="kt_content_container" class="container-xxl">
+        <div class="card mb-5 mb-xxl-12">
+            <div class="card-body">
+                <div class="col-md-12 text-center pb-0">
+                    <h1>Nómina de Conductores</h1>
+                </div>
+                <div class="mb-10 pt-9">
+                    <div class="table-responsive">
+                        <table class="table table-rounded table-striped border gy-7 gs-7" id="driverPayrollTable">
+                            <thead>
+                                <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
+                                    <th>Nombre y Apellido</th>
+                                    <th>Vehículo</th>
+                                    <th>Placa</th>
+                                    <th>Viajes por Pagar</th>
+                                    <th>Monto Pendiente</th>
+                                    <th>Viajes Pagados</th>
+                                    <th>Monto Pagado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for driver in drivers %}
+                                <tr>
+                                    <td>{{ driver.user.get_full_name }}</td>
+                                    <td>{{ driver.marca }} {{ driver.model }}</td>
+                                    <td>{{ driver.plaque }}</td>
+                                    <td>{{ driver.trips_to_pay }}</td>
+                                    <td>{{ driver.pending_amount|default:0 }}$</td>
+                                    <td>{{ driver.trips_paid }}</td>
+                                    <td>{{ driver.paid_amount|default:0 }}$</td>
+                                    <td>
+                                        <a href="{% url 'loyalRyde:driver_payroll_excel' driver.id %}" class="btn btn-primary">Descargar Excel</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#driverPayrollTable').DataTable({
+            "columnDefs": [
+                { "width": "15%", "targets": 0 },
+                { "width": "15%", "targets": 1 },
+                { "width": "10%", "targets": 2 },
+                { "width": "10%", "targets": 3 },
+                { "width": "10%", "targets": 4 },
+                { "width": "10%", "targets": 5 },
+                { "width": "10%", "targets": 6 },
+                { "width": "20%", "targets": 7 }
+            ]
+        });
+    });
+</script>
+{% endblock extra_js %}

@@ -201,7 +201,6 @@ class UpdateTransferRequestStatusView(APIView):
             return Response({"id": transfer_request.id, "status": transfer_request.status}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
 class UploadComprobanteView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 

@@ -331,6 +331,8 @@ class TransferRequest(models.Model):
     final_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio Final", default=0, blank=True, null=True)
     discount_coupon = models.ForeignKey(DiscountCoupon, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Cupón de Descuento")
     comprobante = models.ImageField(upload_to='comprobantes/', blank=True, null=True, verbose_name="Comprobante del Viaje")
+    paid = models.BooleanField(default=False, verbose_name="Pagado", blank=True, null=True)
+    paid_driver = models.BooleanField(default=False, verbose_name="Pagado", blank=True, null=True)
 
     def apply_discount(self):
         if self.discount_coupon and self.discount_coupon.is_valid():
