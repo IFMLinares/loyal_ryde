@@ -21,4 +21,5 @@ urlpatterns = [
     path('user-transfer-requests/', UserTransferRequestsView.as_view(), name='user-transfer-requests'),
     path('update-transfer-request-status/', UpdateTransferRequestStatusView.as_view(), name='update_transfer_request_status'),
     path('upload-comprobante/', UploadComprobanteView.as_view(), name='upload-comprobante'),
+    path('driver-earnings/', DriverEarningsView.as_view(), name='driver-earnings'),
 ]

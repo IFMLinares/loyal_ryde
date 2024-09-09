@@ -217,3 +217,24 @@ class UploadComprobanteView(APIView):
         transfer_request.save()
 
         return Response({"message": "Comprobante subido y estado actualizado a finalizada"}, status=status.HTTP_200_OK)
+    
+class DriverEarningsView(APIView):
+    def post(self, request, format=None):
+        user_driver_id = request.data.get('user_id')
+        if not user_driver_id:
+            return Response({"error": "User Driver ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Obtener el CustomUserDriver
+        user_driver = get_object_or_404(CustomUserDriver, user__id=user_driver_id)
+
+        # Consultar todos los TransferRequest con el user_driver y estado 'finalizada'
+        transfer_requests = TransferRequest.objects.filter(user_driver=user_driver, status='finalizada',paid_driver=False)
+
+        total_earnings = 0
+        for transfer_request in transfer_requests:
+            if transfer_request.is_round_trip:
+                total_earnings += transfer_request.rate.driver_price_round_trip
+            else:
+                total_earnings += transfer_request.rate.driver_price
+
+        return Response({"total_earnings": total_earnings}, status=status.HTTP_200_OK)

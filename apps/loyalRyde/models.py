@@ -381,9 +381,15 @@ class TransferRequest(models.Model):
             serialized_transfer_data['fields']['deviations'] = serialized_deviations_data
             serialized_transfer_data['fields']['id'] = self.id
 
-            rates = {
-                "driver_gain": str(self.rate.driver_price)
-            }
+            if self.is_round_trip:
+                rates = {
+                    "driver_gain": str(self.rate.driver_price_round_trip)
+                }
+            else:
+                rates = {
+                    "driver_gain": str(self.rate.driver_price)
+                }
+
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 conductor.username,
@@ -414,13 +420,11 @@ class TransferRequest(models.Model):
             super().save(*args, **kwargs)
 
         
-        self.apply_discount()
+        # self.apply_discount()
         self.final_price += (self.deviation.all().count() * self.rate.detour_local)
 
         # Llama al método save original para guardar normalmente
         super().save(*args, **kwargs)
-
-
 
     def __str__(self):
         return f"Solicitud de Transferencia {self.id}"

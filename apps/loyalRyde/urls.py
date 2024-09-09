@@ -63,5 +63,6 @@ urlpatterns = [
     path('ajax/transfer-month/', transfer_requests_per_month, name='transfer_month'),
     path('drivers/payroll/', DriverPayrollView.as_view(), name='driver_payroll'),
     path('drivers/payroll/excel/<int:pk>/', DriverPayrollExcelView.as_view(), name='driver_payroll_excel'),
+    path('transfer_request/<int:pk>/pdf/', TransferRequestPDFView.as_view(), name='transfer_request_pdf'),
     
 ]
