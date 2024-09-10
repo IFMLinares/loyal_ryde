@@ -202,44 +202,76 @@ class GuestTransferCreateView(CreateView):
     model = TransferRequest
     template_name = 'loyal_ryde_system/transfer_rerquest_guest.html'
     form_class = TransferRequestForm
-    success_url = reverse_lazy('core:transfer_request_list')
 
     def form_valid(self, form):
-        fecha = form.instance.date
+        # Guarda el formulario directamente
+        form.instance.service_requested = None
+        form.instance.company = "N/A Modo Invitado"
+        
+        transfer_request = form.save()
 
-        # Ensure fecha is a string
-        if isinstance(fecha, str):
-            # Convierte la fecha al formato que Django espera
-            fecha = parse_date(fecha)
+        # Obtén el ID de la tarifa y el objeto Rates
+        rate_id = form.cleaned_data['rate'].id
+        rate = Rates.objects.get(id=rate_id)
+
+        # Calcula el precio basado en si es ida y vuelta
+        if form.cleaned_data['is_round_trip']:
+            transfer_request.price = rate.price_round_trip
         else:
-            # Handle the case where fecha is not a string
-            fecha = fecha.isoformat()
+            transfer_request.price = rate.price
 
-        form.instance.company = None
-        print(fecha)
-        return super().form_valid(form)
+        # Calcula el precio final basado en los desvíos
+        waypoints_numbers = form.cleaned_data.get('waypoints_numbers', 0)
+        if waypoints_numbers > 0:
+            transfer_request.final_price += (waypoints_numbers * rate.detour_local)
 
-    # def post(self, request, *args, **kwargs):
-    #     fecha = request.POST.get('date')
+        # Guarda el objeto TransferRequest con los nuevos valores
+        transfer_request.save()
 
-    #     # Ensure fecha is a string
-    #     if isinstance(fecha, str):
-    #         # Convierte la fecha al formato que Django espera
-    #         fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
+        return HttpResponseRedirect(reverse('core:guest_transfer_success', kwargs={'pk': transfer_request.pk}))
 
-    #     # Actualiza la fecha en los datos del POST
-    #     request.POST = request.POST.copy()
-    #     request.POST['date'] = fecha
+    def post(self, request, *args, **kwargs):
+        # Obtén la fecha directamente del POST
+        fecha = request.POST.get('date')
 
-    #     # Llama al método post original para guardar el TransferRequest
-    #     return super().post(request, *args, **kwargs)
-    
+        # Convierte la fecha al formato que Django espera
+        fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
+        # Actualiza la fecha en los datos del POST
+        request.POST = request.POST.copy()
+        request.POST['date'] = fecha
+
+        # Llama al método post original para guardar el TransferRequest
+        response = super().post(request, *args, **kwargs)
+
+        # Obtén el objeto TransferRequest recién creado
+        transfer_request = self.object
+        # Procesa los desvíos adicionales
+
+        try:
+            waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
+            for i in range(3, 3 + waypoints_numbers):
+                name = request.POST.get(f'waypoint-{i}')
+                lat = request.POST.get(f'lat_{i}')
+                lng = request.POST.get(f'lng_{i}')
+                if lat and lng:
+                    desviation = Desviation.objects.create(
+                        desviation_direc=name,
+                        desviation_number=i - 2,
+                        waypoint_number=i,
+                        lat=lat,
+                        long=lng
+                    )
+                    transfer_request.deviation.add(desviation)
+        except:
+            pass
+        return response
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         departure_points = DeparturePoint.objects.all()
+        context['rates_list'] = Rates.objects.all()
         context['departure'] = departure_points
         return context
-
 
 # Detalles del traslado
 class TransferRequestDetailview(LoginRequiredMixin, DetailView):
@@ -315,6 +347,16 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
 
         return super().post(request, *args, **kwargs)
 
+
+class GuestTransferSuccessView(TemplateView):
+    template_name = 'loyal_ryde_system/guest_transfer_success.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        transfer_request_id = self.kwargs.get('pk')
+        transfer_request = get_object_or_404(TransferRequest, pk=transfer_request_id)
+        context['transfer_request'] = transfer_request
+        return context
 # Agregar Cupones de descuento
 
 class DiscountCouponCreateView(CreateView):
@@ -1066,6 +1108,7 @@ class TransferRequestPDFView(LoginRequiredMixin, View):
 
         doc.build(elements)
         return response
+
 class DriverPayrollView(LoginRequiredMixin, ListView):
     model = CustomUserDriver
     template_name = 'loyal_ryde_system/driver_payroll.html'

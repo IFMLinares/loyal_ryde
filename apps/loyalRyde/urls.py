@@ -64,5 +64,6 @@ urlpatterns = [
     path('drivers/payroll/', DriverPayrollView.as_view(), name='driver_payroll'),
     path('drivers/payroll/excel/<int:pk>/', DriverPayrollExcelView.as_view(), name='driver_payroll_excel'),
     path('transfer_request/<int:pk>/pdf/', TransferRequestPDFView.as_view(), name='transfer_request_pdf'),
+    path('guest-transfer/success/<int:pk>/', GuestTransferSuccessView.as_view(), name='guest_transfer_success'),
     
 ]

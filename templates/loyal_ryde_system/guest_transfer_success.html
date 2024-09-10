@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud Guardada Exitosamente</title>
+    <link rel="stylesheet" href="{% static 'assets/plugins/global/plugins.bundle.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.bundle.css' %}">
+    <style>
+        .summary-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .summary-card h4 {
+            color: #28a745;
+        }
+        .summary-card p {
+            font-size: 16px;
+        }
+        .summary-card hr {
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="summary-card">
+                    <h4 class="alert-heading">Solicitud Guardada Exitosamente</h4>
+                    <p>Tu solicitud ha sido guardada exitosamente. A continuación se muestra un resumen de los datos guardados:</p>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Fecha:</strong> {{ transfer_request.date }}</p>
+                            <p><strong>Hora:</strong> {{ transfer_request.hour }}</p>
+                            <p><strong>Precio:</strong> {{ transfer_request.price }}$</p> </div>
+                        <div class="col-md-6">
+                            <p><strong>Ida y Vuelta:</strong> {{ transfer_request.is_round_trip|yesno:"Sí,No" }}</p>
+                            <p><strong>Tipo de Servicio:</strong> Traslado Ejecutivo</p>
+                            <p><strong>Precio Estimado:</strong> {{ transfer_request.final_price }}$</p>
+                        </div>
+                        <div class="col-md-12">
+                            <p><strong>Punto de Partida:</strong> {{ transfer_request.departure_site_route }}: {{ transfer_request.departure_direc }}</p>
+                            <p><strong>Destino:</strong> {{ transfer_request.destination_route }}: {{ transfer_request.destination_direc }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h5>Detalles Adicionales</h5>
+                    <p><strong>Desvíos:</strong></p>
+                    <ul>
+                        {% for desviation in transfer_request.deviation.all %}
+                        <li>{{ desviation.desviation_direc }} (Lat: {{ desviation.lat }}, Long: {{ desviation.long }})</li>
+                        {% endfor %}
+                    </ul>
+                    <p><strong>Comentarios:</strong> {{ transfer_request.comments }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

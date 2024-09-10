@@ -52,7 +52,9 @@ class UserLoginView(APIView):
                 # Combina los datos de CustomUser y CustomUserDriver en un solo diccionario
                 combined_data = {
                     'user': user_serializar.data,
-                    'vehicle': driver_serializers.data
+                    'vehicle': driver_serializers.data,
+                    'image_url': user_driver.image.url if user_driver.image else None,
+                    'license_url': user_driver.license.url if user_driver.license else None
                 }
 
                 return Response(combined_data, status=200)
@@ -155,14 +157,20 @@ class CustomUserDriverImageUploadView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, format=None):
-        user_driver_id = request.data.get('user_driver_id')
-        user_driver = get_object_or_404(CustomUserDriver, id=user_driver_id)
+        user_id = request.data.get('user_id')
+        user_driver = get_object_or_404(CustomUserDriver, user__id=user_id)
         
-        serializer = CustomUserDriverSerializer(user_driver, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        image = request.FILES.get('image')
+        license = request.FILES.get('license')
+
+        if image:
+            user_driver.image = image
+        if license:
+            user_driver.license = license
+        
+        user_driver.save()
+
+        return Response({"message": "Imágenes subidas exitosamente"}, status=status.HTTP_200_OK)
     
 class UserTransferRequestsView(APIView):
     def post(self, request, format=None):
