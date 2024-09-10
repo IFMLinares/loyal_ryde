@@ -1,0 +1,334 @@
+{% extends "loyal_ryde_system/base/base.html" %}
+{% load static %}
+
+{% block title %}Filtered Transfer Requests{% endblock title %}
+
+{% block extra_css %}
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<style>
+    .company-card {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    .company-card img, .company-card .fa-id-card {
+        max-width: 150px;
+        margin-right: 20px;
+        border-radius: 8px;
+    }
+    .company-card .company-info {
+        flex: 1;
+    }
+    .company-card .company-info h4 {
+        margin-bottom: 15px;
+    }
+    .company-card .company-info p {
+        margin-bottom: 10px;
+    }
+    .select-company-message {
+        text-align: center;
+        font-size: 24px;
+        color: #6c757d;
+        margin-top: 20px;
+    }
+    th {
+        white-space: normal;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <div class="toolbar" id="kt_toolbar">
+        <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
+            <div class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
+                <h1 class="d-flex text-dark fw-bolder fs-3 align-items-center my-1">Filtered Transfer Requests</h1>
+            </div>
+        </div>
+    </div>
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+        <div id="kt_content_container" class="container-xxl">
+            <div class="row gy-5 g-xl-8">
+                <div class="col-xl-12">
+                    <div class="card card-xl-stretch mb-5 mb-xl-8">
+                        <div class="card-header border-0 py-5">
+                            <h3 class="card-title fw-bolder">Compañía</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link active" id="company-info-tab" data-bs-toggle="tab" href="#company-info" role="tab" aria-controls="company-info" aria-selected="true">Información de la Empresa</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="datatable-tab" data-bs-toggle="tab" href="#datatable" role="tab" aria-controls="datatable" aria-selected="false">Tabla</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="chart-tab" data-bs-toggle="tab" href="#chart" role="tab" aria-controls="chart" aria-selected="false">Grafico de Barras</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="pie-chart-tab" data-bs-toggle="tab" href="#pie-chart" role="tab" aria-controls="pie-chart" aria-selected="false">Grafico Circular</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="company-info" role="tabpanel" aria-labelledby="company-info-tab">
+                                    <div id="company-details" class="company-info">
+                                        <p class="select-company-message">Por favor seleccione una empresa</p>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="datatable" role="tabpanel" aria-labelledby="datatable-tab">
+                                    <div class="table-responsive">
+                                        <div class="mb-3">
+                                            <label for="status-select" class="form-label">Filtrar por estado:</label>
+                                            <select id="status-select" class="form-select" data-control="select2" data-hide-search="true">
+                                                <option value="all">Todas</option>
+                                                <option value="esperando validación">Esperando Validación</option>
+                                                <option value="validada">Validada</option>
+                                                <option value="aprobada">Aprobada</option>
+                                                <option value="en proceso">En Proceso</option>
+                                                <option value="finalizada">Finalizada</option>
+                                                <option value="cancelada">Cancelada</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="month-select" class="form-label">Filtrar por mes:</label>
+                                            <select id="month-select" class="form-select" data-control="select2" data-hide-search="true">
+                                                <option value="all">Todos</option>
+                                                {% for month in months %}
+                                                    <option value="{{ month.0 }}">{{ month.1 }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <button id="download-excel" class="btn btn-primary">Descargar Excel</button>
+                                        </div>
+                                        <table class="table table-rounded table-striped border gy-7 gs-7" id="transfer-requests-table">
+                                            <thead>
+                                                <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
+                                                    <th>Fecha</th>
+                                                    <th>Hora</th>
+                                                    <th>Origen</th>
+                                                    <th>Destino</th>
+                                                    <th>Monto base $</th>
+                                                    <th>Desvios</th>
+                                                    <th>Monto total $</th>
+                                                    <th>GRAFO/CECO</th>
+                                                    <th>Solicitante</th>
+                                                    <th>Estado</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Data will be populated by AJAX -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="chart" role="tabpanel" aria-labelledby="chart-tab">
+                                    <div id="transfer-request-status-chart" style="height: 350px;"></div>
+                                </div>
+                                <div class="tab-pane fade" id="pie-chart" role="tabpanel" aria-labelledby="pie-chart-tab">
+                                    <div id="transfer-request-pie-chart" style="height: 350px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var table = $('#transfer-requests-table').DataTable({
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }]
+        });
+
+        $('#date-range').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            todayHighlight: true
+        });
+
+        var barChart = new ApexCharts(document.querySelector("#transfer-request-status-chart"), {
+            series: [],
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    endingShape: 'rounded',
+                    distributed: true
+                },
+            },
+            colors: [],
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            xaxis: {
+                categories: [],
+            },
+            yaxis: {
+                title: {
+                    text: 'Count'
+                }
+            },
+            fill: {
+                opacity: 1
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return val + " requests"
+                    }
+                }
+            }
+        });
+        barChart.render();
+
+        var pieChart = new ApexCharts(document.querySelector("#transfer-request-pie-chart"), {
+            series: [],
+            chart: {
+                type: 'pie',
+                height: 350
+            },
+            labels: [],
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }]
+        });
+        pieChart.render();
+
+        function fetchFilteredData() {
+            var status = $('#status-select').val();
+            var month = $('#month-select').val();
+            var dateRange = $('#date-range').val();
+
+            $.ajax({
+                url: "{% url 'core:reports_company' %}",
+                method: 'POST',
+                data: {
+                    'status': status,
+                    'month': month,
+                    'date_range': dateRange,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    if (data.transfer_requests) {
+                        console.log(data);
+                        // Populate the table
+                        var table = $('#transfer-requests-table').DataTable();
+                        table.clear().draw();
+                        data.table_data.forEach(function(item) {
+                            table.row.add([
+                                item.date,
+                                item.hour,
+                                item.departure_site_route,
+                                item.destination_route,
+                                item.price,
+                                item.deviation_count,
+                                item.final_price,
+                                item.grafo_ceco,
+                                item.service_requested,
+                                item.status,
+                                `<button class="btn btn-primary download-pdf" data-id="${item.id}">Descargar PDF</button>`
+                            ]).draw();
+                        });
+
+                        // Update company info
+                        $('#company-details').html(`
+                            <div class="company-card">
+                                <img src="${data.image}" alt="Company Image">
+                                <div class="company-info">
+                                    <h4>${data.name}</h4>
+                                    <p>Email: ${data.email}</p>
+                                    <p>RIF: ${data.rif}</p>
+                                    <p>Address: ${data.address}</p>
+                                    <p>Phone: ${data.phone}</p>
+                                </div>
+                            </div>
+                        `);
+
+                        // Update bar chart
+                        barChart.updateSeries([{
+                            name: 'Transfer Requests',
+                            data: data.transfer_requests.map(item => item.count)
+                        }]);
+                        barChart.updateOptions({
+                            xaxis: {
+                                categories: data.transfer_requests.map(item => item.status)
+                            }
+                        });
+
+                        // Update pie chart
+                        pieChart.updateSeries(data.transfer_requests.map(item => item.count));
+                        pieChart.updateOptions({
+                            labels: data.transfer_requests.map(item => item.status)
+                        });
+                    }
+                }
+            });
+        }
+
+        $('#status-select, #month-select, #date-range').change(fetchFilteredData);
+
+        // Fetch initial data
+        fetchFilteredData();
+
+        // Download Excel
+        $('#download-excel').click(function() {
+            var status = $('#status-select').val();
+            var month = $('#month-select').val();
+            var dateRange = $('#date-range').val();
+
+            var queryParams = $.param({
+                'status': status,
+                'month': month,
+                'date_range': dateRange,
+                'export': true
+            });
+
+            var url = "{% url 'core:reports_company' %}?" + queryParams;
+            window.location.href = url;
+        });
+
+        // Download PDF
+        $(document).on('click', '.download-pdf', function() {
+            var transferRequestId = $(this).data('id');
+            var url = "{% url 'core:transfer_request_pdf' 0 %}".replace('0', transferRequestId);
+            window.location.href = url;
+        });
+
+    });
+</script>
+{% endblock extra_js %}

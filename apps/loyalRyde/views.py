@@ -18,7 +18,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import AnonymousUser, Group, User
 from django.core import serializers
 from django.core.mail import EmailMessage, EmailMultiAlternatives, send_mail
@@ -1258,6 +1258,18 @@ class DriverPayrollExcelView(LoginRequiredMixin, View):
         response['Content-Disposition'] = f'attachment; filename=nomina_conductor_{driver.user.get_full_name()}.xlsx'
         return response
 
+class CompanyFilteredTransferRequestsView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = 'loyal_ryde_system/company_filtered_transfer_requests.html'
+
+    def test_func(self):
+        return self.request.user.role in ['supervisor', 'operator']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_company = self.request.user.company
+        transfer_requests = TransferRequest.objects.filter(company=user_company)
+        context['transfer_requests'] = transfer_requests
+        return context
 
 # AJAX FUNCTIONS
 @csrf_exempt
