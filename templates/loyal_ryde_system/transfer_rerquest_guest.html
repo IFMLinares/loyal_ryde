@@ -360,14 +360,17 @@
 			{% endif %}
 			</script>
 		{% endblock error_js %}
-        <script>
+        <script>    
             var waypointCount = 0;
+            let urlverify_discount_code = "{% url 'core:verify_discount_code' %}"
+            let url_routes_ajax = "{% url 'core:routes_ajax' %}";
+            let rates_ajax = "{% url 'core:rates_ajax' %}";
+            let url_form = "{% url 'core:transfer_request_people_create' %}";
         </script>
 		<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
         <script src="{% static 'ruta.js' %}"></script>
         <script src="{% static 'transfer_form.js' %}"></script>
         <script>
-        let url_form = "{% url 'core:transfer_request_people_create' %}";
             $(document).ready(function () {
                     // Cuando cambia el select de salida
                     $("#id_departure_site_route").change(function () {

@@ -180,15 +180,12 @@ class UserTransferRequestsView(APIView):
         
         # Get the CustomUser object
         user = get_object_or_404(CustomUser, id=user_id)
-        # print(f"User found: {user}")
 
         # Get the CustomUserDriver object associated with the CustomUser
         user_driver = get_object_or_404(CustomUserDriver, user=user)
-        # print(f"UserDriver found: {user_driver}")
 
         # Get all TransferRequest objects where the driver is the CustomUserDriver
         transfer_requests = TransferRequest.objects.filter(user_driver=user_driver)
-        # print(f"TransferRequests found: {transfer_requests}")
 
         # Serialize the TransferRequest objects
         serializer = TransferRequestSerializer(transfer_requests, many=True)

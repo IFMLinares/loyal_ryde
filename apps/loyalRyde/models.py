@@ -357,7 +357,10 @@ class TransferRequest(models.Model):
 
             # Obtener el nombre y apellido del usuario
             user = self.service_requested
-            user_full_name = f"{user.first_name} {user.last_name}"
+            try:
+                user_full_name = f"{user.first_name} {user.last_name}"
+            except:
+                user_full_name = "Usuario invitado"
 
             # Obtener la URL completa de la imagen de la empresa
             if user.company and user.company.image:
@@ -419,9 +422,8 @@ class TransferRequest(models.Model):
         if not self.pk:
             super().save(*args, **kwargs)
 
-        
         # self.apply_discount()
-        self.final_price += (self.deviation.all().count() * self.rate.detour_local)
+        self.final_price = self.price + (self.deviation.all().count() * self.rate.detour_local)
 
         # Llama al método save original para guardar normalmente
         super().save(*args, **kwargs)

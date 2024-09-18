@@ -303,6 +303,10 @@
                                     <label class="form-label" for="id_final_price">Precio Estimado:</label>
                                     <input type="text" class="form-control" id="id_final_price" name="final_price" readonly value="0">
                                 </div>
+                                <div class="mt-5 col-md-6">
+                                    <label class="form-label" for="id_final_price">Adicional (Por desvios):</label>
+                                    <input type="text" class="form-control" id="id_aditional" name="aditional" readonly value="0">
+                                </div>
                                 
 
                                 <div class="mt-5 col-md-12">
@@ -331,230 +335,13 @@
 {% block extra_js %}
 <script>    
     var waypointCount = 0;
+    let urlverify_discount_code = "{% url 'core:verify_discount_code' %}"
+    let url_routes_ajax = "{% url 'core:routes_ajax' %}";
+    let rates_ajax = "{% url 'core:rates_ajax' %}";
+    let url_form = "{% url 'core:transfer_request_people_create' %}";
 </script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>
 <script src="{% static 'transfer_form.js' %}"></script>
-<script>
-let url_form = "{% url 'core:transfer_request_people_create' %}";
-$(document).ready(function () {
-    $('#id_discount_code').on('input', function () {
-        var code = $(this).val();
-        var discountMessage = $('#discount_message');
-        var discountedPriceContainer = $('#discounted_price_container');
-        var discountedPriceInput = $('#id_discounted_price');
-
-        if (code.length > 0) {
-            $.ajax({
-                url: "{% url 'core:verify_discount_code' %}",
-                type: 'POST',
-                data: {
-                    'code': code,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
-                },
-                success: function (data) {
-                    if (data.valid) {
-                        discountMessage.html('<span class="text-success">Código válido. Descuento: ' + data.discount_value + ' (' + data.discount_type + ')</span>');
-                        console.log(data.discount_value, data.discount_type);
-                        updateDiscountedPrice(data.discount_value, data.discount_type);
-                        discountedPriceContainer.removeClass('d-none');
-                    } else {
-                        discountMessage.html('<span class="text-danger">' + data.message + '</span>');
-                        discountedPriceContainer.addClass('d-none');
-                        discountedPriceInput.val('');
-                        $('#id_final_price').val($('#id_price').val());
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                    discountMessage.html('<span class="text-danger">Error al verificar el código de descuento.</span>');
-                    discountedPriceContainer.addClass('d-none');
-                    discountedPriceInput.val('');
-                }
-            });
-        } else {
-            discountMessage.html('');
-            discountedPriceContainer.addClass('d-none');
-            discountedPriceInput.val('');
-        }
-    });
-    // Cuando cambia el select de salida
-    $("#id_departure_site_route").change(function () {
-        const selectedDeparture = $(this).val();
-
-        // Realizar la petición AJAX
-        $.ajax({
-            url: "{% url 'core:routes_ajax' %}",  // URL de la vista Django
-            type: "GET",
-            data: { departure: selectedDeparture },
-            success: function (data) {
-                // Limpiar el select de destino
-                $("#id_destination_route").empty();
-                console.log(data)
-                // Agregar las opciones de destino
-                $("#id_destination_route").append(
-                    $("<option>", {
-                        value: '',
-                        text: 'Selecciona un punto de destino',
-                        selected: true,
-                        disabled: true
-                    })
-                );
-                data.forEach(function (route) {
-                    $("#id_destination_route").append(
-                        $("<option>", {
-                            value: route.arrival_point,
-                            text: route.arrival_point
-                        })
-                    );
-                });
-            }
-        });
-    });
-    
-    $("#id_departure_site_route, #id_destination_route").change(function () {
-        const departureId = $("#id_departure_site_route").val();
-        const arrivalId = $("#id_destination_route").val();
-        const nro = $('#id_person_to_transfer option:selected').length;
-        $.ajax({
-        url: "{% url 'core:rates_ajax' %}",  // URL de la vista Django
-            type: "GET",
-            data: {
-                departure_id: departureId,
-                arrival_id: arrivalId,
-                nro: nro,
-            },
-            success: function (data) {
-                console.log(data)
-                const tarifas = data.rates; // Obtén todas las tarifas de la respuesta
-
-                // Itera sobre las tarifas y genera el HTML para cada una
-                let tarifasHtml = "";
-                tarifas.forEach((tarifa, index) => {
-                    tarifasHtml += `
-                        <div class="mt-5 col-md-6">
-                            <label class="btn btn-outline btn-outline-dashed btn-outline-default p-7 d-flex align-items-center mb-5" for="">
-                                <svg class="svg-icon svg-icon-4x me-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="60" height="60" >
-                                    <path d="M312 24V34.5c6.4 1.2 12.6 2.7 18.2 4.2c12.8 3.4 20.4 16.6 17 29.4s-16.6 20.4-29.4 17c-10.9-2.9-21.1-4.9-30.2-5c-7.3-.1-14.7 1.7-19.4 4.4c-2.1 1.3-3.1 2.4-3.5 3c-.3 .5-.7 1.2-.7 2.8c0 .3 0 .5 0 .6c.2 .2 .9 1.2 3.3 2.6c5.8 3.5 14.4 6.2 27.4 10.1l.9 .3c11.1 3.3 25.9 7.8 37.9 15.3c13.7 8.6 26.1 22.9 26.4 44.9c.3 22.5-11.4 38.9-26.7 48.5c-6.7 4.1-13.9 7-21.3 8.8V232c0 13.3-10.7 24-24 24s-24-10.7-24-24V220.6c-9.5-2.3-18.2-5.3-25.6-7.8c-2.1-.7-4.1-1.4-6-2c-12.6-4.2-19.4-17.8-15.2-30.4s17.8-19.4 30.4-15.2c2.6 .9 5 1.7 7.3 2.5c13.6 4.6 23.4 7.9 33.9 8.3c8 .3 15.1-1.6 19.2-4.1c1.9-1.2 2.8-2.2 3.2-2.9c.4-.6 .9-1.8 .8-4.1l0-.2c0-1 0-2.1-4-4.6c-5.7-3.6-14.3-6.4-27.1-10.3l-1.9-.6c-10.8-3.2-25-7.5-36.4-14.4c-13.5-8.1-26.5-22-26.6-44.1c-.1-22.9 12.9-38.6 27.7-47.4c6.4-3.8 13.3-6.4 20.2-8.2V24c0-13.3 10.7-24 24-24s24 10.7 24 24zM568.2 336.3c13.1 17.8 9.3 42.8-8.5 55.9L433.1 485.5c-23.4 17.2-51.6 26.5-80.7 26.5H192 32c-17.7 0-32-14.3-32-32V416c0-17.7 14.3-32 32-32H68.8l44.9-36c22.7-18.2 50.9-28 80-28H272h16 64c17.7 0 32 14.3 32 32s-14.3 32-32 32H288 272c-8.8 0-16 7.2-16 16s7.2 16 16 16H392.6l119.7-88.2c17.8-13.1 42.8-9.3 55.9 8.5zM193.6 384l0 0-.9 0c.3 0 .6 0 .9 0z"/>
-                                </svg>
-                                <span class="d-block fw-bold text-start">
-                                    <span class="text-dark fw-bolder d-block fs-3">
-                                        <input type="radio" class="form-check-input rate-radio" name="rate-checkbox" value="${tarifa.rate_price}" data-rate-id="${tarifa.rate_id}" data-round-trip-price="${tarifa.rate_price_round_trip}" required/> Tarifa ${tarifa.rate_id}: ${tarifa.rate_vehicle}
-                                    </span>
-                                    <span class="text-dark">${tarifa.rate_route}</span> <br>
-                                    <span class="text-dark">Tipo de Vehiculo: ${tarifa.rate_vehicle}</span><br>
-                                    <span class="text-dark">Precio Base: </span> <span style="color:green">${tarifa.rate_price}$</span><br>
-                                    <span class="text-dark">Precio Base Ida y vuelta: </span> <span style="color:green">${tarifa.rate_price_round_trip}$</span><br>
-                                    <span class="text-dark">Precio de espera por hora (diurna) C/U: </span> <span style="color:green">${tarifa.rate_daytime_waiting_time}$<br>
-                                    <span class="text-dark">Precio de espera por hora (noctura) C/U: </span> <span style="color:green">${tarifa.rate_nightly_waiting_time}$</span><br>
-                                    <span class="text-dark">Precio por desvio local C/U: </span> <span style="color:green">${tarifa.rate_detour_local}$</span><br>
-                                </br>
-                            </label>
-                        </div>
-                    `;
-                });
-
-                // Inserta el HTML generado en el elemento con ID rates_div
-                $("#rates_div").html(tarifasHtml).removeClass('d-none');
-
-                // Añadir evento para actualizar el precio con la tarifa seleccionada
-                $(".rate-radio").change(function () {
-                    updatePrice();
-                    updateSelectRate($(this).data("rate-id"));
-                });
-
-                // Añadir evento para actualizar el precio cuando se cambia el checkbox de ida y vuelta
-                $("#id_is_round_trip").change(function () {
-                    updatePrice();
-                });
-
-                // Función para actualizar el precio
-                function updatePrice() {
-                    const selectedRate = $("input[name='rate-checkbox']:checked");
-                    if (selectedRate.length > 0) {
-                        const selectedPrice = selectedRate.val();
-                        const roundTripPrice = selectedRate.data("round-trip-price");
-                        const isRoundTrip = $("#id_is_round_trip").is(":checked");
-
-                        if (isRoundTrip) {
-                            $("#id_price").val(roundTripPrice);
-                            $("#id_final_price").val(roundTripPrice);
-                        } else {
-                            $("#id_price").val(selectedPrice);
-                            $("#id_final_price").val(selectedPrice);
-                        }
-
-                        // Si hay un descuento válido, actualizar el precio con descuento
-                        const discountValue = $('#discount_message span.text-success').text().match(/(\d+)%/);
-                        if (discountValue) {
-                            const discount = parseFloat(discountValue[1]) / 100;
-                            const discountedPrice = isRoundTrip ? roundTripPrice * (1 - discount) : selectedPrice * (1 - discount);
-                            $("#id_discounted_price").val(discountedPrice.toFixed(2));
-                            $("#id_final_price").val(discountedPrice.toFixed(2));
-                        }
-                    }
-                }
-
-                // Función para actualizar el campo select con la tarifa seleccionada
-                function updateSelectRate(rateId) {
-                    $("#id_rate").val(rateId);
-                }
-            },
-            error: function () {
-                // Maneja el error si no se encuentra una tarifa
-                $("#precio").text("No disponible");
-                $("#precio_ida_vuelta").text("No disponible");
-            }
-        });
-
-    });
-
-    // Añadir evento para actualizar el precio cuando se cambia el checkbox de ida y vuelta
-    $("#id_is_round_trip").change(function () {
-        const selectedRate = $("input[name='rate']:checked");
-        if (selectedRate.length > 0) {
-            const selectedPrice = selectedRate.val();
-            const roundTripPrice = selectedRate.data("round-trip-price");
-            const isRoundTrip = $(this).is(":checked");
-
-            if (isRoundTrip) {
-                $("#id_price").val(roundTripPrice);
-            } else {
-                $("#id_price").val(selectedPrice);
-            }
-
-            // Si hay un descuento válido, actualizar el precio con descuento
-            const discountValue = $('#discount_message span.text-success').text().match(/(\d+)%/);
-            if (discountValue) {
-                const discount = parseFloat(discountValue[1]) / 100;
-                const discountedPrice = isRoundTrip ? roundTripPrice * (1 - discount) : selectedPrice * (1 - discount);
-                $("#id_discounted_price").val(discountedPrice.toFixed(2));
-            }
-        }
-    });
-
-    function updateDiscountedPrice(discountValue, discountType) {
-        const selectedRate = $("input[name='rate-checkbox']:checked");
-        if (selectedRate.length > 0) {
-            const selectedPrice = parseFloat(selectedRate.val());
-            const roundTripPrice = parseFloat(selectedRate.data("round-trip-price"));
-            const isRoundTrip = $("#id_is_round_trip").is(":checked");
-
-            let price = isRoundTrip ? roundTripPrice : selectedPrice;
-            let discountedPrice;
-
-            if (discountType === 'percentage') {
-                discountedPrice = price * (1 - (discountValue / 100));
-            } else if (discountType === 'fixed') {
-                discountedPrice = price - discountValue;
-            }
-
-            $("#id_discounted_price").val(discountedPrice.toFixed(2));
-            $("#id_final_price").val(discountedPrice.toFixed(2));
-        }
-    }
-});
-
-</script>
 
 {% endblock extra_js %}
