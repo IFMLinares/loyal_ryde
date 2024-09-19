@@ -107,11 +107,20 @@
                                         <div class="menu-item px-3">
                                             <a href="{% url 'core:transfer_request_detail' pk=item.id %}" class="menu-link px-3" data-kt-users-table-filter="delete_row">Ver</a>
                                         </div>
-                                        {% if user.is_authenticated and user.role == 'administrador' %}
-                                            <div class="menu-item px-3">
-                                                <a href="#" class="btn btn-xs btn-primary aprobar {% if item.status != 'validada' %}disabled{% endif %}" data-id="{{ item.id }}">Aprobar</a>
-                                            </div>
-                                        {% endif %}
+                                        <div class="menu-item px-3">
+                                            {% if item.status == 'validada' %}
+                                                {% if user.is_authenticated and user.role == 'administrador' %}
+                                                    <a href="#" class="btn btn-xs btn-primary aprobar" data-id="{{ item.id }}">Aprobar</a>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if item.status == 'esperando validación' %}
+                                                <a href="#" class="btn btn-xs btn-primary validar" data-id="{{ item.id }}">Validar</a>
+                                            {% endif %}
+                                        </div>
+                                    
+                                        <div class="menu-item px-3 mt-xl-1">
+                                            <a href="#" class="btn btn-xs btn-danger cancelar" data-id="{{ item.id }}">Cancelar</a>
+                                        </div>
                                         <!--end::Menu item-->
                                     </div>
                                     <!--end::Menu-->

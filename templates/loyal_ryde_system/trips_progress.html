@@ -88,6 +88,14 @@
                                     <div class="menu-item px-3">
                                         <a href="{% url 'core:transfer_request_detail' pk=item.id %}" class="menu-link px-3" data-kt-users-table-filter="delete_row">Ver</a>
                                     </div>
+                                    
+                                    <div class="menu-item px-3">
+                                        <a href="{% url 'core:transfer_request_update' pk=item.id %}" class="menu-link px-3">Editar</a>
+                                    </div>
+
+                                    <div class="menu-item px-3 pt-xl-1">
+                                        <a href="#" class="btn btn-xs btn-danger cancelar" data-id="{{ item.id }}">Cancelar</a>
+                                    </div>
                                     <!--end::Menu item-->
                                 </div>
                                 <!--end::Menu-->
@@ -110,5 +118,11 @@
 {% endblock content %} 
 
 {% block extra_js %} 
-        <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+    <script>
+    let url_approve_ajax = "{% url 'core:transfer_request_approve' %}";
+    let url_approve_ajax_admin = "{% url 'core:transfer_request_approve_admin' %}";
+    let url_cancel_ajax = "{% url 'core:transfer_request_cancel' %}";
+    </script>   
+    <script src="{% static 'trasnfer_request_list.js' %}"></script>
+    <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
 {% endblock extra_js %}

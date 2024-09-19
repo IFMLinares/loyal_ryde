@@ -95,7 +95,7 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=20, choices=USER_CHOCIES, verbose_name='Rol')
     department = models.CharField(max_length=100, blank=True, verbose_name='Departamento')
     travel_approval = models.BooleanField(default=False, verbose_name='Código de aprobación', blank=True, null=True)
-    status = models.CharField(verbose_name="Status",max_length=20, default='inactive', choices=[('inactive', 'Inactivo'), ('active', 'Activo'), ('suspended', 'Suspendido')])
+    status = models.CharField(verbose_name="Estatus",max_length=20, default='inactive', choices=[('inactive', 'Inactivo'), ('active', 'Activo'), ('suspended', 'Suspendido')])
     company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name='Empresa', null=True, blank=True,)
     class Meta:
         # Asegúrate de definir un related_name único para evitar conflictos

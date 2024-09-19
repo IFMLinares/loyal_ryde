@@ -30,7 +30,7 @@
                     <!--begin::Card body-->
                     <div class="card-body text-center pt-0">
                         <!--begin::Image input-->
-                        <div class="image-input image-input-empty image-input-outline mb-3" data-kt-image-input="true" style="background-image: url({% static 'assets/media/logos/logo-01.png' %})" id="image_company">
+                        <div class="image-input image-input-empty image-input-outline mb-3 " data-kt-image-input="true" style="background-image: url({% static 'img/logo-01.png' %});background-size: contain; background-position: center; background-repeat: no-repeat;" id="image_company">
                             <!--begin::Preview existing avatar-->
                             <div class="image-input-wrapper w-150px h-150px"></div>
                             <!--end::Preview existing avatar-->
@@ -150,7 +150,7 @@
                             </div>
                                 <!--end::Description-->
                             {% for field in form.visible_fields %}
-                                {% if  field.name != 'role' and field.name != 'first_name' and field.name != 'last_name' and field.name != 'travel_approval' and field.name != 'company' %}
+                                {% if  field.name != 'role' and field.name != 'first_name' and field.name != 'last_name' and field.name != 'travel_approval' and field.name != 'company' and field.name != 'department' %}
                                             <!--begin::Label-->
                                             <div class="mb-3  {% if field.name == 'password1' or field.name == 'password2' %} d-none {% endif %}">
                                             <label class="required form-label">{{ field.label }}</label>

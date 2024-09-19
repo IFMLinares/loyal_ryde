@@ -1,6 +1,7 @@
 import calendar
 import locale
 import json
+from babel.dates import format_date
 from datetime import datetime
 from io import BytesIO
 
@@ -707,21 +708,29 @@ class TransferRequestExcelView(LoginRequiredMixin, ListView):
             for tr in transfer_requests
         ]
         return JsonResponse({'transfer_requests': transfer_requests_data})
-
+    
     def export_to_excel(self):
         transfer_requests = self.get_queryset()
+
+        # Obtener el mes de los parámetros de la solicitud
+        month = self.request.GET.get('month')
+        if month:
+            month_name = format_date(datetime.strptime(month, "%m"), "MMMM", locale="es").upper()
+        else:
+            month_name = "MES DESCONOCIDO"
 
         # Crear un nuevo libro de trabajo y una hoja
         wb = Workbook()
         ws = wb.active
         ws.title = "Transfer Requests"
 
-        # Añadir el logo de la empresa
-        logo_path = 'static/img/logo-01.png'
-        img = Image(logo_path)
-        img.width = 100  # Ajustar el ancho del logo
-        img.height = 100  # Ajustar la altura del logo
-        ws.add_image(img, 'A1')
+        # Añadir el título
+        title = f"REPORTES GGMN MES DE {month_name}"
+        ws.merge_cells('A1:O1')  # Unificar celdas desde A1 hasta O1
+        cell = ws['A1']
+        cell.value = title
+        cell.font = Font(bold=True, size=14)
+        cell.alignment = Alignment(horizontal='center', vertical='center')
 
         # Escribir los encabezados
         headers = [
@@ -731,12 +740,7 @@ class TransferRequestExcelView(LoginRequiredMixin, ListView):
             "Desvios US$", "Lugar", 
             "Total US$", "GRAFO/CECO", "Solicitante"
         ]
-        ws.append([''])  # Añadir una fila en blanco al inicio
-        ws.append([''])  # Añadir otra fila en blanco para el logo
-        ws.append([''])  # Añadir otra fila en blanco para el logo
-        ws.append([''])  # Añadir otra fila en blanco para el logo
-        ws.append([''])  # Añadir otra fila en blanco para el logo
-        ws.append([''])  # Añadir otra fila en blanco para el logo
+        ws.append([''])  # Añadir una fila en blanco después del título
         ws.append(headers)
 
         # Estilo para los encabezados
@@ -749,7 +753,7 @@ class TransferRequestExcelView(LoginRequiredMixin, ListView):
             bottom=Side(border_style='thin', color='000000')
         )
 
-        for cell in ws[8]:  # La fila de encabezados es la quinta fila
+        for cell in ws[3]:  # La fila de encabezados es la tercera fila
             cell.font = header_font
             cell.alignment = header_alignment
             cell.border = header_border
@@ -776,39 +780,32 @@ class TransferRequestExcelView(LoginRequiredMixin, ListView):
                 ]
                 ws.append(row)
 
-        # Añadir bordes a las celdas de datos
-        data_border = Border(
-            left=Side(border_style='thin', color='000000'),
-            right=Side(border_style='thin', color='000000'),
-            top=Side(border_style='thin', color='000000'),
-            bottom=Side(border_style='thin', color='000000')
-        )
-
         # Ajustar el ancho de las columnas
-        for col in ws.columns:
+        for col in ws.iter_cols(min_row=3, max_row=ws.max_row, min_col=1, max_col=len(headers)):
             max_length = 0
             column = col[0].column_letter  # Obtiene la letra de la columna
             for cell in col:
-                try:
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(cell.value)
-                except:
-                    pass
+                if not isinstance(cell, MergedCell):  # Omitir celdas unificadas
+                    try:
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(cell.value)
+                    except:
+                        pass
             adjusted_width = (max_length + 2)
             ws.column_dimensions[column].width = adjusted_width
 
         # Alinear el contenido de las celdas al centro
-        for row in ws.iter_rows(min_row=6, max_row=ws.max_row, min_col=1, max_col=len(headers)):
+        for row in ws.iter_rows(min_row=4, max_row=ws.max_row, min_col=1, max_col=len(headers)):
             for cell in row:
                 cell.alignment = Alignment(horizontal='center', vertical='center')
 
         # Guardar el archivo en un objeto BytesIO
-        response = BytesIO()
-        wb.save(response)
-        response.seek(0)
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
 
         # Crear la respuesta HTTP
-        response = HttpResponse(response, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response = HttpResponse(output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=solicitud_traslados_finalizados.xlsx'
         return response
 
