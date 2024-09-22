@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import viewsets
@@ -9,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import AllowAny
 
 from django.core.mail import send_mail
+from django.core.serializers import serialize
 from django.utils.crypto import get_random_string
 from rest_framework import status
 
@@ -243,3 +245,58 @@ class DriverEarningsView(APIView):
                 total_earnings += transfer_request.rate.driver_price
 
         return Response({"total_earnings": total_earnings}, status=status.HTTP_200_OK)
+
+class TransferRequestDetailView(APIView):
+    def post(self, request, format=None):
+        transfer_request_id = request.data.get('id')
+        if not transfer_request_id:
+            return Response({"error": "TransferRequest ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        transfer_request = get_object_or_404(TransferRequest, id=transfer_request_id)
+        
+        serialized_transfer = serialize("json", [transfer_request], use_natural_foreign_keys=True)
+        serialized_transfer_data = json.loads(serialized_transfer)[0]  # Convertir a dict
+
+        # Obtener el nombre y apellido del usuario
+        user = transfer_request.service_requested
+        try:
+            user_full_name = f"{user.first_name} {user.last_name}"
+        except:
+            user_full_name = "Usuario invitado"
+
+        # Obtener la URL completa de la imagen de la empresa
+        if user.company and user.company.image:
+            company_image_url = user.company.image.url
+        else:
+            company_image_url = ""
+
+        # Obtener la información completa de las personas a trasladar
+        persons_to_transfer = list(transfer_request.person_to_transfer.values('name', 'phone', 'company'))
+
+        # Añadir el nombre y apellido, la URL de la imagen de la empresa y la información de las personas a trasladar al diccionario de la transferencia
+        serialized_transfer_data['fields']['service_requested'] = user_full_name
+        serialized_transfer_data['fields']['company_image_url'] = company_image_url
+        serialized_transfer_data['fields']['person_to_transfer'] = persons_to_transfer
+
+        # Serializar los desvíos
+        serialized_deviations = serialize("json", transfer_request.deviation.all(), use_natural_foreign_keys=True)
+        serialized_deviations_data = json.loads(serialized_deviations)
+
+        # Añadir los desvíos al diccionario de la transferencia
+        serialized_transfer_data['fields']['deviations'] = serialized_deviations_data
+        serialized_transfer_data['fields']['id'] = transfer_request.id
+
+        if transfer_request.is_round_trip:
+            rates = {
+                "driver_gain": str(transfer_request.rate.driver_price_round_trip)
+            }
+        else:
+            rates = {
+                "driver_gain": str(transfer_request.rate.driver_price)
+            }
+
+        return Response({
+            "transferencia_id": transfer_request.id,
+            "transferencia_data": serialized_transfer_data,  # No convertir a JSON string
+            "rates": rates
+        }, status=status.HTTP_200_OK)
