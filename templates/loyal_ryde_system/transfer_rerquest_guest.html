@@ -1,538 +1,496 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-	<!--begin::Head-->
-	<head>
-		<base href="../" />
-		<title>Loyal Ride </title>
-		<meta charset="utf-8" />
-		<meta
-			name="description"
-			content="Sistema de administración LOYAL RIDE"
-		/>
-		<meta name="keywords" content="" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta property="og:locale" content="en_ES" />
-		<meta property="og:type" content="article" />
-		<meta property="og:title" content="" />
-		<meta property="og:url" content="" />
-		<meta property="og:site_name" content="" />
-		<link
-			rel="shortcut icon"
-			href="{% static 'assets/media/logos/favicon.ico'%}"
-		/>
+<!--begin::Head-->
 
-		<link
-			rel="stylesheet"
-			href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700"
-		/>
+<head>
+    <base href="../" />
+    <title>Loyal Ride </title>
+    <meta charset="utf-8" />
+    <meta name="description" content="Sistema de administración LOYAL RIDE" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:locale" content="en_ES" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:site_name" content="" />
+    <link rel="shortcut icon" href="{% static 'assets/media/logos/favicon.ico'%}" />
 
-		<!--begin::Global Stylesheets Bundle(used by all pages)-->
-		<link
-			href="{% static 'assets/plugins/global/plugins.bundle.css' %}"
-			rel="stylesheet"
-			type="text/css"
-		/>
-		<link
-			href="{% static 'assets/css/style.bundle.css' %}"
-			rel="stylesheet"
-			type="text/css"
-		/>
-		<style>
-			.font_white{
-				color: white
-			}
-			.form-check {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				height: 100%;
-			}
-            
-    .page {
-        display: none;
-    }
-    #page1 {
-        display: block;
-    }
-    body {
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+
+    <!--begin::Global Stylesheets Bundle(used by all pages)-->
+    <link href="{% static 'assets/plugins/global/plugins.bundle.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/css/style.bundle.css' %}" rel="stylesheet" type="text/css" />
+    <style>
+        .font_white {
+            color: white
+        }
+
+        .form-check {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .page {
+            display: none;
+        }
+
+        #page1 {
+            display: block;
+        }
+
+        body {
             background-image: url("{% static 'img/background/2.jpg' %}");
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
+
         /* .transparente {
             opacity: 0.5;
         } */
         .transparente {
-            background-color: rgba(0, 0, 0, 0.5); /* Fondo negro con 50% de transparencia */
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Fondo negro con 50% de transparencia */
             padding: 20px;
-            color: white; /* Color del texto para mejor visibilidad */
+            color: white;
+            /* Color del texto para mejor visibilidad */
         }
-        
+
         .transparente1 {
-            background-color: rgba(255, 255, 255, 0.8); /* Fondo negro con 50% de transparencia */
+            background-color: rgba(255, 255, 255, 0.8);
+            /* Fondo negro con 50% de transparencia */
             padding: 20px;
-            color: white; /* Color del texto para mejor visibilidad */
+            color: white;
+            /* Color del texto para mejor visibilidad */
         }
+
         .form-check-input {
-            border: 1px solid rgb(90, 89, 89)!important; /* Borde negro delgado */
+            border: 1px solid rgb(90, 89, 89) !important;
+            /* Borde negro delgado */
         }
-		</style>
-	</head>
-	<!--end::Head-->
-	<!--begin::Body-->
-	<body
-		id="kt_body"
-		class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled aside-enabled aside-fixed"
-		style="
+    </style>
+</head>
+<!--end::Head-->
+<!--begin::Body-->
+
+<body id="kt_body" class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled aside-enabled aside-fixed" style="
 			--kt-toolbar-height: 55px;
 			--kt-toolbar-height-tablet-and-mobile: 55px;
-		"
-	>
-		<!--begin::Main-->
-		<!--begin::Root-->
-		<div class="d-flex flex-column flex-root">
-			<!--begin::Page-->
-			<div class="page d-flex flex-row flex-column-fluid ">
-				<div
-					class="pt-xl-6 d-flex flex-column flex-row-fluid"
-					id="kt_wrapper"
-				>
-                    <div class=" post d-flex flex-column-fluid " id="kt_post">
-                        <!--begin::Container-->
-                        <div id="kt_content_container " class="container-xxl">
-                            <!--begin::Navbar-->
-                            <div class="card mb-5 mb-xxl-12 transparente1">
-                                <div class="card-body pt-9 pb-0">
-                                    <div class="mb-10">
-                                        <form method="POST">
-                                            {% csrf_token %}
-                                            <div id="page-container">
-                                                <div class="page" id="page1">
+		">
+    <!--begin::Main-->
+    <!--begin::Root-->
+    <div class="d-flex flex-column flex-root">
+        <!--begin::Page-->
+        <div class="page d-flex flex-row flex-column-fluid ">
+            <div class="pt-xl-6 d-flex flex-column flex-row-fluid" id="kt_wrapper">
+                <div class=" post d-flex flex-column-fluid " id="kt_post">
+                    <!--begin::Container-->
+                    <div id="kt_content_container " class="container-xxl">
+                        <!--begin::Navbar-->
+                        <div class="card mb-5 mb-xxl-12 transparente1">
+                            <div class="card-body pt-9 pb-0">
+                                <div class="mb-10">
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <div id="page-container">
+                                            <div class="page" id="page1">
+                                                <div class="row">
+                                                    <div class="col-md-12 text-center">
+                                                        <h1>LOYAL RIDE</h1>
+                                                    </div>
+                                                    <div class="mt-5 col-md-6">
+                                                        <h3>Fecha del traslado:</h3>
+                                                        <!-- <label class="form-label" for="id_date">Fecha del traslado:</label> -->
+                                                        <input class="form-control" placeholder="Selecciona una fecha"
+                                                            id="id_date" name="date" required />
+                                                    </div>
+                                                    <div class="mt-5 col-md-6">
+                                                        <h3>Hora del traslado:</h3>
+                                                        <input type="time" class="form-control" id="id_hour" name="hour"
+                                                            required value="{{ form.hour.value }}" />
+                                                    </div>
+                                                    <div class="mt-8 col-md-12">
+                                                        <h3>Tipo de servicio:</h3>
+                                                    </div>
                                                     <div class="row">
-                                                        <div class="col-md-12 text-center">
-                                                            <h1>LOYAL RIDE</h1>
+                                                        <div class="col-md-4">
+                                                            <div
+                                                                class="form-check form-check-custom form-check-solid mt-5">
+
+                                                                {{ form.executive_transfer }}
+                                                                <!-- <input class="form-check-input" type="checkbox" value="" id="id_executive_transfer"  name="executive_transfer"/> -->
+                                                                <label class="form-check-label"
+                                                                    for="id_executive_transfer" style="color: black;">
+                                                                    <i class="fas fa-solid fa-car-side"
+                                                                        style="color: #009ef6; font-size: 20px;"></i>
+                                                                    TRASLADO EJECUTIVO
+                                                                </label>
+                                                            </div>
                                                         </div>
-                                                        <div class="mt-5 col-md-6">
-                                                            <h3>Fecha del traslado:</h3>
-                                                            <!-- <label class="form-label" for="id_date">Fecha del traslado:</label> -->
-                                                            <input class="form-control" placeholder="Selecciona una fecha" id="id_date" name="date" required /> 
+                                                        <div class="col-md-4">
+                                                            <div
+                                                                class="form-check form-check-custom form-check-solid mt-5">
+                                                                {{ form.encomienda }}
+                                                                <!-- <input class="form-check-input" type="checkbox" value="" id="id_encomienda"  name="encomienda"/> -->
+                                                                <label class="form-check-label" for="id_encomienda"
+                                                                    style="color: black;">
+                                                                    <i class="fas fa-solid fa-dolly"
+                                                                        style="color: #009ef6; font-size: 20px;"></i>
+                                                                    ENCOMIENDA
+                                                                </label>
+                                                            </div>
                                                         </div>
-                                                        <div class="mt-5 col-md-6">
-                                                            <h3>Hora del traslado:</h3>
-                                                            <input type="time" class="form-control" id="id_hour" name="hour" required value="{{ form.hour.value }}"/>
+                                                        <div class="col-md-4">
+                                                            <div
+                                                                class="form-check form-check-custom form-check-solid mt-5">
+                                                                {{ form.driver }}
+                                                                <!-- <input class="form-check-input" type="checkbox" value="" id="id_driver"  name="driver"/> -->
+                                                                <label class="form-check-label" for="id_driver"
+                                                                    style="color: black;">
+                                                                    <i class="fas fa-solid fa-user"
+                                                                        style="color: #009ef6; font-size: 20px;"></i>
+                                                                    CONDUCTOR
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="mt-8 col-md-12">
+                                                            <h3>Ruta:</h3>
+                                                        </div>
+                                                        <div class="mt-5 col-md-4">
+                                                            <label class="form-label"
+                                                                for="id_departure_site_route">Seleccione punto de
+                                                                salida:</label>
+                                                            <select class="form-select"
+                                                                aria-label="Seleccione un punto de origen"
+                                                                name="departure_site_route" id="id_departure_site_route"
+                                                                required>
+                                                                <option disabled selected>Seleccione un punto de origen
+                                                                </option>
+                                                                {% for opcion in departure %}
+                                                                <option value="{{ opcion.name }}">{{ opcion.name }}
+                                                                </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="mt-5 col-md-4">
+                                                            <label class="form-label" for="id_route">Dirección exacta
+                                                                del punto de salida:</label>
+                                                            {{ form.destination_direc }}
+                                                            <!-- <input class="form-control" type="text" name="destination_direc" id="id_destination_direc"> -->
+                                                        </div>
+
+                                                        <div class="mt-5 col-md-4">
+                                                            <label class="form-label" for="id_route">Punto de
+                                                                referencia:</label>
+                                                            {{ form.departure_landmark }}
+                                                            <!-- <input class="form-control" type="text" name="departure_landmark" id="id_departure_landmark"> -->
+                                                        </div>
+
+                                                        <div class="mt-5 col-md-4">
+                                                            <label class="form-label"
+                                                                for="id_destination_route">Destino:</label>
+                                                            <select class="form-select"
+                                                                aria-label="Seleccione un punto de origen"
+                                                                name="destination_route" id="id_destination_route"
+                                                                required>
+                                                                <option disabled selected>Seleccione un punto de Destino
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mt-5 col-md-4">
+                                                            <label class="form-label" for="id_route">Dirección exacta
+                                                                del destino:</label>
+                                                            {{ form.departure_direc }}
+                                                            <!-- <input class="form-control" type="text" name="departure_direc" id="id_departure_direc"> -->
+                                                        </div>
+                                                        <div class="mt-5 col-md-4">
+                                                            <label class="form-label" for="id_route">Punto de
+                                                                referencia:</label>
+                                                            {{ form.destination_landmark }}
+                                                            <!-- <input class="form-control" type="text" name="destination_landmark" id="id_destination_landmark"> -->
                                                         </div>
                                                         <div class="mt-8 col-md-12">
-                                                            <h3>Tipo de servicio:</h3>
+                                                            <h3>¿Necesitas desvíos?</h3>
                                                         </div>
-                                                        <div class="row">
-                                                            <div class="col-md-4">
-                                                                <div class="form-check form-check-custom form-check-solid mt-5">
-                                                                        
-                                                                    {{ form.executive_transfer }}
-                                                                    <!-- <input class="form-check-input" type="checkbox" value="" id="id_executive_transfer"  name="executive_transfer"/> -->
-                                                                    <label class="form-check-label" for="id_executive_transfer" style="color: black;">
-                                                                        <i class="fas fa-solid fa-car-side" style="color: #009ef6; font-size: 20px;"></i>   
-                                                                        TRASLADO EJECUTIVO
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-check form-check-custom form-check-solid mt-5">
-                                                                    {{ form.encomienda }}
-                                                                    <!-- <input class="form-check-input" type="checkbox" value="" id="id_encomienda"  name="encomienda"/> -->
-                                                                    <label class="form-check-label" for="id_encomienda" style="color: black;">
-                                                                        <i class="fas fa-solid fa-dolly" style="color: #009ef6; font-size: 20px;"></i>
-                                                                        ENCOMIENDA
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-check form-check-custom form-check-solid mt-5">
-                                                                    {{ form.driver }}
-                                                                    <!-- <input class="form-check-input" type="checkbox" value="" id="id_driver"  name="driver"/> -->
-                                                                    <label class="form-check-label" for="id_driver" style="color: black;">
-                                                                        <i class="fas fa-solid fa-user"  style="color: #009ef6; font-size: 20px;"></i>
-                                                                        CONDUCTOR
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <div class="mt-8 col-md-12">
-                                                                <h3>Ruta:</h3>
-                                                            </div>
-                                                            <div class="mt-5 col-md-4">
-                                                                <label class="form-label" for="id_departure_site_route">Seleccione punto de salida:</label>
-                                                                <select class="form-select" aria-label="Seleccione un punto de origen" name="departure_site_route" id="id_departure_site_route" required>
-                                                                    <option disabled selected>Seleccione un punto de origen</option>
-                                                                    {% for opcion in departure %}
-                                                                        <option value="{{ opcion.name }}">{{ opcion.name }}</option>
-                                                                    {% endfor %}
-                                                                </select>
-                                                            </div>
-                                                            
-                                                            <div class="mt-5 col-md-4">
-                                                                <label class="form-label" for="id_route">Dirección exacta del punto de salida:</label>
-                                                                {{ form.destination_direc }}
-                                                                <!-- <input class="form-control" type="text" name="destination_direc" id="id_destination_direc"> -->
-                                                            </div>
-                                                            
-                                                            <div class="mt-5 col-md-4">
-                                                                <label class="form-label" for="id_route">Punto de referencia:</label>
-                                                                {{ form.departure_landmark }}
-                                                                <!-- <input class="form-control" type="text" name="departure_landmark" id="id_departure_landmark"> -->
-                                                            </div>
-                            
-                                                            <div class="mt-5 col-md-4">
-                                                                <label class="form-label" for="id_destination_route">Destino:</label>
-                                                                <select class="form-select" aria-label="Seleccione un punto de origen" name="destination_route" id="id_destination_route" required>
-                                                                    <option disabled selected>Seleccione un punto de Destino</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="mt-5 col-md-4">
-                                                                <label class="form-label" for="id_route">Dirección exacta del destino:</label>
-                                                                {{ form.departure_direc }}
-                                                                <!-- <input class="form-control" type="text" name="departure_direc" id="id_departure_direc"> -->
-                                                            </div>
-                                                            <div class="mt-5 col-md-4">
-                                                                <label class="form-label" for="id_route">Punto de referencia:</label>
-                                                                {{ form.destination_landmark }}
-                                                                <!-- <input class="form-control" type="text" name="destination_landmark" id="id_destination_landmark"> -->
-                                                            </div>
-                                                            <div class="mt-8 col-md-12">
-                                                                <h3>¿Necesitas desvíos?</h3>
-                                                            </div>
-                                                            <div class="col-md-4 mt-2">
-                                                                <button type="button" id="addWaypointBtn" class="btn btn-success btn-hover-rotate-end" >Añadir desvío</button>
-                                                                <!-- btn btn-primary btn-hover-rotate-end mt-5 -->
-                                                                <div id="waypointsContainer" class="mt-3"></div>
-                                                            </div>
-                                                            <div id="map" style="height: 400px;" class="mt-xl-4">
-                            
-                                                            </div>
-                                                            <div class="d-none">
-                                                                {{ form.lat_1 }}
-                                                                {{ form.long_1 }}
-                                                                {{ form.lat_2 }}
-                                                                {{ form.long_2 }}
-                                                                
-                                                                <input type="hidden" name="waypoints_numbers" id="id_waypoints_numbers" placeholder="Nro de inputs">
-                                                            </div>
+                                                        <div class="col-md-4 mt-2">
+                                                            <button type="button" id="addWaypointBtn"
+                                                                class="btn btn-success btn-hover-rotate-end">Añadir
+                                                                desvío</button>
+                                                            <!-- btn btn-primary btn-hover-rotate-end mt-5 -->
+                                                            <div id="waypointsContainer" class="mt-3"></div>
+                                                        </div>
+                                                        <div id="map" style="height: 400px;" class="mt-xl-4">
+
+                                                        </div>
+                                                        <div class="d-none">
+                                                            {{ form.lat_1 }}
+                                                            {{ form.long_1 }}
+                                                            {{ form.lat_2 }}
+                                                            {{ form.long_2 }}
+
+                                                            <input type="hidden" name="waypoints_numbers"
+                                                                id="id_waypoints_numbers" placeholder="Nro de inputs">
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="page" id="page2">
-                                                    <div class="row">
-                                                        <div class="mt-8 col-md-12">
-                                                            <h3>
-                                                                <i class="fas fa-solid fa-users" style="color: #009ef6; font-size: 20px;"></i> Lista de personas para el traslado:
-                                                            </h3>
-                                                        </div>
-                                                        <div class="mt-5 col-md-3">
-                                                            <label class="form-label" for="id_person_to_transfer">Nombre Completo:</label>
-                                                            <input class="form-control" type="text" id="name" name="name" placeholder="Nombre">
-                                                        </div>
-                                                        <div class="mt-5 col-md-3">
-                                                            <label class="form-label" for="id_person_to_transfer">Teléfono:</label>
-                                                            <input class="form-control" type="text" id="phone" name="phone" placeholder="Teléfono">
-                                                        </div>
-                                                        <div class="mt-5 col-md-3">
-                                                            <label class="form-label" for="id_person_to_transfer">Empresa:</label>
-                                                            <input class="form-control" type="text" id="company" name="company" placeholder="Empresa">
-                                                        </div>
-                                                        <div class="mt-13 col-md-3">
-                                                            <button type="button" id="people-transfer-form" class="btn btn-success btn-hover-rotate-end">AGREGAR</button>
-                                                        </div>
-                                                        <div class="mt-5 col-md-6">
-                                                            <label class="form-label" for="id_person_to_transfer">Persona(s):</label>
-                                                            <!-- <input type="text" class="form-control" id="id_person_to_transfer" name="person_to_transfer"/> -->
-                                                            <!-- {{ form.person_to_transfer }} -->
-                                                            <select class="form-select" aria-label="seleccione" multiple  id="id_person_to_transfer" name="person_to_transfer" required>
-                                                                <option disabled>Lista de personas añadidas</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="mt-5 col-md-12">
-                                                            <label class="form-label" for="id_payment_method">Método de Pago:</label>
-                                                            {{ form.payment_method }}
-                                                            <!-- <select class="form-select" id="id_payment_method" name="payment_method" required>
+                                            </div>
+                                            <div class="page" id="page2">
+                                                <div class="row">
+                                                    <div class="mt-8 col-md-12">
+                                                        <h3>
+                                                            <i class="fas fa-solid fa-users"
+                                                                style="color: #009ef6; font-size: 20px;"></i> Lista de
+                                                            personas para el traslado:
+                                                        </h3>
+                                                    </div>
+                                                    <div class="mt-5 col-md-3">
+                                                        <label class="form-label" for="id_person_to_transfer">Nombre
+                                                            Completo:</label>
+                                                        <input class="form-control" type="text" id="name" name="name"
+                                                            placeholder="Nombre">
+                                                    </div>
+                                                    <div class="mt-5 col-md-3">
+                                                        <label class="form-label"
+                                                            for="id_person_to_transfer">Teléfono:</label>
+                                                        <input class="form-control" type="text" id="phone" name="phone"
+                                                            placeholder="Teléfono">
+                                                    </div>
+                                                    <div class="mt-5 col-md-3">
+                                                        <label class="form-label"
+                                                            for="id_person_to_transfer">Empresa:</label>
+                                                        <input class="form-control" type="text" id="company"
+                                                            name="company" placeholder="Empresa">
+                                                    </div>
+                                                    <div class="mt-13 col-md-3">
+                                                        <button type="button" id="people-transfer-form"
+                                                            class="btn btn-success btn-hover-rotate-end">AGREGAR</button>
+                                                    </div>
+                                                    <div class="mt-5 col-md-6">
+                                                        <label class="form-label"
+                                                            for="id_person_to_transfer">Persona(s):</label>
+                                                        <!-- <input type="text" class="form-control" id="id_person_to_transfer" name="person_to_transfer"/> -->
+                                                        <!-- {{ form.person_to_transfer }} -->
+                                                        <select class="form-select" aria-label="seleccione" multiple
+                                                            id="id_person_to_transfer" name="person_to_transfer"
+                                                            required>
+                                                            <option disabled>Lista de personas añadidas</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mt-5 col-md-12">
+                                                        <label class="form-label" for="id_payment_method">Método de
+                                                            Pago:</label>
+                                                        {{ form.payment_method }}
+                                                        <!-- <select class="form-select" id="id_payment_method" name="payment_method" required>
                                                                 <option disabled selected>Seleccione una opción</option>
                                                                 <option value="1">CECO/GRAFO/PEDIDO</option>
                                                                 <option value="2">CREDITO</option>
                                                                 <option value="3">TARJETA DE CRÉDITO</option>
                                                             </select> -->
-                                                        </div>
-                                                        
-                                                        
-                                                        <div class="mt-5 col-md-12">
-                                                            <div class="col-md-12">
-                                                                <h3>Observaciones:</h3>
-                                                            </div>
-                                                            {{ form.observations }}
-                                                        </div>
-                        
-                                                        <div class="row d-none" id="data_required">
-                                                            
-                                                            <div class="mt-8 col-md-12">
-                                                                <h3>Métodos de Pago:</h3>
-                                                            </div>
-                                                            
-                                                            <div class="mt-5 col-md-6">
-                                                                <label class="form-label" for="id_ceco_grafo_pedido">CECO/GRAFO/PEDIDO::</label>
-                                                                <input type="text" class="form-control" id="id_ceco_grafo_pedido" name="ceco_grafo_pedido" />
-                                                            </div>
-                                                            <div class="mt-5 col-md-6">
-                                                                <label class="form-label" for="id_division">División:</label>
-                                                                <input type="text" class="form-control" id="id_division" name="division" >
-                                                            </div>
-                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="page" id="page3">
-                                                    <div class="row">
-                                                        <div class="col-md-12 text-center">
-                                                            <h1>Tarifas</h1>
+
+
+                                                    <div class="mt-5 col-md-12">
+                                                        <div class="col-md-12">
+                                                            <h3>Observaciones:</h3>
                                                         </div>
-                                                        
-                                                        <div id="rates_div" class="row">
+                                                        {{ form.observations }}
+                                                    </div>
+
+                                                    <div class="row d-none" id="data_required">
+
+                                                        <div class="mt-8 col-md-12">
+                                                            <h3>Métodos de Pago:</h3>
+                                                        </div>
+
+                                                        <div class="mt-5 col-md-6">
+                                                            <label class="form-label"
+                                                                for="id_ceco_grafo_pedido">CECO/GRAFO/PEDIDO::</label>
+                                                            <input type="text" class="form-control"
+                                                                id="id_ceco_grafo_pedido" name="ceco_grafo_pedido" />
                                                         </div>
                                                         <div class="mt-5 col-md-6">
-                                                            <input type="hidden" id="selected_rate" name="rate" />
-                                                            <label class="form-label" for="base_price">Precio base:</label>
-                                                            <input type="text" class="form-control" id="base_price" name="base_price" readonly />
-                                                        </div>
-                                                        <div class="mt-5 col-md-6">
-                                                            <label class="form-label" for="estimated_price">Precio estimado:</label>
-                                                            <input type="text" class="form-control" id="estimated_price" name="estimated_price" readonly />
-                                                        </div>
-                                                        <div class="mt-5 col-md-12">
-                                                            <div class="form-check form-check-custom form-check-solid">
-                                                                <input class="form-check-input" type="checkbox" id="round_trip_checkbox" name="round_trip_checkbox" />
-                                                                <label class="form-check-label" for="round_trip_checkbox" style="color: black;">
-                                                                    Ida y vuelta
-                                                                </label>
-                                                            </div>
+                                                            <label class="form-label"
+                                                                for="id_division">División:</label>
+                                                            <input type="text" class="form-control" id="id_division"
+                                                                name="division">
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="text-center mt-xl-6 pt-xl-5">
-                                                    <button id="prev-btn" class="btn btn-info" type="button">Anterior</button>
-                                                    <button id="next-btn" class="btn btn-primary" type="button">Siguiente</button>
-                                                    <button type="submit" class="btn btn-primary btn-hover-rotate-end d-none" id="submit">SOLICITAR TRASLADO</button>
                                                 </div>
                                             </div>
-                                        </form>
-                                    </div>
+                                            <div class="page" id="page3">
+                                                <div class="row">
+                                                    <div class="col-md-12 text-center">
+                                                        <h1>Tarifas</h1>
+                                                    </div>
+
+                                                    <div id="rates_div" class="row">
+                                                    </div>
+                                                    <div class="mt-5 col-md-6">
+                                                        <label class="form-label" for="id_price">Precio Base:</label>
+                                                        <input type="text" class="form-control" id="id_price"
+                                                            name="price" readonly value="{{ form.instance.price }}">
+                                                    </div>
+                                                    <div class="mt-5 col-md-6">
+                                                        <label class="form-label" for="id_final_price">Precio
+                                                            Estimado:</label>
+                                                        <input type="text" class="form-control" id="id_final_price"
+                                                            name="final_price" readonly value="0">
+                                                    </div>
+                                                    <div class="mt-5 col-md-6 d-none">
+                                                        <label class="form-label " for="id_discount_code">Código de Descuento:</label>
+                                                        <input type="text" class="form-control" id="id_discount_code" name="discount_code" placeholder="Ingresa tu código de descuento" disabled>
+                                                        <div id="discount_message" class="mt-2"></div>
+                                                    </div>
+                                                    <div class="mt-5 col-md-6 d-none" id="discounted_price_container">
+                                                        <label class="form-label" for="id_discounted_price">Precio con Descuento:</label>
+                                                        <input type="text" class="form-control" id="id_discounted_price" name="discounted_price" readonly value="0" >
+                                                    </div>
+                                                    <div class="mt-5 col-md-6">
+                                                        <label class="form-label" for="id_aditional">Adicional (Por
+                                                            desvíos):</label>
+                                                        <input type="text" class="form-control" id="id_aditional"
+                                                            name="aditional" readonly value="0">
+                                                    </div>
+                                                    <div class="mt-5 col-md-12">
+                                                        <div class="form-check form-check-custom form-check-solid">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="id_is_round_trip" name="is_round_trip" />
+                                                            <label class="form-check-label" for="id_is_round_trip"
+                                                                style="color: black;">
+                                                                Ida y vuelta
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="text-center mt-xl-6 pt-xl-5">
+                                                <button id="prev-btn" class="btn btn-info"
+                                                    type="button">Anterior</button>
+                                                <button id="next-btn" class="btn btn-primary"
+                                                    type="button">Siguiente</button>
+                                                <button type="submit"
+                                                    class="btn btn-primary btn-hover-rotate-end d-none"
+                                                    id="submit">SOLICITAR TRASLADO</button>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-                            <!--end::Navbar-->
                         </div>
-                        <!--end::Container-->
+                        <!--end::Navbar-->
                     </div>
-                    
-				{% include "loyal_ryde_system/base/footer.html" %}
-				</div>
-				<!--end::Wrapper-->
-			</div>
-			<!--end::Page-->
-		</div>
-		<!--begin::Global Javascript Bundle(used by all pages)-->
-		<script src="{% static 'assets/plugins/global/plugins.bundle.js' %}"></script>
-		<script src="{% static 'assets/js/scripts.bundle.js' %}"></script>
-		<script src="{% static 'assets/js/sweetalert2/sweet-alert-2-11.js'%}"></script>
-		{% block error_js %}
-		<script>
-			{% if form.errors %}
-				var errors = '';
-				{% for field in form %}
-					{% for error in field.errors %}
-						errors += '<p style="margin-top: 7px; margin-bottom: 7px;">{{ field.label|title }}: {{ error }}</p>';
-					{% endfor %}
-				{% endfor %}
-				Swal.fire({
-					title: 'Error!',
-					html: errors, // Cambia 'text' por 'html'
-					icon: "error",
-					width: 500,
-					heigth: 700
-					// footer: '<a href="#">Why do I have this issue?</a>'
-				});
-			{% endif %}
-			</script>
-		{% endblock error_js %}
-        <script>    
-            var waypointCount = 0;
-            let urlverify_discount_code = "{% url 'core:verify_discount_code' %}"
-            let url_routes_ajax = "{% url 'core:routes_ajax' %}";
-            let rates_ajax = "{% url 'core:rates_ajax' %}";
-            let url_form = "{% url 'core:transfer_request_people_create' %}";
-        </script>
-		<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
-        <script src="{% static 'ruta.js' %}"></script>
-        <script src="{% static 'transfer_form.js' %}"></script>
-        <script>
-            $(document).ready(function () {
-                    // Cuando cambia el select de salida
-                    $("#id_departure_site_route").change(function () {
-                        const selectedDeparture = $(this).val();
+                    <!--end::Container-->
+                </div>
 
-                        // Realizar la petición AJAX
-                        $.ajax({
-                            url: "{% url 'core:routes_ajax' %}",  // URL de la vista Django
-                            type: "GET",
-                            data: { departure: selectedDeparture },
-                            success: function (data) {
-                                // Limpiar el select de destino
-                                $("#id_destination_route").empty();
-                                console.log(data)
-                                // Agregar las opciones de destino
-                                    $("#id_destination_route").append(
-                                        $("<option>", {
-                                            value: '',
-                                            text: 'Selecciona un punto de destino',
-                                            selected: true,
-                                            disabled: true
-                                        })
-                                    );
-                                data.forEach(function (route) {
-                                    $("#id_destination_route").append(
-                                        $("<option>", {
-                                            value: route.arrival_point,
-                                            text: route.arrival_point
-                                        })
-                                    );
-                                });
-                            }
-                        });
-                    });
-                    $("#id_departure_site_route, #id_destination_route").change(function () {
-                        const departureId = $("#id_departure_site_route").val();
-                        const arrivalId = $("#id_destination_route").val();
-                        const nro = $('#id_person_to_transfer option:selected').length;
-                        $.ajax({
-                            url: "{% url 'core:rates_ajax' %}",  // URL de la vista Django
-                            type: "GET",
-                            data: {
-                                departure_id: departureId,
-                                arrival_id: arrivalId,
-                                nro: nro,
-                            },
-                            success: function (data) {
-                                console.log(data)
-                                const tarifas = data.rates; // Obtén todas las tarifas de la respuesta
-
-                                // Itera sobre las tarifas y genera el HTML para cada una
-                                let tarifasHtml = "";
-                                
-                                tarifas.forEach((tarifa, index) => {
-                                    tarifasHtml += `
-                                        <div class="mt-5 col-md-6">
-                                            <label class="btn btn-outline btn-outline-dashed btn-outline-default p-7 d-flex align-items-center mb-5" for="">
-                                                <svg class="svg-icon svg-icon-4x me-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="60" height="60" >
-                                                    <path d="M312 24V34.5c6.4 1.2 12.6 2.7 18.2 4.2c12.8 3.4 20.4 16.6 17 29.4s-16.6 20.4-29.4 17c-10.9-2.9-21.1-4.9-30.2-5c-7.3-.1-14.7 1.7-19.4 4.4c-2.1 1.3-3.1 2.4-3.5 3c-.3 .5-.7 1.2-.7 2.8c0 .3 0 .5 0 .6c.2 .2 .9 1.2 3.3 2.6c5.8 3.5 14.4 6.2 27.4 10.1l.9 .3c11.1 3.3 25.9 7.8 37.9 15.3c13.7 8.6 26.1 22.9 26.4 44.9c.3 22.5-11.4 38.9-26.7 48.5c-6.7 4.1-13.9 7-21.3 8.8V232c0 13.3-10.7 24-24 24s-24-10.7-24-24V220.6c-9.5-2.3-18.2-5.3-25.6-7.8c-2.1-.7-4.1-1.4-6-2c-12.6-4.2-19.4-17.8-15.2-30.4s17.8-19.4 30.4-15.2c2.6 .9 5 1.7 7.3 2.5c13.6 4.6 23.4 7.9 33.9 8.3c8 .3 15.1-1.6 19.2-4.1c1.9-1.2 2.8-2.2 3.2-2.9c.4-.6 .9-1.8 .8-4.1l0-.2c0-1 0-2.1-4-4.6c-5.7-3.6-14.3-6.4-27.1-10.3l-1.9-.6c-10.8-3.2-25-7.5-36.4-14.4c-13.5-8.1-26.5-22-26.6-44.1c-.1-22.9 12.9-38.6 27.7-47.4c6.4-3.8 13.3-6.4 20.2-8.2V24c0-13.3 10.7-24 24-24s24 10.7 24 24zM568.2 336.3c13.1 17.8 9.3 42.8-8.5 55.9L433.1 485.5c-23.4 17.2-51.6 26.5-80.7 26.5H192 32c-17.7 0-32-14.3-32-32V416c0-17.7 14.3-32 32-32H68.8l44.9-36c22.7-18.2 50.9-28 80-28H272h16 64c17.7 0 32 14.3 32 32s-14.3 32-32 32H288 272c-8.8 0-16 7.2-16 16s7.2 16 16 16H392.6l119.7-88.2c17.8-13.1 42.8-9.3 55.9 8.5zM193.6 384l0 0-.9 0c.3 0 .6 0 .9 0z"/>
-                                                </svg>
-                                                <span class="d-block fw-bold text-start">
-                                                    <span class="text-dark fw-bolder d-block fs-3">
-                                                        <input type="radio" class="form-check-input rate-radio" name="rate-checkbox" value="${tarifa.rate_price}" data-rate-id="${tarifa.rate_id}" data-round-trip-price="${tarifa.rate_price_round_trip}" required/> Tarifa ${tarifa.rate_id}: ${tarifa.rate_vehicle}
-                                                    </span>
-                                                    <span class="text-dark">${tarifa.rate_route}</span> <br>
-                                                    <span class="text-dark">Tipo de Vehiculo: ${tarifa.rate_vehicle}</span><br>
-                                                    <span class="text-dark">Precio Base: </span> <span style="color:green">${tarifa.rate_price}$</span><br>
-                                                    <span class="text-dark">Precio Base Ida y vuelta: </span> <span style="color:green">${tarifa.rate_price_round_trip}$</span><br>
-                                                    <span class="text-dark">Precio de espera por hora (diurna) C/U: </span> <span style="color:green">${tarifa.rate_daytime_waiting_time}$<br>
-                                                    <span class="text-dark">Precio de espera por hora (noctura) C/U: </span> <span style="color:green">${tarifa.rate_nightly_waiting_time}$</span><br>
-                                                    <span class="text-dark">Precio por desvio local C/U: </span> <span style="color:green">${tarifa.rate_detour_local}$</span><br>
-                                                </br>
-                                            </label>
-                                        </div>
-                                    `;
-                                });
-
-                                // Inserta el HTML generado en el elemento con ID rates_div
-                                $("#rates_div").html(tarifasHtml).removeClass('d-none');
-                            },
-                            error: function () {
-                                // Maneja el error si no se encuentra una tarifa
-                                $("#precio").text("No disponible");
-                                $("#precio_ida_vuelta").text("No disponible");
-                            }
-                        });
-                    });
-
-                let currentPage = 1;
-                const totalPages = 3;
-
-                function showPage(pageNumber) {
-                    $('.page').slideUp(300, function () {
-                        $(`#page${pageNumber}`).slideDown(300);
-                    });
-                }
-
-                $('#next-btn').click(function () {
-                    if (currentPage < totalPages) {
-                        // Realiza validaciones antes de avanzar (puedes agregar tus propias validaciones aquí)
-                        // ...
-
-                        currentPage++;
-                        showPage(currentPage);
-                        validarButton()
-                    }
-                });
-
-                $('#prev-btn').click(function () {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        showPage(currentPage);
-                        validarButton()
-                    }
-                });
-
-                function validarButton(){
-                    if(currentPage == 3){
-                            $('#submit').removeClass('d-none')
-                            $('#next-btn').addClass('d-none')
-                        }else{
-                            $('#next-btn').removeClass('d-none')
-                            $('#submit').addClass('d-none')
-                        }
-                }
-            
-                function calculatePrices() {
-            const selectedRate = $('input[name="rate-checkbox"]:checked');
-            const isRoundTrip = $('#round_trip_checkbox').is(':checked');
-            let basePrice = 0;
-            let estimatedPrice = 0;
-
-            if (selectedRate.length > 0) {
-                basePrice = parseFloat(selectedRate.val());
-                estimatedPrice = isRoundTrip ? parseFloat(selectedRate.data('round-trip-price')) : basePrice;
-                $('#selected_rate').val(selectedRate.data('rate-id')); // Almacenar el ID de la tarifa seleccionada
-            } else {
-                $('#selected_rate').val(''); // Limpiar el campo si no hay tarifa seleccionada
-            }
-
-            $('#base_price').val(basePrice.toFixed(2));
-            $('#estimated_price').val(estimatedPrice.toFixed(2));
-        }
-
-        // Llamar a la función para calcular los precios cuando se seleccione una tarifa o se cambie el estado del checkbox
-        $(document).on('change', 'input[name="rate-checkbox"], #round_trip_checkbox', calculatePrices);
-
-        // Llamar a la función para calcular los precios cuando se cargue la página
-        calculatePrices();
-
-        // Validar que se haya seleccionado una tarifa antes de enviar el formulario
-        $('form').on('submit', function(e) {
-            if ($('#selected_rate').val() === '') {
-                alert('Tarifa: Este campo es requerido.');
-                e.preventDefault();
-            }
+                {% include "loyal_ryde_system/base/footer.html" %}
+            </div>
+            <!--end::Wrapper-->
+        </div>
+        <!--end::Page-->
+    </div>
+    <!--begin::Global Javascript Bundle(used by all pages)-->
+    <script src="{% static 'assets/plugins/global/plugins.bundle.js' %}"></script>
+    <script src="{% static 'assets/js/scripts.bundle.js' %}"></script>
+    <script src="{% static 'assets/js/sweetalert2/sweet-alert-2-11.js'%}"></script>
+    {% block error_js %}
+    <script>
+        {% if form.errors %}
+        var errors = '';
+        {% for field in form %}
+        {% for error in field.errors %}
+        errors += '<p style="margin-top: 7px; margin-bottom: 7px;">{{ field.label|title }}: {{ error }}</p>';
+        {% endfor %}
+        {% endfor %}
+        Swal.fire({
+            title: 'Error!',
+            html: errors, // Cambia 'text' por 'html'
+            icon: "error",
+            width: 500,
+            heigth: 700
+            // footer: '<a href="#">Why do I have this issue?</a>'
         });
-            
+        {% endif %}
+    </script>
+    {% endblock error_js %}
+    <script>
+        var waypointCount = 0;
+        let urlverify_discount_code = "{% url 'core:verify_discount_code' %}"
+        let url_routes_ajax = "{% url 'core:routes_ajax' %}";
+        let rates_ajax = "{% url 'core:rates_ajax' %}";
+        let url_form = "{% url 'core:transfer_request_people_create' %}";
+    </script>
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
+    <script src="{% static 'ruta.js' %}"></script>
+    <script src="{% static 'transfer_form.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            // Cuando cambia el select de salida
+            let currentPage = 1;
+            const totalPages = 3;
+
+            function showPage(pageNumber) {
+                $('.page').slideUp(300, function () {
+                    $(`#page${pageNumber}`).slideDown(300);
+                });
+            }
+
+            $('#next-btn').click(function () {
+                if (currentPage < totalPages) {
+                    // Realiza validaciones antes de avanzar (puedes agregar tus propias validaciones aquí)
+                    // ...
+
+                    currentPage++;
+                    showPage(currentPage);
+                    validarButton()
+                }
             });
 
-        </script>
-		<!--end::Javascript-->
-	</body>
-	<!--end::Body-->
+            $('#prev-btn').click(function () {
+                if (currentPage > 1) {
+                    currentPage--;
+                    showPage(currentPage);
+                    validarButton()
+                }
+            });
+
+            function validarButton() {
+                if (currentPage == 3) {
+                    $('#submit').removeClass('d-none')
+                    $('#next-btn').addClass('d-none')
+                } else {
+                    $('#next-btn').removeClass('d-none')
+                    $('#submit').addClass('d-none')
+                }
+            }
+
+            
+
+            // Llamar a la función para calcular los precios cuando se seleccione una tarifa o se cambie el estado del checkbox
+            $(document).on('change', 'input[name="rate-checkbox"], #id_is_round_trip', calculatePrices);
+
+            // Llamar a la función para calcular los precios cuando se cargue la página
+            calculatePrices();
+
+            // Validar que se haya seleccionado una tarifa antes de enviar el formulario
+            $('form').on('submit', function (e) {
+                if ($('#selected_rate').val() === '') {
+                    alert('Tarifa: Este campo es requerido.');
+                    e.preventDefault();
+                }
+            });
+
+        });
+
+    </script>
+    <!--end::Javascript-->
+</body>
+<!--end::Body-->
+
 </html>
