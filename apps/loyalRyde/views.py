@@ -447,6 +447,11 @@ class FleetTypeAdd(LoginRequiredMixin, CreateView):
     template_name = 'loyal_ryde_system/add_fleet_type.html'
     success_url = reverse_lazy('core:fleet_list_type')
 
+class FleetTypeUpdateView(LoginRequiredMixin, UpdateView):
+    model = FleetType
+    form_class = AddFleetTypeForm
+    template_name = 'loyal_ryde_system/add_fleet_type.html'  # Reutiliza el mismo template
+    success_url = reverse_lazy('core:fleet_list_type')
 #  Agregar Salida
 class DeparturePointCreateView(LoginRequiredMixin, CreateView):
     model = DeparturePoint

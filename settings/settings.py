@@ -200,6 +200,11 @@ SITE_DOMAIN = 'http://69.167.167.154:8000/'
 # Daphne
 ASGI_APPLICATION = 'settings.asgi.application'
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://miloyalride.com',
+    # Add other trusted origins if needed
+]
+
 # Channels
 CHANNEL_LAYERS = {
 	'default': {

@@ -24,6 +24,7 @@ urlpatterns = [
     path('drivers/list/inactive', DriverPendingListView.as_view(), name='driver_list_pending'),
     path('fleet/create/', FleetAdd.as_view(), name='fleet_add'),
     path('fleet/type/create', FleetTypeAdd.as_view(), name='fleet_add_type'),
+    path('fleet/type/update/<int:pk>/', FleetTypeUpdateView.as_view(), name='fleet_type_update'),
     path('fleet/list/', FleetListView.as_view(), name='fleet_list'),
     path('fleet/type/list', FleeTypetListView.as_view(), name='fleet_list_type'),
     path('route/create/', RouteCreateView.as_view(), name='route_add'),
