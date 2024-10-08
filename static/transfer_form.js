@@ -471,6 +471,7 @@ $(document).ready(function () {
                     updateSelectRate($(this).data("rate-id"));
                 });
 
+
                 // Añadir evento para actualizar el precio cuando se cambia el checkbox de ida y vuelta
                 $("#id_is_round_trip").change(function () {
                     updatePrice();
