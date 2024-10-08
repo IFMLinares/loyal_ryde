@@ -68,7 +68,6 @@ class UserAdd(LoginRequiredMixin, CreateView):
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
-
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
@@ -78,7 +77,7 @@ class UserAdd(LoginRequiredMixin, CreateView):
             random_password = get_random_string(length=10)
             user.set_password(random_password)
             user.save()
-            send_styled_email(user,random_password)
+            send_styled_email(user, random_password)
             if user.role == 'administrador':
                 return HttpResponseRedirect(reverse_lazy('core:user_list_admin'))
             elif user.role == 'despachador':
@@ -233,6 +232,7 @@ class GuestTransferCreateView(CreateView):
 
     def post(self, request, *args, **kwargs):
         # Obtén la fecha directamente del POST
+        print(request.POST)
         fecha = request.POST.get('date')
 
         # Convierte la fecha al formato que Django espera

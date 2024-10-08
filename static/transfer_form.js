@@ -465,6 +465,8 @@ $(document).ready(function () {
 
                 // Añadir evento para actualizar el precio con la tarifa seleccionada
                 $(".rate-radio").change(function () {
+					var rateId = $("input[name='rate-checkbox']:checked").data('rate-id');
+					$("#id_rate").val(rateId);
                     updatePrice();
                     updateSelectRate($(this).data("rate-id"));
                 });

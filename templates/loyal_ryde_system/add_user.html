@@ -245,7 +245,7 @@
                 <div class="d-flex justify-content-end">
                     <a href="../../demo1/dist/apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancelar</a>
 
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="form-submit">
                         <span class="indicator-label">Registrar Usuario</span>
                         <span class="indicator-progress">
                         <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -262,6 +262,15 @@
 {% endblock content %} 
 
 {% block extra_js %} 
+<script>
+    $('#form-submit').on('click', function(){
+    $(this).event.preventDefault();
+    // ENVIAR FORMULARIO
+    // $('#form-submit').addClass('spinner spinner-white spinner-right');
+    // $('#form-submit').attr('disabled', true);
+    $('form').submit();
+})
+</script>
 <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
 <script src="{% static 'assets/plugins/custom/formrepeater/formrepeater.bundle.js' %}"></script>
 <!--end::Page Vendors Javascript-->
@@ -275,6 +284,7 @@
 <script src="{% static 'assets/js/custom/utilities/modals/users-search.js' %}"></script>
 
 <script>
+    
     $('#password1, #password2').val('asdjhsdjhsdjhsjdh')
 
 
