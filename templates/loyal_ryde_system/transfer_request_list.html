@@ -21,6 +21,7 @@
                             <table class="table table-rounded table-striped border gy-7 gs-7" id="transfer_list_table">
                                 <thead>
                                     <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
+                                        <th>id</th>
                                         <th>Fecha y Hora</th>
                                         <th>Salida</th>
                                         <th>Destino</th>
@@ -35,6 +36,7 @@
                                 <tbody>
                                     {% for transfer_request in transfer_requests %}
                                         <tr>
+                                            <td>{{ transfer_request.id }}</td>
                                             <td class="text-center">{{ transfer_request.date|date:'d/m/Y'}}-{{ transfer_request.hour|date:'G:i' }}</td>
                                             <td class="text-center">{{ transfer_request.departure_site_route }}</td>
                                             <td class="text-center">{{ transfer_request.destination_route }}</td>

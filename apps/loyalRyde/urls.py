@@ -19,6 +19,7 @@ urlpatterns = [
     path('company/list/', CompaniesListView.as_view(), name='companies_list'),
     path('company/create/', CompnayAdd.as_view(), name='companies_create'),
     path('drivers/create/', DriverAdd.as_view(), name='driver_add'),
+    path('driver/update/<int:pk>/', DriverUpdateView.as_view(), name='driver_update'),
     path('drivers/list/', DriverListView.as_view(), name='driver_list'),
     path('drivers/list/active', DriverActiveListView.as_view(), name='driver_list_active'),
     path('drivers/list/inactive', DriverPendingListView.as_view(), name='driver_list_pending'),
@@ -30,8 +31,12 @@ urlpatterns = [
     path('route/create/', RouteCreateView.as_view(), name='route_add'),
     path('route/departure/create', DeparturePointCreateView.as_view(), name='rates_departure_create'),
     path('route/departure/list', DepartureListView.as_view(), name='rates_departure_list'),
+    path('route/departure/update/<int:pk>/', DepartureUpdateView.as_view(), name='departure_update'),
     path('route/arrival/create', ArrivalPointCreateView.as_view(), name='rates_arrival_create'),
     path('route/arrival/list', ArrivalListView.as_view(), name='rates_arrival_list'),
+    path('route/arrival/update/<int:pk>/', ArrivalPointUpdateView.as_view(), name='arrival_update'),
+    path('route/arrival/delete/<int:pk>/', ArrivalPointDeleteView.as_view(), name='arrival_delete'),
+    path('route/delete/<int:pk>/', DepartureDeleteView.as_view(), name='departure_delete'),
     path('route/list/', RouteListView.as_view(), name='route_list'),
     path('trips/progress/', TripsProgressListView.as_view(), name='trips_progress'),
     path('trips/completed/', TripsCompletedListView.as_view(), name='trips_completed'),
@@ -49,6 +54,7 @@ urlpatterns = [
     path('reports/excel/', TransferRequestExcelView.as_view(), name='transfer_request_excel'),
     path('reports/generales/', GeneralReportsView.as_view(), name='reportes_generales'),
     path('reports/company/', FilteredTransferRequestsView.as_view(), name='reports_company'),
+    path('company/update/<int:pk>/', CompanyUpdateView.as_view(), name='company_update'),
     
     
     

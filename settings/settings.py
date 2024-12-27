@@ -174,11 +174,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER =  os.environ.get('DJANGO_EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER =  os.environ.get('email')
+EMAIL_HOST_PASSWORD = os.environ.get('passEmail')
 
-print("EMAIL_HOST_USER:", os.environ.get('DJANGO_EMAIL_HOST_USER'))
-print("EMAIL_HOST_PASSWORD:", os.environ.get('prueba'))
+print("EMAIL_HOST_USER:", os.environ.get('email'))
+print("EMAIL_HOST_PASSWORD:", os.environ.get('passEmail'))
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',

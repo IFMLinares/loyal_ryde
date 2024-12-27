@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
     $('.validar').click(function(e) {
         e.preventDefault();
@@ -93,6 +94,8 @@ $(document).ready(function() {
     });
 
     $('#transfer_list_table').DataTable({
-        // "order": [[0, "asc"]]
+        "order": [[0, "desc"]]
     });
+
+
 });

@@ -195,27 +195,27 @@
                                 </div>
                                 <div class="">
                                     <label class="required form-label">Marca:</label>
-                                    <input type="text" name="marca" class="form-control mb-2" placeholder="Marca del Vehiculo" required value="" />
+                                    <input type="text" name="marca" class="form-control mb-2" placeholder="Marca del Vehiculo" required value="{{ driver.marca|default_if_none:'' }}" />
                                     <div class="text-muted fs-7">.</div>
                                 </div>
                                 <div class="">
                                     <label class="form-label">Modelo</label>
-                                    <input type="text" name="model" class="form-control mb-2" placeholder="Toyota..." value="" required/>
+                                    <input type="text" name="model" class="form-control mb-2" placeholder="Toyota..." value="{{ driver.model|default_if_none:'' }}" required/>
                                     <div class="text-muted fs-7"></div>
                                 </div>
                                 <div class="">
                                     <label class="form-label">Color</label>
-                                    <input type="text" name="color" class="form-control mb-2" value="" required placeholder="" />
+                                    <input type="text" name="color" class="form-control mb-2" value="{{ driver.color|default_if_none:'' }}" required placeholder="" />
                                     <div class="text-muted fs-7"></div>
                                 </div>
                                 <div class="">
                                     <label class="form-label">Placa</label>
-                                    <input type="text" name="plaque" class="form-control mb-2" value="" required/>
+                                    <input type="text" name="plaque" class="form-control mb-2" value="{{ driver.plaque|default_if_none:'' }}" required/>
                                     <div class="text-muted fs-7"></div>
                                 </div>
                                 <div class="">
                                     <label class="form-label">Nro maximo de pasajeros</label>
-                                    <input type="number" name="passengers_numbers" class="form-control mb-2" value="" required/>
+                                    <input type="number" name="passengers_numbers" class="form-control mb-2" value="{{ driver.passengers_numbers|default_if_none:'' }}" required/>
                                     <div class="text-muted fs-7"></div>
                                 </div>
                                 <div class="">
@@ -223,7 +223,7 @@
                                     <select name="type" class="form-select mb-2" data-control="select2" data-hide-search="true" required>
                                         <option value="" selected disabled>-----</option>
                                         {% for type in type %}
-                                        <option value="{{ type.id }}" >{{ type.type }}</option>
+                                        <option value="{{ type.id }}" {% if driver.type.id == type.id %}selected{% endif %}>{{ type.type }}</option>
                                         {% endfor %}
                                     </select>
                                     <div class="text-muted fs-7"></div>

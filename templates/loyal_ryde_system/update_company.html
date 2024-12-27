@@ -1,0 +1,132 @@
+{% extends "loyal_ryde_system/base/base.html" %}
+{% load static %}
+
+{% block title %}Editar Empresa{% endblock title %}
+
+{% block extra_css %}
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+
+{% block content %}
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+        <form class="form d-flex flex-column flex-lg-row" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!--begin::Aside column-->
+            <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
+                <!--begin::Thumbnail settings-->
+                <div class="card card-flush py-4">
+                    <!--begin::Card header-->
+                    <div class="card-header">
+                        <!--begin::Card title-->
+                        <div class="card-title text-center">
+                            <h2>Logo de la empresa</h2>
+                        </div>
+                        <!--end::Card title-->
+                    </div>
+                    <!--end::Card header-->
+                    <!--begin::Card body-->
+                    <div class="card-body text-center pt-0">
+                        <!--begin::Image input-->
+                        <div class="image-input image-input-empty image-input-outline mb-3" data-kt-image-input="true" style="background-image: url({% static 'assets/media/svg/files/blank-image.svg'%})">
+                            <!--begin::Preview existing avatar-->
+                            <div class="image-input-wrapper w-150px h-150px"></div>
+                            <!--end::Preview existing avatar-->
+                            <!--begin::Label-->
+                            <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Seleccionar logo">
+                                <!--begin::Icon-->
+                                <i class="bi bi-pencil-fill fs-7"></i>
+                                <!--end::Icon-->
+                                <!--begin::Inputs-->
+                                <input type="file" name="image" id="id_image" accept=".png, .jpg, .jpeg" />
+                                <input type="hidden" name="avatar_remove" />
+                                <!--end::Inputs-->
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Cancel-->
+                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+                                <i class="bi bi-x fs-2"></i>
+                            </span>
+                            <!--end::Cancel-->
+                            <!--begin::Remove-->
+                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+                                <i class="bi bi-x fs-2"></i>
+                            </span>
+                            <!--end::Remove-->
+                        </div>
+                        <!--end::Image input-->
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7">Establezca la imagen en miniatura de la categoría. Sólo se aceptan archivos de imagen *.png, *.jpg y *.jpeg</div>
+                        <!--end::Description-->
+                    </div>
+                    <!--end::Card body-->
+                </div>
+                <!--end::Thumbnail settings-->
+            </div>
+            <!--end::Aside column-->
+            <!--begin::Main column-->
+            <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                <!--begin::General options-->
+                <div class="card card-flush py-4">
+                    <!--begin::Card header-->
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h2>Editar Empresa</h2>
+                        </div>
+                    </div>
+                    <!--end::Card header-->
+                    <!--begin::Card body-->
+                    <div class="card-body pt-0">
+                        <!--begin::Input group-->
+                        {% for field in form %}
+                            {% if field.name != 'image' %}
+                            <div class="mb-3 fv-row">
+                                <!--begin::Label-->
+                                <label class="required form-label">{{ field.label }}</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ field }}
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">{{ field.help_text }}</div>
+                                <!--end::Description-->
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        <!--end::Input group-->
+                    </div>
+                    <!--end::Card body-->
+                </div>
+                <!--end::General options-->
+                <div class="d-flex justify-content-end">
+                    <!--begin::Button-->
+                    <a href="{% url 'core:companies_list' %}" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancelar</a>
+                    <!--end::Button-->
+                    <!--begin::Button-->
+                    <button type="submit" class="btn btn-primary">
+                        <span class="indicator-label">Guardar Cambios</span>
+                        <span class="indicator-progress">Espere por favor...
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                    </button>
+                    <!--end::Button-->
+                </div>
+            </div>
+            <!--end::Main column-->
+        </form>
+    </div>
+    <!--end::Container-->
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script src="{% static 'assets/plugins/custom/formrepeater/formrepeater.bundle.js' %}"></script>
+<script src="{% static 'assets/js/custom/apps/ecommerce/catalog/save-category.js' %}"></script>
+<script src="{% static 'assets/js/widgets.bundle.js' %}"></script>
+<script src="{% static 'assets/js/custom/widgets.js' %}"></script>
+<script src="{% static 'assets/js/custom/apps/chat/chat.js' %}"></script>
+<script src="{% static 'assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
+<script src="{% static 'assets/js/custom/utilities/modals/create-app.js' %}"></script>
+<script src="{% static 'assets/js/custom/utilities/modals/users-search.js' %}"></script>
+{% endblock extra_js %}

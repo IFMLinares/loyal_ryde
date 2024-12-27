@@ -433,6 +433,39 @@ class DriverAdd(LoginRequiredMixin, CreateView):
         print(context)
         return context
 
+class DriverUpdateView(LoginRequiredMixin, UpdateView):
+    model = CustomUser
+    form_class = CustomUserCreationForm
+    template_name = 'loyal_ryde_system/add_driver.html'
+    success_url = reverse_lazy('core:driver_list')
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(CustomUser, pk=self.kwargs['pk'])
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.save()
+        
+        # Actualizar instancia de CustomUserDriver
+        custom_user_driver = CustomUserDriver.objects.get(user=user)
+        fleet = FleetType.objects.get(id=self.request.POST.get('type'))
+        custom_user_driver.marca = self.request.POST.get('marca')
+        custom_user_driver.model = self.request.POST.get('model')
+        custom_user_driver.color = self.request.POST.get('color')
+        custom_user_driver.plaque = self.request.POST.get('plaque')
+        custom_user_driver.passengers_numbers = self.request.POST.get('passengers_numbers')
+        custom_user_driver.type = fleet
+        custom_user_driver.save()
+
+        return HttpResponseRedirect(self.success_url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        type = FleetType.objects.all()
+        context['type'] = type
+        context['driver'] = CustomUserDriver.objects.get(user=self.get_object())
+        return context
+
 #  Agregar Flota
 class FleetAdd(LoginRequiredMixin, CreateView):
     model = Fleet
@@ -453,18 +486,49 @@ class FleetTypeUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'loyal_ryde_system/add_fleet_type.html'  # Reutiliza el mismo template
     success_url = reverse_lazy('core:fleet_list_type')
 #  Agregar Salida
+
 class DeparturePointCreateView(LoginRequiredMixin, CreateView):
     model = DeparturePoint
     form_class = AddDepartureForm
-    # fields = '__all__'
     template_name = 'loyal_ryde_system/add.html'
     success_url = reverse_lazy('core:rates_departure_list')
 
-    def get_context_data(self,**kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Registrar Salida"
         return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Salida registrada exitosamente!')
+        return response
+
+class DepartureUpdateView(LoginRequiredMixin, UpdateView):
+    model = DeparturePoint
+    form_class = AddDepartureForm
+    template_name = 'loyal_ryde_system/add.html'
+    success_url = reverse_lazy('core:rates_departure_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Actualizar Salida"
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Salida actualizada exitosamente!')
+        return response
+
+class DepartureDeleteView(LoginRequiredMixin, DeleteView):
+    model = DeparturePoint
+    template_name = 'loyal_ryde_system/delete_departure.html'
+    success_url = reverse_lazy('core:rates_departure_list')
     
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Salida eliminada exitosamente!')
+        return response
+
 #  Agregar Destino
 class ArrivalPointCreateView(LoginRequiredMixin, CreateView):
     model = ArrivalPoint
@@ -477,6 +541,35 @@ class ArrivalPointCreateView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Registrar Destino"
         return context
+
+# Actualizar Destino
+class ArrivalPointUpdateView(LoginRequiredMixin, UpdateView):
+    model = ArrivalPoint
+    form_class = AddArrivalForm
+    template_name = 'loyal_ryde_system/add.html'
+    success_url = reverse_lazy('core:rates_arrival_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Actualizar Destino"
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Destino actualizado exitosamente!')
+        return response
+
+# Eliminar Destino
+class ArrivalPointDeleteView(LoginRequiredMixin, DeleteView):
+    model = ArrivalPoint
+    template_name = 'loyal_ryde_system/delete_arrival.html'
+    success_url = reverse_lazy('core:rates_arrival_list')
+    
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Destino eliminada exitosamente!')
+        return response
 
 #  Agregar Ruta
 class RouteCreateView(LoginRequiredMixin, CreateView):
@@ -666,6 +759,17 @@ class CompnayAdd(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, 'Formulario guardado exitosamente!')
+        return response
+
+class CompanyUpdateView(LoginRequiredMixin, UpdateView):
+    model = Company
+    form_class = AddCompanyForm
+    template_name = 'loyal_ryde_system/update_company.html'
+    success_url = reverse_lazy('core:companies_list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Registro actualizado exitosamente!')
         return response
 
 class TransferRequestExcelView(LoginRequiredMixin, ListView):

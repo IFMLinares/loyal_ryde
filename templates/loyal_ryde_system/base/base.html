@@ -133,6 +133,17 @@
 			{% endif %}
 			</script>
 		{% endblock error_js %}
+		{% if messages %}
+			<script>
+				Swal.fire({
+					icon: 'success',
+					title: 'Éxito',
+					html: '{% for message in messages %}<p>{{ message }}</p>{% endfor %}',
+					showConfirmButton: true,
+					confirmButtonText: 'Cerrar'
+				});
+			</script>
+		{% endif %}
 		<!--end::Global Javascript Bundle-->
 		{% block extra_js %} {% endblock extra_js %}
 		<!--end::Javascript-->
