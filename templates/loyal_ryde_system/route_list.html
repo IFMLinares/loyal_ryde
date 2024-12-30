@@ -31,7 +31,7 @@
                             </svg>
                         </span>
                         <!--end::Svg Icon-->
-                        <input type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Buscar ruta" />
+                        <input type="text" id="searchInput" class="form-control form-control-solid w-250px ps-14" placeholder="Buscar ruta" />
                     </div>
                     <!--end::Search-->
                 </div>
@@ -119,7 +119,7 @@
 <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
 <script>
     $(document).ready(function() {
-        $('#kt_ecommerce_category_table').DataTable({
+        var table = $('#kt_ecommerce_category_table').DataTable({
             "paging": true,
             "searching": true,
             "ordering": true,
@@ -127,6 +127,10 @@
             "language": {
                 "url": "{% static 'datatables/es.json' %}"
             }
+        });
+
+        $('#searchInput').on('keyup', function() {
+            table.search(this.value).draw();
         });
     });
 </script>
