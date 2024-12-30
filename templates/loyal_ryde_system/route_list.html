@@ -4,7 +4,6 @@
 {% block title %}Lista de Rutas{% endblock title %}
 
 {% block extra_css %} 
-
 <link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
 {% endblock extra_css %}
 
@@ -18,7 +17,6 @@
             <!--begin::Card header-->
             <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                 <!--begin::Card title-->
-                
                 <div class="col-md-12 text-center">
                     <h1 class="">Lista de Rutas</h1>
                 </div>
@@ -41,7 +39,7 @@
                 <!--begin::Card toolbar-->
                 <div class="card-toolbar">
                     <!--begin::Add customer-->
-                    <a href="{% url 'core:route_add' %}" class="btn btn-primary ">Añadir Ruta</a>
+                    <a href="{% url 'core:route_add' %}" class="btn btn-primary">Añadir Ruta</a>
                     <!--end::Add customer-->
                 </div>
                 <!--end::Card toolbar-->
@@ -61,14 +59,16 @@
                                 </div>
                             </th>
                             <th class="min-w-250px">Punto de Partida</th>
-                            <th class="min-w-150px">Punto de LLegada</th>
+                            <th class="min-w-150px">Punto de Llegada</th>
                             <th class="min-w-150px">Fecha de registro</th>
                             <th class="text-end min-w-70px">Acciones</th>
                         </tr>
                         <!--end::Table row-->
                     </thead>
-                    
-                    <tr>
+                    <!--end::Table head-->
+                    <!--begin::Table body-->
+                    <tbody class="fw-bold text-gray-600">
+                        <!--begin::Table row-->
                         {% if routes %}
                             {% for route in routes %}
                             <tr>
@@ -80,43 +80,26 @@
                                 <td>{{ route.departure_point }}</td>
                                 <td>{{ route.arrival_point }}</td>
                                 <td>{{ route.date_created|date:"d/m/Y" }}</td>
-                                <!--end::Role=-->
-                                <!--begin::Last login=-->
-                                <!--end::Last login=-->
                                 <td class="text-end">
-                                    <a href="#" class="btn btn-light btn-active-light-primary btn-sm disabled disabled" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Acciones
-                                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
-                                    <span class="svg-icon svg-icon-5 m-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor" />
-                                        </svg>
-                                    </span>
-                                    <!--end::Svg Icon--></a>
-                                    <!--begin::Menu-->
+                                    <a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Acciones
+                                        <span class="svg-icon svg-icon-5 m-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor" />
+                                            </svg>
+                                        </span>
+                                    </a>
                                     <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
-                                        <!--begin::Menu item-->
                                         <div class="menu-item px-3">
-                                            <a href="../../demo1/dist/apps/user-management/users/view.html" class="menu-link px-3">Editar</a>
+                                            <a href="" class="menu-link px-3">Editar</a>
                                         </div>
-                                        <!--end::Menu item-->
-                                        <!--begin::Menu item-->
                                         <div class="menu-item px-3">
-                                            <a href="#" class="menu-link px-3" data-kt-users-table-filter="delete_row">Eliminar</a>
+                                            <a href="" class="menu-link px-3">Eliminar</a>
                                         </div>
-                                        <!--end::Menu item-->
                                     </div>
-                                    <!--end::Menu-->
                                 </td>
                             </tr>
                             {% endfor %}
                         {% endif %}
-                        <!--end::Action=-->
-                    </tr>
-                    <!--end::Table head-->
-                    <!--begin::Table body-->
-                    <tbody class="fw-bold text-gray-600">
-                        <!--begin::Table row-->
-
                     </tbody>
                     <!--end::Table body-->
                 </table>
@@ -131,15 +114,20 @@
 {% endblock content %} 
 
 {% block extra_js %} 
-        <script src="{% static 'assets/plugins/global/plugins.bundle.js' %}"></script>
-		<script src="{% static 'assets/js/scripts.bundle.js' %}"></script>
-        <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
-		
-		<script src="{% static 'assets/js/custom/apps/ecommerce/catalog/categories.js' %}"></script>
-        <script src="{% static 'assets/js/widgets.bundle.js' %}"></script>
-		<script src="{% static 'assets/js/custom/widgets.js' %}"></script>
-		<script src="{% static 'assets/js/custom/apps/chat/chat.js' %}"></script>
-		<script src="{% static 'assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
-		<script src="{% static 'assets/js/custom/utilities/modals/create-app.js' %}"></script>
-		<script src="{% static 'ssets/js/custom/utilities/modals/users-search.js' %}"></script>
+<script src="{% static 'assets/plugins/global/plugins.bundle.js' %}"></script>
+<script src="{% static 'assets/js/scripts.bundle.js' %}"></script>
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#kt_ecommerce_category_table').DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "language": {
+                "url": "{% static 'datatables/es.json' %}"
+            }
+        });
+    });
+</script>
 {% endblock extra_js %}
