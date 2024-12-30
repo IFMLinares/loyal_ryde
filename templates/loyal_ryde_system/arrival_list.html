@@ -114,4 +114,17 @@
 <script src="{% static 'assets/plugins/global/plugins.bundle.js' %}"></script>
 <script src="{% static 'assets/js/scripts.bundle.js' %}"></script>
 <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#kt_ecommerce_category_table').DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "language": {
+                "url": "{% static 'assets/plugins/custom/datatables/spanish.json' %}"
+            }
+        });
+    });
+</script>
 {% endblock extra_js %}
