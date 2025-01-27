@@ -1,7 +1,7 @@
 {% extends "loyal_ryde_system/base/base.html" %} 
 {% load static %} 
 
-{% block title %}Inicio{% endblock title %}
+{% block title %}Solicitud de traslados{% endblock title %}
 
 {% block extra_css %} 
 <style>
@@ -169,40 +169,23 @@
                                 <div class="mt-8 col-md-12">
                                     <h3>Ruta:</h3>
                                 </div>
-                                <div class="mt-5 col-md-4">
-                                    <label class="form-label" for="id_departure_site_route">Seleccione punto de salida:</label>
-                                    <select class="form-select" aria-label="Seleccione un punto de origen" name="departure_site_route" id="id_departure_site_route" required data-control="select2">
-                                        <option disabled selected>Seleccione un punto de origen</option>
-                                        {% for opcion in departure %}
-                                            <option value="{{ opcion.name }}">{{ opcion.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                
-                                <div class="mt-5 col-md-4">
+                                <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_route">Dirección exacta del punto de salida:</label>
                                     {{ form.destination_direc }}
                                     <!-- <input class="form-control" type="text" name="destination_direc" id="id_destination_direc"> -->
                                 </div>
                                 
-                                <div class="mt-5 col-md-4">
+                                <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_route">Punto de referencia:</label>
                                     {{ form.departure_landmark }}
                                     <!-- <input class="form-control" type="text" name="departure_landmark" id="id_departure_landmark"> -->
                                 </div>
-
-                                <div class="mt-5 col-md-4">
-                                    <label class="form-label" for="id_destination_route">Destino:</label>
-                                    <select class="form-select" aria-label="Seleccione un punto de origen" name="destination_route" id="id_destination_route" required data-control="select2">
-                                        <option disabled selected>Seleccione un punto de Destino</option>
-                                    </select>
-                                </div>
-                                <div class="mt-5 col-md-4">
+                                <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_route">Dirección exacta del destino:</label>
                                     {{ form.departure_direc }}
                                     <!-- <input class="form-control" type="text" name="departure_direc" id="id_departure_direc"> -->
                                 </div>
-                                <div class="mt-5 col-md-4">
+                                <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_route">Punto de referencia:</label>
                                     {{ form.destination_landmark }}
                                     <!-- <input class="form-control" type="text" name="destination_landmark" id="id_destination_landmark"> -->

@@ -1436,13 +1436,14 @@ def get_routes_by_departure(request):
 
 def get_rates(request):
     if request.method == "GET":
-        departure_id = request.GET.get("departure_id")
-        arrival_id = request.GET.get("arrival_id")
+        departure_city = request.GET.get("departure_city")
+        arrival_city = request.GET.get("arrival_city")
+        print(departure_city, arrival_city)
         nro = int(request.GET.get("nro"))
 
         try:
-            # Buscar la ruta con los IDs de salida y destino
-            route = Route.objects.get(departure_point__name=departure_id, arrival_point__name=arrival_id)
+            # Buscar la ruta con los nombres de las ciudades de salida y destino
+            route = Route.objects.get(departure_point__name__icontains=departure_city, arrival_point__name__icontains=arrival_city)
             # Luego, busca la tarifa asociada a esa ruta
             rate = Rates.objects.filter(route=route)
             rate_data = []
@@ -1451,7 +1452,7 @@ def get_rates(request):
                 rate_data.append({
                     "rate_id": n.id,
                     'rate_vehicle': f'{n.type_vehicle}',
-                    'rate_route': F'{n.route.route_name}: {n.route.departure_point}-{n.route.arrival_point}',
+                    'rate_route': f'{n.route.route_name}: {n.route.departure_point}-{n.route.arrival_point}',
                     'rate_price': n.price,
                     'rate_price_round_trip': n.price_round_trip,
                     'rate_driver_gain': n.driver_gain,
@@ -1471,7 +1472,6 @@ def get_rates(request):
             return JsonResponse(response_data)
         except (Route.DoesNotExist, Rates.DoesNotExist):
             return JsonResponse({"error": "No se encontró una tarifa para esta ruta."}, status=404)
-
 
 @require_POST
 def verify_discount_code(request):
