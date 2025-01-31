@@ -63,7 +63,6 @@
 <script src="{% static 'assets/js/custom/utilities/modals/create-app.js' %}"></script>
 <script src="{% static 'assets/js/custom/utilities/modals/users-search.js' %}"></script>
 <!--end::Page Custom Javascript-->
-
 <script>
     document.getElementById('routeForm').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -77,13 +76,26 @@
             }
         }, function(results, status) {
             if (status === 'OK') {
+                console.log(results);
                 var isVenezuelanCity = results.some(result => {
                     return result.address_components.some(component => {
                         return component.types.includes('country') && component.short_name === 'VE';
                     });
                 });
                 if (isVenezuelanCity) {
-                    event.target.submit();
+                    // Buscar el componente de la ciudad
+                    var cityComponent = results[0].address_components.find(component => component.types.includes('locality'));
+                    if (cityComponent) {
+                        var cityResult = cityComponent.long_name;
+                        document.getElementById('id_name').value = cityResult;
+                        event.target.submit();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo encontrar el nombre de la ciudad'
+                        });
+                    }
                 } else {
                     Swal.fire({
                         icon: 'error',

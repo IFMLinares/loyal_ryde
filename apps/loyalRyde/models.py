@@ -18,6 +18,7 @@ payment_method_choices = [
         (1, 'CECO/GRAFO/PEDIDO'),
         (2, 'CREDITO'),
         (3, 'TARJETA DE CRÉDITO'),
+        (4, 'PAGO MOVIL'),
     ]
 
 TYPES_CHOICES = [

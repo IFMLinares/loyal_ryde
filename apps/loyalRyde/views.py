@@ -578,12 +578,49 @@ class RouteCreateView(LoginRequiredMixin, CreateView):
     template_name = 'loyal_ryde_system/add_route.html'
     success_url = reverse_lazy('core:route_list')
 
+#  Agregar Ruta
+class RouteUpdate(LoginRequiredMixin, UpdateView):
+    model = Route
+    form_class = AddRouteForm
+    template_name = 'loyal_ryde_system/add_route.html'
+    success_url = reverse_lazy('core:route_list')
+
+
+class RouteDeleteView(LoginRequiredMixin, DeleteView):
+    model = Route
+    template_name = 'loyal_ryde_system/delete_departure.html'
+    success_url = reverse_lazy('core:route_list')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Ruta eliminada exitosamente!')
+        return response
+
+
 #  Agregar tarifas
 class RatesCreateView(LoginRequiredMixin, CreateView):
     model = Rates
     form_class = AddRateForm
     template_name = 'loyal_ryde_system/add_rate.html'
     success_url = reverse_lazy('core:rates_list')
+
+
+#  Agregar tarifas
+class RatesUpdateView(LoginRequiredMixin, UpdateView):
+    model = Rates
+    form_class = AddRateForm
+    template_name = 'loyal_ryde_system/add_rate.html'
+    success_url = reverse_lazy('core:rates_list')
+
+class RatesDeleteView(LoginRequiredMixin, DeleteView):
+    model = Rates
+    template_name = 'loyal_ryde_system/delete_departure.html'
+    success_url = reverse_lazy('core:rates_list')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Tarifa eliminada exitosamente!')
+        return response
 
 #  Listado de conductores
 class DriverListView(LoginRequiredMixin, ListView):

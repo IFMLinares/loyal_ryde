@@ -52,6 +52,8 @@ class TransferRequestForm(ModelForm):
             'id_fly_checkbox': CheckboxInput(),
             'person_to_transfer': SelectMultiple(),
             'rate': Select(attrs={'class': 'form-control'}),
+            # agregar al campo observations que es textarea solo 2 filas de altura
+            'observations': Textarea(attrs={'class': 'form-control', 'rows': 2}),
             # 'destination_direc': TextInput(attrs={'autocomplete': 'off'}),
             # 'departure_direc': TextInput(attrs={'autocomplete': 'off'})
         }

@@ -127,9 +127,13 @@ $(document).ready(function () {
 		if ($(this).val() == "1") {
 			// Si el valor seleccionado es "1", quitamos la clase 'd-none' del div
 			$("#data_required").removeClass("d-none");
-		} else {
+		}else if ($(this).val() == "4") {
+			$("#data_required_pago_movil").removeClass("d-none");
+		} 
+		else {
 			// Si el valor seleccionado es cualquier otro, agregamos la clase 'd-none' al div
 			$("#data_required").addClass("d-none");
+			$("#data_required_pago_movil").addClass("d-none");
 		}
 	});
 
