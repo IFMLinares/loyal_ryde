@@ -148,7 +148,7 @@ class PeopleTransfer(models.Model):
         verbose_name_plural = 'Personas a transferir'
 
 class DeparturePoint(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Punto de salida")
+    name = models.CharField(max_length=255, verbose_name="Punto de salida", unique=True)
     date_created = models.DateField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
 
     class Meta:
@@ -157,7 +157,7 @@ class DeparturePoint(models.Model):
         return f"{self.name}"
 
 class ArrivalPoint(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Punto de Llegada")
+    name = models.CharField(max_length=255, verbose_name="Punto de Llegada", unique=True)
     date_created = models.DateField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
 
     class Meta:
