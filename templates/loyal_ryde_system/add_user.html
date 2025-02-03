@@ -263,18 +263,16 @@
 
 {% block extra_js %} 
 <script>
-    $('#form-submit').on('click', function(){
-    $(this).event.preventDefault();
+    // Ocultar los campos de contraseña
     $('.password-field').hide();
+    // Eliminar el atributo "required" de los campos de contraseña
+    $('#id_password1, #id_password2').removeAttr('required');
 
-        // Eliminar el atributo "required" de los campos de contraseña
-        $('#id_password1, #id_password2').removeAttr('required');
-
-        $('#form-submit').on('click', function(event){
-            event.preventDefault();
-            // Enviar el formulario
-            $('form').submit();
-    });
+    $('#form-submit').on('click', function(){
+        event.preventDefault();
+    // ENVIAR FORMULARIO
+    // $('#form-submit').addClass('spinner spinner-white spinner-right');
+    // $('#form-submit').attr('disabled', true);
     $('form').submit();
 })
 </script>
@@ -294,13 +292,14 @@
     
     $('#password1, #password2').val('asdjhsdjhsdjhsjdh')
 
+
     $('#id_role').change(function() {
     if ($(this).val() == 'supervisor') {
         $('#travel_approval_div').removeClass('d-none');
     } else {
         $('#travel_approval_div').addClass('d-none');
     }
-    });
+});
 
 function getCompanyImage() {
     var companyId = $('#id_company').val();  // El select tiene el id 'id_company'
