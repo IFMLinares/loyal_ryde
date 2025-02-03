@@ -19,6 +19,7 @@ urlpatterns = [
     path('company/list/', CompaniesListView.as_view(), name='companies_list'),
     path('company/create/', CompnayAdd.as_view(), name='companies_create'),
     path('drivers/create/', DriverAdd.as_view(), name='driver_add'),
+    path('drivers/delete/<int:pk>/', DriverDeleteView.as_view(), name='driver_delete'),
     path('driver/update/<int:pk>/', DriverUpdateView.as_view(), name='driver_update'),
     path('drivers/list/', DriverListView.as_view(), name='driver_list'),
     path('drivers/list/active', DriverActiveListView.as_view(), name='driver_list_active'),

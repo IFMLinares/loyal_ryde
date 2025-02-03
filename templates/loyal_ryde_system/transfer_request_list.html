@@ -38,8 +38,8 @@
                                         <tr>
                                             <td>{{ transfer_request.id }}</td>
                                             <td class="text-center">{{ transfer_request.date|date:'d/m/Y'}}-{{ transfer_request.hour|date:'G:i' }}</td>
-                                            <td class="text-center">{{ transfer_request.departure_site_route }}</td>
-                                            <td class="text-center">{{ transfer_request.destination_route }}</td>
+                                            <td class="text-center">{{ transfer_request.rate.route.departure_point.name }}</td>
+                                            <td class="text-center">{{ transfer_request.rate.route.arrival_point.name }}</td>
                                             <td class="text-center">{{ transfer_request.service_requested.username }}</td>
                                             <td class="text-center">{{ transfer_request.rate.price }}$</td>
                                             <td class="text-center">{{ transfer_request.service_authorize }}</td>
@@ -124,6 +124,7 @@
 let url_approve_ajax = "{% url 'core:transfer_request_approve' %}";
 let url_approve_ajax_admin = "{% url 'core:transfer_request_approve_admin' %}";
 let url_cancel_ajax = "{% url 'core:transfer_request_cancel' %}";
+let csr_token = "{{ csrf_token }}";
 </script>
 <script src="{% static 'trasnfer_request_list.js' %}"></script>
 <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>

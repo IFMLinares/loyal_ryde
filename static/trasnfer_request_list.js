@@ -28,7 +28,7 @@ $(document).ready(function() {
             type: 'POST',
             data: {
                 'request_id': requestId,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                'csrfmiddlewaretoken': csr_token
             },
             success: function(data) {
                 if (data.status == 'success') {
@@ -59,7 +59,7 @@ $(document).ready(function() {
             type: 'POST',
             data: {
                 'request_id': requestId,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                'csrfmiddlewaretoken': csr_token
             },
             success: function(data) {
                 if (data.status == 'success') {
@@ -90,7 +90,7 @@ $(document).ready(function() {
             type: 'POST',
             data: {
                 'request_id': requestId,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                'csrfmiddlewaretoken': csr_token
             },
             success: function(data) {
                 if (data.status == 'warning') {

@@ -628,6 +628,18 @@ class DriverListView(LoginRequiredMixin, ListView):
     model = CustomUserDriver
     context_object_name = 'drivers'
 
+# eliminación de conductores
+class DriverDeleteView(LoginRequiredMixin, DeleteView):
+    model = CustomUser
+    template_name = 'loyal_ryde_system/delete_departure.html'
+    success_url = reverse_lazy('core:driver_list')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Conductor Eliminado Exitosamente')
+        return response
+
+
 #  Listado de conductores Activos
 class DriverActiveListView(LoginRequiredMixin, ListView):
     template_name = 'loyal_ryde_system/driver_list_active.html'
