@@ -265,9 +265,16 @@
 <script>
     $('#form-submit').on('click', function(){
     $(this).event.preventDefault();
-    // ENVIAR FORMULARIO
-    // $('#form-submit').addClass('spinner spinner-white spinner-right');
-    // $('#form-submit').attr('disabled', true);
+    $('.password-field').hide();
+
+        // Eliminar el atributo "required" de los campos de contraseña
+        $('#id_password1, #id_password2').removeAttr('required');
+
+        $('#form-submit').on('click', function(event){
+            event.preventDefault();
+            // Enviar el formulario
+            $('form').submit();
+    });
     $('form').submit();
 })
 </script>
@@ -286,21 +293,6 @@
 <script>
     
     $('#password1, #password2').val('asdjhsdjhsdjhsjdh')
-
-
-    $('#form-submit').on('click', function(event){
-        event.preventDefault();
-        
-        // Hacer visibles los campos de contraseña antes de enviar el formulario
-        $('#password1').closest('.mb-3').removeClass('d-none');
-        $('#password2').closest('.mb-3').removeClass('d-none');
-        
-        // Enviar el formulario
-        $('form').submit();
-        $('#password1').closest('.mb-3').addClass('d-none');
-        $('#password2').closest('.mb-3').addClass('d-none');
-
-    });
 
     $('#id_role').change(function() {
     if ($(this).val() == 'supervisor') {
