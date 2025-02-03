@@ -1,17 +1,17 @@
 $(document).ready(function() {
     // Definir un tipo de columna personalizado para fechas en formato DD/MM/YYYY-HH:mm
-    $.fn.dataTable.ext.type.order['datetime-ddmmyyyy-hhmm-pre'] = function(d) {
-        var parts = d.split('-');
-        var dateParts = parts[0].split('/');
-        var timeParts = parts[1].split(':');
-        return new Date(
-            parseInt(dateParts[2], 10),  // Año
-            parseInt(dateParts[1], 10) - 1,  // Mes (0-indexed)
-            parseInt(dateParts[0], 10),  // Día
-            parseInt(timeParts[0], 10),  // Hora
-            parseInt(timeParts[1], 10)   // Minuto
-        ).getTime();
-    };
+    // $.fn.dataTable.ext.type.order['datetime-ddmmyyyy-hhmm-pre'] = function(d) {
+    //     var parts = d.split('-');
+    //     var dateParts = parts[0].split('/');
+    //     var timeParts = parts[1].split(':');
+    //     return new Date(
+    //         parseInt(dateParts[2], 10),  // Año
+    //         parseInt(dateParts[1], 10) - 1,  // Mes (0-indexed)
+    //         parseInt(dateParts[0], 10),  // Día
+    //         parseInt(timeParts[0], 10),  // Hora
+    //         parseInt(timeParts[1], 10)   // Minuto
+    //     ).getTime();
+    // };
 
     $('#transfer_list_table').DataTable({
         "order": [[0, "desc"]],
@@ -28,7 +28,7 @@ $(document).ready(function() {
             type: 'POST',
             data: {
                 'request_id': requestId,
-                'csrfmiddlewaretoken': csr_token
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function(data) {
                 if (data.status == 'success') {
@@ -59,7 +59,7 @@ $(document).ready(function() {
             type: 'POST',
             data: {
                 'request_id': requestId,
-                'csrfmiddlewaretoken': csr_token
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function(data) {
                 if (data.status == 'success') {
@@ -90,7 +90,7 @@ $(document).ready(function() {
             type: 'POST',
             data: {
                 'request_id': requestId,
-                'csrfmiddlewaretoken': csr_token
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function(data) {
                 if (data.status == 'warning') {

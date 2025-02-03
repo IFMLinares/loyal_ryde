@@ -120,6 +120,20 @@
         <!--end::Container-->
 {% endblock content %}
 {% block extra_js %}
+
+		<!--begin::Page Vendors Javascript(used by this page)-->
+		<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+		<!--end::Page Vendors Javascript-->
+		<!--begin::Page Custom Javascript(used by this page)-->
+		<script src="{% static 'assets/js/custom/apps/user-management/users/list/table.js' %}"></script>
+		<script src="{% static 'assets/js/custom/apps/user-management/users/list/export-users.js' %}"></script>
+		<script src="{% static 'assets/js/custom/apps/user-management/users/list/add.js' %}"></script>
+		<script src="{% static 'assets/js/widgets.bundle.js' %}"></script>
+		<script src="{% static 'assets/js/custom/widgets.js' %}"></script>
+		<script src="{% static 'assets/js/custom/apps/chat/chat.js' %}"></script>
+		<script src="{% static 'assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
+		<script src="{% static 'assets/js/custom/utilities/modals/create-app.js' %}"></script>
+		<script src="{% static 'ssets/js/custom/utilities/modals/users-search.js' %}"></script>
 <script>
 let url_approve_ajax = "{% url 'core:transfer_request_approve' %}";
 let url_approve_ajax_admin = "{% url 'core:transfer_request_approve_admin' %}";
@@ -127,5 +141,4 @@ let url_cancel_ajax = "{% url 'core:transfer_request_cancel' %}";
 let csr_token = "{{ csrf_token }}";
 </script>
 <script src="{% static 'trasnfer_request_list.js' %}"></script>
-<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
 {% endblock extra_js %}
