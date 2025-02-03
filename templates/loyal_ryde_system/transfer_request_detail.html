@@ -123,29 +123,21 @@
                                     <div class="card-body">
                                         <h5 class="card-title"><i class="fas fa-road"></i> Salida/Destino(s)</h5>
                                         <div class="row">
-                                            <div class="col-md-4">
-                                                <label class="form-label">Seleccione punto de salida:</label>
-                                                <p class="form-control-plaintext">{{ detail.departure_site_route }}</p>
-                                            </div>
-                                            <div class="col-md4">
-                                                <label class="form-label">Dirección exacta del punto de salida:</label>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Dirección de salida:</label>
                                                 <p class="form-control-plaintext">{{ detail.departure_direc }}</p>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label class="form-label">Punto de referencia:</label>
-                                                <p class="form-control-plaintext">{{ detail.departure_landmark }}</p>
+                                                <p class="form-control-plaintext">{{ detail.departure_landmark|default:"N/A"  }}</p>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label class="form-label">Destino:</label>
-                                                <p class="form-control-plaintext">{{ detail.destination_route }}</p>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Dirección de destino:</label>
+                                                <p class="form-control-plaintext">{{ detail.destination_direc}}</p>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label class="form-label">Dirección exacta del destino:</label>
-                                                <p class="form-control-plaintext">{{ detail.destination_direc }}</p>
-                                            </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label class="form-label">Punto de referencia:</label>
-                                                <p class="form-control-plaintext">{{ detail.destination_landmark }}</p>
+                                                <p class="form-control-plaintext">{{ detail.destination_landmark|default:"N/A"  }}</p>
                                             </div>
                                         </div>
                                     </div>
