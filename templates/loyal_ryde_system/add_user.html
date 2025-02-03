@@ -152,7 +152,9 @@
                             {% for field in form.visible_fields %}
                                 {% if  field.name != 'role' and field.name != 'first_name' and field.name != 'last_name' and field.name != 'travel_approval' and field.name != 'company' and field.name != 'department' %}
                                             <!--begin::Label-->
-                                            <div class="mb-3  {% if field.name == 'password1' or field.name == 'password2' %} d-none {% endif %}">
+                                            {% if field.name == 'password1' or field.name == 'password2' %}
+                                            {% else %}
+                                            <div class="mb-3   d-none ">
                                             <label class="required form-label">{{ field.label }}</label>
                                             <!--end::Label-->
                                             <!--begin::Input-->
@@ -170,7 +172,8 @@
                                                 {{ field.help_text }}
                                             </div>
                                             <!--end::Description-->
-                                        </div>
+                                            </div>
+                                            {% endif %}
                                 {% endif %}
                             {% endfor %}
                             <div class="mb-3 d-none" id="travel_approval_div">

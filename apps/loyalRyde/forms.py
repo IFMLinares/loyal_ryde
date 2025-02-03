@@ -101,16 +101,6 @@ class CustomUserCreationForm(UserCreationForm):
                     'data-placeholder': "seleccione un estatus de usuario",
                 },
             ),
-            'password1': Select(
-                attrs={
-                    'required': 'false',
-                },
-            ),
-            'password2': Select(
-                attrs={
-                    'required': 'false',
-                },
-            ),
             'status': Select(
                 attrs={
                     'data-placeholder': "Seleccione un rol de usuario",
@@ -131,7 +121,6 @@ class CustomUserCreationForm(UserCreationForm):
                     'autocomplete': 'off',
                 },
             ),
-
         }
 
 class AddRouteForm(ModelForm):
