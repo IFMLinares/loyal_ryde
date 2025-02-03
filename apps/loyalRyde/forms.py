@@ -79,10 +79,10 @@ class AddCompanyForm(ModelForm):
 
 class CustomUserCreationForm(UserCreationForm):
 
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
-        for form in  self.visible_fields():
-            if form.name == 'role' or form.name == 'company' or form.name == 'status':
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for form in self.visible_fields():
+            if form.name in ['role', 'company', 'status']:
                 form.field.widget.attrs['class'] = 'form-select mb-2'
                 form.field.widget.attrs['data-control'] = 'select2'
                 form.field.widget.attrs['data-hide-search'] = 'true'
@@ -90,48 +90,36 @@ class CustomUserCreationForm(UserCreationForm):
                 pass
             else:
                 form.field.widget.attrs['class'] = 'form-control mb-2'
-    
+
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        exclude = ['password1','password2']
-        fields = UserCreationForm.Meta.fields + ('first_name', 'last_name', 'email', 'phone', 'role', 'department', 'status', 'company', 'travel_approval')
+        fields = ('first_name', 'last_name', 'email', 'phone', 'role', 'department', 'status', 'company', 'travel_approval')
         widgets = {
-            'role': Select(
+            'role': forms.Select(
                 attrs={
-                    'data-placeholder': "seleccione un estatus de usuario",
+                    'data-placeholder': "Seleccione un estatus de usuario",
                 },
             ),
-            'password1': Select(
-                attrs={
-                    'required': 'false',
-                },
-            ),
-            'password2': Select(
-                attrs={
-                    'required': 'false',
-                },
-            ),
-            'status': Select(
+            'status': forms.Select(
                 attrs={
                     'data-placeholder': "Seleccione un rol de usuario",
                 },
             ),
-            'company': Select(
+            'company': forms.Select(
                 attrs={
                     'data-placeholder': "Seleccione la empresa",
                 },
             ),
-            'destination_direc': TextInput(
+            'destination_direc': forms.TextInput(
                 attrs={
                     'autocomplete': 'off',
                 },
             ),
-            'destination_landmark': TextInput(
+            'destination_landmark': forms.TextInput(
                 attrs={
                     'autocomplete': 'off',
                 },
             ),
-
         }
 
 class AddRouteForm(ModelForm):
