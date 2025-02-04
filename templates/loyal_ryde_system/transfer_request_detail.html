@@ -211,6 +211,20 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="d-flex justify-content-center align-items-center mb-3">
+                                            <h5 class="card-title mb-0"><i class="fas fa-credit-card"></i> Comprobante de pago</h5>
+                                            <a href="{{ detail.comprobante.url }}" class="btn btn-primary ms-3" download>Descargar</a>
+                                        </div>
+                                        <!-- Mostrar el comprobante de pago que viene en detail.comprobante -->
+                                        <!-- Ajusta el tamaño del comprobante -->
+                                        <img src="{{ detail.comprobante.url }}" alt="Comprobante de pago" class="img-fluid" width="500px" height="500px"/>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="driver" role="tabpanel" aria-labelledby="driver-tab">
