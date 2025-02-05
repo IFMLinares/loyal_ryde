@@ -1,5 +1,19 @@
 from django.urls import path, include
-from .views import *
+from .views_initial import *
+
+# Importar vistas desde las diferentes carpetas
+from apps.loyalRyde.views.arrival_views.views import *
+from apps.loyalRyde.views.componaie_views.views import *
+from apps.loyalRyde.views.departure_views.views import *
+from apps.loyalRyde.views.discount_views.views import *
+from apps.loyalRyde.views.driver_views.views import *
+from apps.loyalRyde.views.fleet_views.views import *
+from apps.loyalRyde.views.rates_views.views import *
+from apps.loyalRyde.views.route_views.views import *
+from apps.loyalRyde.views.transfers_request_views.views import *
+from apps.loyalRyde.views.trips_views.views import *
+from apps.loyalRyde.views.user_views.views import *
+
 
 app_name = 'loyalRyde'
 
