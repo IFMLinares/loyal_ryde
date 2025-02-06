@@ -177,8 +177,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER =  os.environ.get('email')
 EMAIL_HOST_PASSWORD = os.environ.get('passEmail')
 
-print("EMAIL_HOST_USER:", os.environ.get('email'))
-print("EMAIL_HOST_PASSWORD:", os.environ.get('passEmail'))
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
@@ -208,7 +206,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 #     "http://185.182.186.224"
 # ]
 
-SITE_DOMAIN = 'https://miloyalride.com'
+SITE_DOMAIN = 'http://69.167.167.154:8000'
 
 # Daphne
 ASGI_APPLICATION = 'settings.asgi.application'

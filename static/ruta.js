@@ -298,6 +298,20 @@ async function handleAddressChange() {
                     updatePrice();
                 });
 
+                function AditionalDetour(){
+                    var detour_price = $('input[name="rate-checkbox"]:checked');
+                    var detourLocalValue = parseFloat(detour_price.data('detour-local'));
+                    var waypointCount = $('#waypointsContainer').children().length; // Asegúrate de definir waypointCount
+            
+                    // Si detourLocalValue es NaN, se devuelve 0
+                    if (isNaN(detourLocalValue)) {
+                        detourLocalValue = 0;
+                    }
+            
+                    $('#id_aditional').val(detourLocalValue * waypointCount);
+                    $('#id_final_price').val(parseFloat($('#id_price').val()) + parseFloat($('#id_aditional').val()));
+                }
+
                 // Función para actualizar el precio
                 function updatePrice() {
                     const selectedRate = $("input[name='rate-checkbox']:checked");

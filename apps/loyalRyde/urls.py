@@ -14,7 +14,6 @@ from apps.loyalRyde.views.transfers_request_views.views import *
 from apps.loyalRyde.views.trips_views.views import *
 from apps.loyalRyde.views.user_views.views import *
 
-
 app_name = 'loyalRyde'
 
 urlpatterns = [

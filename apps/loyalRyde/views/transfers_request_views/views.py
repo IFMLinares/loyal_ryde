@@ -1,11 +1,9 @@
 import calendar
 import locale
-import json
 from babel.dates import format_date
 from datetime import datetime
 from io import BytesIO
 
-import pandas as pd
 from openpyxl import Workbook
 from openpyxl.cell.cell import MergedCell
 from openpyxl.drawing.image import Image
@@ -13,33 +11,31 @@ from openpyxl.styles import Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import AnonymousUser, Group, User
-from django.core import serializers
-from django.core.mail import EmailMessage, EmailMultiAlternatives, send_mail
-from django.db.models import Count, F, Q, Sum
-from django.db.models.functions import TruncMonth
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
-from django.utils import timezone
-from django.utils.crypto import get_random_string
-from django.utils.dateparse import parse_date
 from django.utils.html import strip_tags
-from django.utils import timezone
 from django.utils.timezone import now
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
-from django.views.generic import (CreateView, DeleteView, DetailView, 
-                                ListView,TemplateView, UpdateView, View)
-
+from django.views.generic import (
+    CreateView, 
+    DeleteView, 
+    DetailView, 
+    ListView,
+    TemplateView, 
+    UpdateView, 
+    View,
+    )
+from django.conf import settings
 from apps.loyalRyde.forms import *
 from apps.loyalRyde.models import *
 
@@ -50,6 +46,25 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'loyal_ryde_system/transfer_rerquest.html'
     form_class = TransferRequestForm
     success_url = reverse_lazy('core:transfer_request_list')
+
+    def send_email_creation_transfer(self, transfer_request):
+        # Recuperar los usuarios con los roles 'administrador' y 'despachador'
+        recipients = CustomUser.objects.filter(role__in=['administrador', 'despachador']).values_list('email', flat=True)
+        
+        subject = 'Nueva solicitud de traslado'
+        
+        # Construir la URL completa de la imagen
+        request = self.request
+        image_url = request.build_absolute_uri(settings.STATIC_URL + 'assets/media/logos/logo-01.png')
+        
+        html_message = render_to_string('emails/test.html', {
+            'transfer_request': transfer_request,
+            'image_url': image_url
+        })
+        plain_message = strip_tags(html_message)
+        from_email = 'loyalride.test@gmail.com'
+
+        send_mail(subject, plain_message, from_email, recipients, html_message=html_message)
 
     def form_valid(self, form):
         # Guarda el formulario directamente
@@ -77,6 +92,9 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
 
         # Guarda el objeto TransferRequest con los nuevos valores
         transfer_request.save()
+
+        # Enviar correo electrónico
+        self.send_email_creation_transfer(transfer_request)
 
         return super().form_valid(form)
 
@@ -129,6 +147,25 @@ class GuestTransferCreateView(CreateView):
     template_name = 'loyal_ryde_system/transfer_rerquest_guest.html'
     form_class = TransferRequestForm
 
+    def send_email_creation_transfer_guest(self, transfer_request):
+        # Recuperar los usuarios con los roles 'administrador' y 'despachador'
+        recipients = CustomUser.objects.filter(role__in=['administrador', 'despachador']).values_list('email', flat=True)
+        
+        subject = 'Nueva solicitud de traslado'
+        
+        # Construir la URL completa de la imagen
+        request = self.request
+        image_url = request.build_absolute_uri(settings.STATIC_URL + 'assets/media/logos/logo-01.png')
+        
+        html_message = render_to_string('emails/test.html', {
+            'transfer_request': transfer_request,
+            'image_url': image_url
+        })
+        plain_message = strip_tags(html_message)
+        from_email = 'loyalride.test@gmail.com'
+
+        send_mail(subject, plain_message, from_email, recipients, html_message=html_message)
+
     def form_valid(self, form):
         # Guarda el formulario directamente
         form.instance.service_requested = None
@@ -153,6 +190,8 @@ class GuestTransferCreateView(CreateView):
 
         # Guarda el objeto TransferRequest con los nuevos valores
         transfer_request.save()
+        
+        self.send_email_creation_transfer_guest(transfer_request)
 
         return HttpResponseRedirect(reverse('core:guest_transfer_success', kwargs={'pk': transfer_request.pk}))
 
