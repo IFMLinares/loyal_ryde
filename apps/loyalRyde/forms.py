@@ -37,7 +37,7 @@ class TransferRequestForm(ModelForm):
             elif form.name == 'user_driver' or form.name == 'payment_method':
                 form.field.widget.attrs['class'] = 'form-select mb-2'
                 form.field.widget.attrs['data-control'] = 'select2'
-                form.field.widget.attrs['data-hide-search'] = 'true'
+                # form.field.widget.attrs['data-hide-search'] = 'true'
             else:
                 form.field.widget.attrs['class'] = 'form-control'
 
@@ -173,7 +173,12 @@ class AddRateForm(ModelForm):
                 attrs={
                     'disabled': 'true'
                 }
-            )
+            ),
+            'driver_gain_detour_local_quantity': NumberInput(
+                attrs={
+                    'disabled': 'true'
+                }
+            ),
         }
 
 class AddDepartureForm(ModelForm):

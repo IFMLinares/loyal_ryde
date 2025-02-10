@@ -19,26 +19,13 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import AnonymousUser, Group, User
-from django.core import serializers
-from django.core.mail import EmailMessage, EmailMultiAlternatives, send_mail
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, F, Q, Sum
-from django.db.models.functions import TruncMonth
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.template.loader import render_to_string
-from django.urls import reverse_lazy, reverse
-from django.utils import timezone
+from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
-from django.utils.dateparse import parse_date
-from django.utils.html import strip_tags
-from django.utils import timezone
-from django.utils.timezone import now
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
-from django.views.generic import (CreateView, DeleteView, DetailView, 
-                                ListView,TemplateView, UpdateView, View)
+from django.views.generic import (CreateView, DeleteView, ListView, UpdateView, View)
 
 from apps.loyalRyde.forms import *
 from apps.loyalRyde.models import *
@@ -136,7 +123,14 @@ class DriverDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(self.request, 'Conductor Eliminado Exitosamente')
         return response
 
-#  Listado de conductores Activos
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Eliminar Conductor"
+        context['text'] = "¿Está seguro de eliminar este conductor?"
+        context['url_cancel'] = reverse_lazy('core:driver_list')
+        return context
+
+#  Listado de conductores Activos 
 class DriverActiveListView(LoginRequiredMixin, ListView):
     template_name = 'loyal_ryde_system/driver_list_active.html'
     model = CustomUserDriver

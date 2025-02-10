@@ -267,7 +267,7 @@ async function handleAddressChange() {
                                 </svg>
                                 <span class="d-block fw-bold text-start">
                                     <span class="text-dark fw-bolder d-block fs-3">
-                                        <input type="radio" class="form-check-input rate-radio" name="rate-checkbox" value="${tarifa.rate_price}" data-rate-id="${tarifa.rate_id}" data-round-trip-price="${tarifa.rate_price_round_trip}"  data-detour-local="${tarifa.rate_detour_local}" required/> Tarifa ${tarifa.rate_id}: ${tarifa.rate_vehicle}
+                                        <input type="radio" class="form-check-input rate-radio" name="rate-checkbox" value="${tarifa.rate_price}" data-rate-id="${tarifa.rate_id}" data-round-trip-price="${tarifa.rate_price_round_trip}"  data-detour-local="${tarifa.rate_detour_local}" required/> ${tarifa.rate_route}
                                     </span>
                                     <span class="text-dark">${tarifa.rate_route}</span> <br>
                                     <span class="text-dark">Tipo de Vehiculo: ${tarifa.rate_vehicle}</span><br>

@@ -226,6 +226,8 @@ class Rates(models.Model):
     daytime_waiting_time = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Extra: Hora de espera (diurna) C/u", null=True, blank=True)
     nightly_waiting_time = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Extra: Hora de espera (Nocturna) C/u", null=True, blank=True)
     detour_local = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Desvío Local C/u", null=True, blank=True)
+    driver_gain_detour_local = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Ganancia del conductor por desvío local %", null=True, blank=True)
+    driver_gain_detour_local_quantity = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Ganancia del conductor por desvío local", null=True, blank=True)
     date_created = models.DateField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):

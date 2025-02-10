@@ -132,6 +132,16 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.driver_gain_detour_local.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.driver_gain_detour_local }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.driver_gain_detour_local.help_text }}
+                                    </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <!--begin::Label-->
@@ -181,46 +191,23 @@
                                         {{ form.gain_loyal_ride_round_trip.help_text }}
                                     </div>
                                 </div>
+                                <div class="col-md-6 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.driver_gain_detour_local_quantity.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.driver_gain_detour_local_quantity }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.driver_gain_detour_local_quantity.help_text }}
+                                    </div>
+                                </div>
                             </div>
-                            <!--begin::Label-->
-                            <!-- <label class="required form-label">Punto de partida</label>
-                            <select class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Seleccione un punto de partida" id="">
-                                <option selected disabled></option>
-                                <option value="Caracas">Toda Caracas</option>
-                                <option value="Arrecife">Arrecife</option>
-                                <option value="Barcelona">Barcelona</option>
-                                <option value="Barquisimeto">Barquisimeto</option>
-                                <option value="Carayaca">Carayaca</option>
-                                <option value="Catia la Mar">Catia la Mar</option>
-                                <option value="Charallave">Charallave</option>
-                                <option value="Cua">Cua</option>
-                                <option value="Guanta">Guanta</option>
-                                <option value="Guarenas">Guarenas</option>
-                                <option value="Guatire">Guatire</option>
-                                <option value="La Guaira">La Guaira</option>
-                                <option value="Los Teques">Los Teques</option>
-                                <option value="Maracay">Maracay</option>
-                                <option value="Moron">Moron</option>
-                                <option value="Ocumare del Tuy">Ocumare del Tuy</option>
-                                <option value="Puerto Cabello">Puerto Cabello</option>
-                                <option value="Puerto La Cruz">Puerto La Cruz</option>
-                                <option value="San Antonio de los Altos">San Antonio de los Altos</option>
-                                <option value="Santa Lucia">Santa Lucia</option>
-                                <option value="Santa Teresa">Santa Teresa</option>
-                                <option value="Monay">Monay</option>
-                                <option value="Valencia">Valencia</option>
-                            </select> -->
                         </div>
-                        <!-- <div class="mb-10 fv-row">
-                            <label class="form-label">Destino</label>
-                            <input type="text" name="" class="form-control mb-2" placeholder="" value="" />
-                        </div> -->
                     </div>
                     <!--end::Card header-->
                 </div>
-                <!--end::General options-->
-                <!--begin::Automation-->
-                <!--end::Automation-->
                 <div class="d-flex justify-content-end">
                     <!--begin::Button-->
                     <a href="../../demo1/dist/apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancelar</a>
@@ -272,6 +259,19 @@
             $('#id_driver_price_round_trip').val(driverPrice.toFixed(2));
             var gain = price - driverPrice
             $('#id_gain_loyal_ride_round_trip').val(gain.toFixed(2))
+        });
+        
+        $('#id_detour_local, #id_driver_gain_detour_local').on('input', function() {
+            // Obtiene los valores de los inputs
+            var detuor = parseFloat($('#id_detour_local').val());
+            var detour_percent = parseFloat($('#id_driver_gain_detour_local').val());
+    
+            // Calcula el precio del conductor
+            var detour_gain_quantity = detuor * detour_percent / 100;
+            detour_gain_quantity = detour_gain_quantity.toFixed(2);
+    
+            // Muestra el resultado en el input id_driver_price
+            $('#id_driver_gain_detour_local_quantity').val(detour_gain_quantity);
         });
     });
     </script>

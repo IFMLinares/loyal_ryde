@@ -1,7 +1,7 @@
 {% extends "loyal_ryde_system/base/base.html" %}
 {% load static %}
 
-{% block title %}Eliminar Salida{% endblock title %}
+{% block title %}{{ title }}{% endblock title %}
 
 {% block content %}
 <div class="post d-flex flex-column-fluid" id="kt_post">
@@ -9,15 +9,15 @@
         <div class="card card-flush py-4">
             <div class="card-header">
                 <div class="card-title">
-                    <h2>Eliminar Salida</h2>
+                    <h2>{{ title }}</h2>
                 </div>
             </div>
             <div class="card-body pt-0">
-                <p>¿Estás seguro de que deseas eliminar esta salida?</p>
+                <p>{{ text }}</p>
                 <form method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Eliminar</button>
-                    <a href="{% url 'core:rates_departure_list' %}" class="btn btn-secondary">Cancelar</a>
+                    <a href="{{ url_cancel }}" class="btn btn-secondary">Cancelar</a>
                 </form>
             </div>
         </div>

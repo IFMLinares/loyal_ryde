@@ -1,23 +1,6 @@
 $(document).ready(function() {
-    // Definir un tipo de columna personalizado para fechas en formato DD/MM/YYYY-HH:mm
-    // $.fn.dataTable.ext.type.order['datetime-ddmmyyyy-hhmm-pre'] = function(d) {
-    //     var parts = d.split('-');
-    //     var dateParts = parts[0].split('/');
-    //     var timeParts = parts[1].split(':');
-    //     return new Date(
-    //         parseInt(dateParts[2], 10),  // Año
-    //         parseInt(dateParts[1], 10) - 1,  // Mes (0-indexed)
-    //         parseInt(dateParts[0], 10),  // Día
-    //         parseInt(timeParts[0], 10),  // Hora
-    //         parseInt(timeParts[1], 10)   // Minuto
-    //     ).getTime();
-    // };
-
     $('#transfer_list_table').DataTable({
-        "order": [[0, "desc"]],
-        "columnDefs": [
-            { "type": "datetime-ddmmyyyy-hhmm", "targets": 0 }
-        ]
+        order: false,
     });
 
     $('.validar').click(function(e) {
@@ -112,4 +95,10 @@ $(document).ready(function() {
             }            
         });
     });
+    $.fn.dataTable.ext.type.order['datetime-ddmmyyyy-hhmm-pre'] = function (date) {
+    var dateTimeParts = date.split('-');
+    var dateParts = dateTimeParts[0].split('/');
+    var timeParts = dateTimeParts[1].split(':');
+    return new Date(dateParts[2], dateParts[1] - 1, dateParts[0], timeParts[0], timeParts[1]).getTime();
+};
 });

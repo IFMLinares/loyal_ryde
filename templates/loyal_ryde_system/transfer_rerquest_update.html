@@ -90,10 +90,6 @@
                                     <label class="form-label" for="id_person_to_transfer">Teléfono:</label>
                                     <input class="form-control" type="text" id="phone" name="phone" placeholder="Teléfono">
                                 </div>
-                                <div class="mt-5 col-md-3">
-                                    <label class="form-label" for="id_person_to_transfer">Empresa:</label>
-                                    <input class="form-control" type="text" id="company" name="company" placeholder="Empresa">
-                                </div>
                                 <div class="mt-13 col-md-3">
                                     <button type="button" id="people-transfer-form" class="btn btn-success btn-hover-rotate-end">AGREGAR</button>
                                 </div>
@@ -115,7 +111,7 @@
                                         <input class="form-check-input" type="checkbox" id="id_fly_checkbox"  name="fly_checkbox"/>
                                         <label class="form-check-label text-dark" for="id_fly_checkbox">
                                             <i class="fas fa-solid fa-plane-departure"  style="color: #009ef6; font-size: 20px;"></i>
-                                            ¿TU TRASLADO ES HACIA UN AEROPUERTO?
+                                            ¿TU TRASLADO ES INICIA EN UN AEROPUERTO?
                                         </label>
                                     </div>
                                 </div>
@@ -215,11 +211,14 @@
                                     <input type="text" class="form-control" id="id_division" name="division" >
                                 </div>
                             </div>
-                            
-                            <div class="mt-5 col-md-12">
-                                <label class="form-label" for="">Conductor:</label>
-                                {{ form.user_driver }}
-                            </div>
+                            {% if request.user.role == "administrador" or request.user.role == "administrador" %}
+                                <div class="mt-5 col-md-12">
+                                    <div class="col-md-12">
+                                        <h3>Conductor:</h3>
+                                    </div>
+                                    {{ form.user_driver }}
+                                </div>
+                            {% endif %}
                             
                             <div class="row pb-xl-3">
                                 <div class="mt-8 col-md-12">

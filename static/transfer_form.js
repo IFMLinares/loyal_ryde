@@ -21,7 +21,7 @@ $(document).ready(function () {
 		e.preventDefault();
 		var name = $("#name").val();
 		var phone = $("#phone").val();
-		var company = $("#company").val();
+		var company = "";
 		// Validación de campos
 		if (!name || !phone) {
 			if (!name) {

@@ -330,6 +330,9 @@ class TransferRequestListView(LoginRequiredMixin, ListView):
     model = TransferRequest
     template_name = 'loyal_ryde_system/transfer_request_list.html'
     context_object_name = 'transfer_requests'
+    
+    def get_queryset(self):
+        return TransferRequest.objects.all().order_by('-date')
 
 class TransferRequestExcelView(LoginRequiredMixin, ListView):
     model = TransferRequest
