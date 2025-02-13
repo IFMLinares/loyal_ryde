@@ -123,6 +123,51 @@ class CustomUserCreationForm(UserCreationForm):
             ),
         }
 
+class CustomUserUpdateForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for form in self.visible_fields():
+            if form.name == 'role' or form.name == 'company' or form.name == 'status':
+                form.field.widget.attrs['class'] = 'form-select mb-2'
+                form.field.widget.attrs['data-control'] = 'select2'
+                form.field.widget.attrs['data-hide-search'] = 'true'
+            elif form.name == 'travel_approval':
+                pass
+            else:
+                form.field.widget.attrs['class'] = 'form-control mb-2'
+
+    class Meta:
+        model = CustomUser
+        fields = ('first_name', 'last_name', 'email', 'phone', 'role', 'department', 'status', 'company', 'travel_approval')
+        widgets = {
+            'role': Select(
+                attrs={
+                    'data-placeholder': "seleccione un estatus de usuario",
+                },
+            ),
+            'status': Select(
+                attrs={
+                    'data-placeholder': "Seleccione un rol de usuario",
+                },
+            ),
+            'company': Select(
+                attrs={
+                    'data-placeholder': "Seleccione la empresa",
+                },
+            ),
+            'destination_direc': TextInput(
+                attrs={
+                    'autocomplete': 'off',
+                },
+            ),
+            'destination_landmark': TextInput(
+                attrs={
+                    'autocomplete': 'off',
+                },
+            ),
+        }
+
 class AddRouteForm(ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -179,6 +224,19 @@ class AddRateForm(ModelForm):
                     'disabled': 'true'
                 }
             ),
+            'driver_daytime_waiting_time': NumberInput(
+                attrs={
+                    'disabled': 'true'
+                }
+            ),
+            'driver_nightly_waiting_time': NumberInput(
+                attrs={
+                    'disabled': 'true'
+                }
+            ),
+            # driver_daytime_waiting_time
+            # driver_nightly_waiting_time
+            # driver_gain_waiting_time
         }
 
 class AddDepartureForm(ModelForm):

@@ -35,7 +35,8 @@
                             <!-- {{ form.as_p }} -->
                             
                             <div class="row">
-                                <div class="col-md-12 mb-3">
+                                <!-- Ruta -->
+                                <div class="col-md-6 mb-3">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.route.label }}</label>
                                     <!--end::Label-->
@@ -47,42 +48,7 @@
                                         {{ form.route.help_text }}
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <!--begin::Label-->
-                                    <label class="required form-label">{{ form.price.label }}</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    {{ form.price }}
-                                    <!--end::Input-->
-                                    <!--begin::Description-->
-                                    <div class="text-muted fs-7">
-                                        {{ form.price.help_text }}
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <!--begin::Label-->
-                                    <label class="required form-label">{{ form.price_round_trip.label }}</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    {{ form.price_round_trip }}
-                                    <!--end::Input-->
-                                    <!--begin::Description-->
-                                    <div class="text-muted fs-7">
-                                        {{ form.price_round_trip.help_text }}
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <!--begin::Label-->
-                                    <label class="required form-label">{{ form.driver_gain.label }}</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    {{ form.driver_gain }}
-                                    <!--end::Input-->
-                                    <!--begin::Description-->
-                                    <div class="text-muted fs-7">
-                                        {{ form.driver_gain.help_text }}
-                                    </div>
-                                </div>
+                                <!-- Tipo de Vehiculo -->
                                 <div class="col-md-6 mb-3">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.type_vehicle.label }}</label>
@@ -95,6 +61,46 @@
                                         {{ form.type_vehicle.help_text }}
                                     </div>
                                 </div>
+                                <!-- Precio ida -->
+                                <div class="col-md-4 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.price.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.price }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.price.help_text }}
+                                    </div>
+                                </div>
+                                <!-- Precio ida y vuelta -->
+                                <div class="col-md-4 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.price_round_trip.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.price_round_trip }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.price_round_trip.help_text }}
+                                    </div>
+                                </div>
+                                <!-- Costo desvío local -->
+                                <div class="col-md-4 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.detour_local.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.detour_local }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.detour_local.help_text }}
+                                    </div>
+                                </div>
+                                <!-- Hora de espera diurna -->
                                 <div class="col-md-6 mb-3">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.daytime_waiting_time.label }}</label>
@@ -107,6 +113,7 @@
                                         {{ form.daytime_waiting_time.help_text }}
                                     </div>
                                 </div>
+                                <!-- Hora de espera nocturna -->
                                 <div class="col-md-6 mb-3">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.nightly_waiting_time.label }}</label>
@@ -119,19 +126,37 @@
                                         {{ form.nightly_waiting_time.help_text }}
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+
+                                <!-- Ganancias del conductor -->
+                                <hr>
+                                <h3>Ganancias conductor</h3>
+                                <div class="col-md-4 mb-3">
                                     <!--begin::Label-->
-                                    <label class="required form-label">{{ form.detour_local.label }}</label>
+                                    <label class="required form-label">{{ form.driver_gain.label }}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
-                                    {{ form.detour_local }}
+                                    {{ form.driver_gain }}
                                     <!--end::Input-->
                                     <!--begin::Description-->
                                     <div class="text-muted fs-7">
-                                        {{ form.detour_local.help_text }}
+                                        {{ form.driver_gain.help_text }}
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+
+                                <div class="col-md-4 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.driver_gain_waiting_time.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.driver_gain_waiting_time }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.driver_gain_waiting_time.help_text }}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.driver_gain_detour_local.label }}</label>
                                     <!--end::Label-->
@@ -167,6 +192,47 @@
                                         {{ form.driver_price_round_trip.help_text }}
                                     </div>
                                 </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.driver_gain_detour_local_quantity.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.driver_gain_detour_local_quantity }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.driver_gain_detour_local_quantity.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.driver_daytime_waiting_time.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.driver_daytime_waiting_time }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.driver_daytime_waiting_time.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.driver_nightly_waiting_time.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.driver_nightly_waiting_time }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.driver_nightly_waiting_time.help_text }}
+                                    </div>
+                                </div>
+                                
+                                <!-- Ganancias empresa -->
+                                <hr>
+                                <h3>Ganancias Loyal Ride</h3>
                                 <div class="col-md-6 mb-3">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.gain_loyal_ride.label }}</label>
@@ -189,18 +255,6 @@
                                     <!--begin::Description-->
                                     <div class="text-muted fs-7">
                                         {{ form.gain_loyal_ride_round_trip.help_text }}
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <!--begin::Label-->
-                                    <label class="required form-label">{{ form.driver_gain_detour_local_quantity.label }}</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    {{ form.driver_gain_detour_local_quantity }}
-                                    <!--end::Input-->
-                                    <!--begin::Description-->
-                                    <div class="text-muted fs-7">
-                                        {{ form.driver_gain_detour_local_quantity.help_text }}
                                     </div>
                                 </div>
                             </div>
@@ -273,6 +327,33 @@
             // Muestra el resultado en el input id_driver_price
             $('#id_driver_gain_detour_local_quantity').val(detour_gain_quantity);
         });
+        
+        $('#id_daytime_waiting_time, #id_driver_gain_waiting_time').on('input', function() {
+            // Obtiene los valores de los inputs
+            var daytime_price = parseFloat($('#id_daytime_waiting_time').val());
+            var daytime_percent_gain = parseFloat($('#id_driver_gain_waiting_time').val());
+
+            // Calcula el precio del conductor
+            var hour_gain_quantity = daytime_price * daytime_percent_gain / 100;
+            hour_gain_quantity = hour_gain_quantity.toFixed(2);
+    
+            // Muestra el resultado en el input id_driver_price
+            $('#id_driver_daytime_waiting_time').val(hour_gain_quantity);
+        });
+        
+        $('#id_nightly_waiting_time, #id_driver_gain_waiting_time').on('input', function() {
+            // Obtiene los valores de los inputs
+            var daytime_price = parseFloat($('#id_nightly_waiting_time').val());
+            var daytime_percent_gain = parseFloat($('#id_driver_gain_waiting_time').val());
+            
+            // Calcula el precio del conductor
+            var hour_gain_quantity = daytime_price * daytime_percent_gain / 100;
+            hour_gain_quantity = hour_gain_quantity.toFixed(2);
+    
+            // Muestra el resultado en el input id_driver_price
+            $('#id_driver_nightly_waiting_time').val(hour_gain_quantity);
+        });
+        
     });
     </script>
 <!--end::Page Custom Javascript-->

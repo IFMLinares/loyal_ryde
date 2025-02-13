@@ -3,7 +3,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
-from django.views.generic import (CreateView, ListView)
+from django.views.generic import (CreateView, ListView, UpdateView, DeleteView)
+
+from django.contrib import messages
 
 from apps.loyalRyde.forms import *
 from apps.loyalRyde.models import *
@@ -46,7 +48,6 @@ class UserCompanyAdd(LoginRequiredMixin, CreateView):
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
-
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
@@ -105,3 +106,51 @@ class UserSupervisorListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         # Filtra el queryset para incluir solo usuarios con el rol 'operator'
         return CustomUser.objects.filter(role='supervisor')
+
+# Actualizar usuario Operador
+class UserOperatorUpdateView(LoginRequiredMixin, UpdateView):
+    model = CustomUser
+    form_class = CustomUserUpdateForm
+    template_name = 'loyal_ryde_system/add_user_company.html'
+    context_object_name = 'user'
+
+    def get_success_url(self):
+        return reverse_lazy('core:user_list_operator')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['button_title'] = "Actualizar"
+        return context
+
+# Actualizar usuario Supervisor
+class UserSupervisorUpdateView(LoginRequiredMixin, UpdateView):
+    model = CustomUser
+    form_class = CustomUserUpdateForm
+    template_name = 'loyal_ryde_system/add_user_company.html'
+    context_object_name = 'user'
+
+    def get_success_url(self):
+        return reverse_lazy('core:user_list_supervisor')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['button_title'] = "Actualizar"
+        return context
+    
+# eliminación de conductores
+class DeleteUser(LoginRequiredMixin, DeleteView):
+    model = CustomUser
+    template_name = 'loyal_ryde_system/delete_departure.html'
+    success_url = reverse_lazy('core:index')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Usuario eliminado correctamente')
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Eliminar Usuario"
+        context['text'] = "¿Está seguro de eliminar este usuario?"
+        context['url_cancel'] = self.success_url
+        return context
