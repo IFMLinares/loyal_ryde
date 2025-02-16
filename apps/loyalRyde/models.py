@@ -329,7 +329,7 @@ class TransferRequest(models.Model):
     lat_2 = models.CharField(max_length=255, verbose_name="Latitud Final", blank=True, null=True)
     long_2= models.CharField(max_length=255, verbose_name="Longitud Final", blank=True, null=True)
     # company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
-    # company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Empresa", null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Empresa", null=True, blank=True)
     observations = models.TextField(blank=True, null=True, verbose_name='Observaciones')
     is_round_trip = models.BooleanField(default=False, verbose_name="Ida y Vuelta")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio", default=0.00,blank=True, null=True)
@@ -414,10 +414,10 @@ class TransferRequest(models.Model):
     
     def save(self, *args, **kwargs):
         # obtener compañía del service_requested y asignarla a la solicitud
-        # try:
-        #     self.company = self.service_requested.company
-        # except:
-        #     self.company = None
+        try:
+            self.company = self.service_requested.company
+        except:
+            self.company = None
 
         # try:
         #     self.company = self.service_requested.company.name
