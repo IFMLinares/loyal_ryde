@@ -292,7 +292,7 @@ class TransferRequest(models.Model):
             ('finalizada', 'Finalizada'),
             ('cancelada', 'Cancelada'),
         ]
-
+    approved_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_requests', verbose_name="Aprobado por")
     rate = models.ForeignKey(Rates, on_delete=models.CASCADE, verbose_name="Tarifa")
     service_requested = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Usuario que Llenó el Formulario", blank=True, null=True)
     user_driver = models.ForeignKey(CustomUserDriver, on_delete=models.CASCADE, verbose_name="Usuario conductor", blank=True, null=True)
@@ -328,7 +328,8 @@ class TransferRequest(models.Model):
     long_1= models.CharField(max_length=255, verbose_name="Longitud Inicio", blank=True, null=True)
     lat_2 = models.CharField(max_length=255, verbose_name="Latitud Final", blank=True, null=True)
     long_2= models.CharField(max_length=255, verbose_name="Longitud Final", blank=True, null=True)
-    company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
+    # company =  models.CharField(max_length=255, verbose_name="Nombre Compañia (Solo texto)", blank=True, null=True)
+    # company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Empresa", null=True, blank=True)
     observations = models.TextField(blank=True, null=True, verbose_name='Observaciones')
     is_round_trip = models.BooleanField(default=False, verbose_name="Ida y Vuelta")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio", default=0.00,blank=True, null=True)
@@ -412,10 +413,16 @@ class TransferRequest(models.Model):
             print(persons_to_transfer)
     
     def save(self, *args, **kwargs):
-        try:
-            self.company = self.service_requested.company.name
-        except: 
-            self.company = None
+        # obtener compañía del service_requested y asignarla a la solicitud
+        # try:
+        #     self.company = self.service_requested.company
+        # except:
+        #     self.company = None
+
+        # try:
+        #     self.company = self.service_requested.company.name
+        # except: 
+        #     self.company = None
         # Validación personalizada antes de guardar
         if self.status == 'aprobada':
             # Realiza la funcionalidad adicional que necesitas

@@ -87,21 +87,34 @@ def get_people_transfer(request):
 @csrf_exempt
 def approve_request(request):
     if request.method == 'POST':
+        if request.user.role != 'supervisor':
+            return JsonResponse({'status': 'error', 'message': 'No tiene permisos para aprobar esta solicitud.'})
+
         request_id = request.POST.get('request_id')
         transfer_request = TransferRequest.objects.get(id=request_id)
+
+        if transfer_request.service_requested.company != request.user.company:
+            return JsonResponse({'status': 'error', 'message': 'No puede aprobar solicitudes de otra compañía.'})
+
         transfer_request.status = 'validada'
+        transfer_request.approved_by = request.user
         transfer_request.save()
         return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido validada con éxito.'})
 
 @csrf_exempt
 def approve_request_admin(request):
     if request.method == 'POST':
+        if request.user.role != 'administrador':
+            return JsonResponse({'status': 'error', 'message': 'No tiene permisos para aprobar esta solicitud.'})
+
         request_id = request.POST.get('request_id')
         transfer_request = TransferRequest.objects.get(id=request_id)
-        if(not transfer_request.user_driver):
+
+        if not transfer_request.user_driver:
             return JsonResponse({'status': 'error', 'message': 'No ha seleccionado un conductor.'})
         else:
             transfer_request.status = 'aprobada'
+            # transfer_request.approved_by = request.user
             transfer_request.save()
             return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido aprobada con éxito.'})
 
@@ -113,7 +126,6 @@ def cancel_request(request):
         transfer_request.status = 'cancelada'
         transfer_request.save()
         return JsonResponse({'status': 'warning', 'message': 'La solicitud ha sido cancelada.'})
-
 
 def get_company_image(request):
     company_id = request.GET.get('company_id')
