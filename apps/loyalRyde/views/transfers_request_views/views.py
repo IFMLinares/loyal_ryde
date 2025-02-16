@@ -260,7 +260,7 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('core:transfer_request_list')
 
     def form_valid(self, form):
-        form.instance.service_requested = self.request.user
+        # form.instance.service_requested = self.request.user
         messages.success(self.request, 'Formulario guardado exitosamente!')
         return super().form_valid(form)
 
