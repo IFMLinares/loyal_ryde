@@ -496,13 +496,17 @@ class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['companies'] = Company.objects.values_list('name', flat=True).distinct()
-        
-        # Establecer el locale a español
-        locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
-        
+
+        # Intentar establecer la configuración regional a español
+        try:
+            locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+        except locale.Error:
+            # Si falla, establecer a una configuración regional disponible
+            locale.setlocale(locale.LC_TIME, 'C')
+
         # Generar la lista de meses en español
         context['months'] = [(i, calendar.month_name[i].capitalize()) for i in range(1, 13)]
-        
+
         return context
 
     def post(self, request, *args, **kwargs):
@@ -514,7 +518,7 @@ class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
         if company_name:
             company = Company.objects.filter(name=company_name).first()
             if company:
-                transfer_requests = TransferRequest.objects.filter(company=company.name)
+                transfer_requests = TransferRequest.objects.filter(company=company)
 
                 if status and status != 'all':
                     transfer_requests = transfer_requests.filter(status=status)

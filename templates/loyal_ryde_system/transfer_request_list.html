@@ -40,7 +40,7 @@
                                             <td class="text-center" data-order="{{ transfer_request.date|date:'Y-m-d' }} {{ transfer_request.hour|date:'H:i' }}">{{ transfer_request.date|date:'d/m/Y'}}-{{ transfer_request.hour|date:'G:i' }}</td>
                                             <td class="text-center">{{ transfer_request.rate.route.departure_point.name }}</td>
                                             <td class="text-center">{{ transfer_request.rate.route.arrival_point.name }}</td>
-                                            <td class="text-center">{{ transfer_request.service_requested.username }}</td>
+                                            <td class="text-center">{{ transfer_request.company.name }}</td>
                                             <td class="text-center">{{ transfer_request.rate.price }}$</td>
                                             <td class="text-center">{{ transfer_request.approved_by|default:"N/A" }}</td>
                                             <td class="text-center">{{ transfer_request.get_payment_method_display }}</td>
