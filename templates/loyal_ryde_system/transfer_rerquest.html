@@ -334,6 +334,9 @@
     let url_routes_ajax = "{% url 'core:routes_ajax' %}";
     let rates_ajax = "{% url 'core:rates_ajax' %}";
     let url_form = "{% url 'core:transfer_request_people_create' %}";
+    let company = {{ request.user.company.pk }};
+    
+    console.log(company);
 </script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>

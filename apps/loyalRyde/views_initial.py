@@ -77,11 +77,22 @@ def get_people_transfer(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         phone = request.POST.get('phone')
-        company = request.POST.get('company')
+        company_id = request.POST.get('company')
 
+        try:
+            company = Company.objects.get(id=company_id)
+        except Company.DoesNotExist:
+            return JsonResponse({'error': 'La empresa no existe.'}, status=400)
+
+        # Verificar si ya existe un registro con los datos proporcionados
+        person = PeopleTransfer.objects.filter(name=name, phone=phone, company=company).first()
+        if person:
+            data = serializers.serialize('json', [person])
+            return JsonResponse({'people_transfer': data}, status=200)
+
+        # Crear un nuevo registro si no existe
         person = PeopleTransfer.objects.create(name=name, phone=phone, company=company)
         data = serializers.serialize('json', [person])
-
         return JsonResponse({'people_transfer': data}, status=200)
 
 @csrf_exempt

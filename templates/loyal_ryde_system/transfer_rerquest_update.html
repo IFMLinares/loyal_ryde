@@ -283,6 +283,9 @@
 <script>
 let url_form = "{% url 'core:transfer_request_people_create' %}";
 var waypointCount = parseInt({{ desviations|length }});
+let company = {{ request.user.company.pk }};
+
+console.log(company);
 console.log(waypointCount);
 </script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>

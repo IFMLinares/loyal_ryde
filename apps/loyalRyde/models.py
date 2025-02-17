@@ -136,8 +136,7 @@ class OTPCode(models.Model):
 class PeopleTransfer(models.Model):
     name = models.CharField(max_length=255, verbose_name='nombre')
     phone = models.CharField(max_length=255, verbose_name='teléfono')
-    company = models.CharField(max_length=255, verbose_name='empresa')
-
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name='empresa', blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} - {self.company}"
@@ -146,6 +145,8 @@ class PeopleTransfer(models.Model):
     class Meta:
         verbose_name = 'Persona a transferir'
         verbose_name_plural = 'Personas a transferir'
+
+
 
 class DeparturePoint(models.Model):
     name = models.CharField(max_length=255, verbose_name="Ciudad")

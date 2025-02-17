@@ -21,7 +21,8 @@ $(document).ready(function () {
 		e.preventDefault();
 		var name = $("#name").val();
 		var phone = $("#phone").val();
-		var company = "";
+		var c = company;
+		console.log(name, phone, company);
 		// Validación de campos
 		if (!name || !phone) {
 			if (!name) {
@@ -32,7 +33,7 @@ $(document).ready(function () {
 			}
 			return;
 		}
-		if (!company) {
+		if (company	== "") {
 			company = "N/A";
 		}
 
@@ -45,7 +46,7 @@ $(document).ready(function () {
 				company: company,
 			},
 			success: function (response) {
-				// console.log(response.people_transfer);
+				console.log(response.people_transfer);
 
 				$("#name").val("");
 				$("#phone").val("");

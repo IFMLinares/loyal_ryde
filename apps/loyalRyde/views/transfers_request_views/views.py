@@ -141,6 +141,74 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         context['departure'] = departure_points
         return context
 
+# Actualizar traslado
+class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
+    model = TransferRequest
+    template_name = 'loyal_ryde_system/transfer_rerquest_update.html'
+    form_class = TransferRequestForm
+    success_url = reverse_lazy('core:transfer_request_list')
+
+    def form_valid(self, form):
+        # obtener el id del TransferRequest
+        transfer_request_id = self.kwargs.get('pk')
+        # obtener el objeto TransferRequest
+        transfer_request = TransferRequest.objects.get(id=transfer_request_id)
+        # obtener el usuario que tiene en el campo service_requested
+        user = transfer_request.service_requested
+        # guardar el formulario manteniendo el service_requested
+        form.instance.service_requested = user
+        # form.instance.service_requested = self.request.user
+        messages.success(self.request, 'Formulario guardado exitosamente!')
+        return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        # Obtén la fecha directamente del POST
+        fecha = request.POST.get('date')
+
+        # Actualiza la fecha en los datos del POST
+        request.POST = request.POST.copy()
+        request.POST['date'] = fecha
+        
+        # Llama al método post original para guardar el TransferRequest
+        response = super().post(request, *args, **kwargs)
+
+        # Obtén el objeto TransferRequest recién creado
+        transfer_request = self.object
+
+        # Procesa los desvíos adicionales
+        try:
+            waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
+        except ValueError:
+            waypoints_numbers = 0
+            print("Error: waypoints_numbers no es un entero válido")
+
+        for i in range(3, 3 + waypoints_numbers):
+            lat = request.POST.get(f'lat_{i}')
+            lng = request.POST.get(f'lng_{i}')
+            if lat and lng:
+                try:
+                    desviation = Desviation.objects.create(
+                        desviation_number=i - 2,
+                        waypoint_number=i,
+                        lat=lat,
+                        long=lng
+                    )
+                    transfer_request.deviation.add(desviation)
+                except Exception as e:
+                    print(f"Error al crear desvío {i - 2}: {e}")
+            else:
+                print(f"Latitud o longitud faltante para el desvío {i - 2}")
+
+        print(transfer_request)
+        return response
+    
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        departure_points = DeparturePoint.objects.all()
+        context['departure'] = departure_points
+        context['desviations'] = self.object.deviation.all()
+        return context
+
 # agregar traslado (modo invitado)
 class GuestTransferCreateView(CreateView):
     model = TransferRequest
@@ -252,76 +320,6 @@ class TransferRequestDetailview(LoginRequiredMixin, DetailView):
         context['desviations'] = self.object.deviation.all()
         return context
 
-# Actualizar traslado
-class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
-    model = TransferRequest
-    template_name = 'loyal_ryde_system/transfer_rerquest_update.html'
-    form_class = TransferRequestForm
-    success_url = reverse_lazy('core:transfer_request_list')
-
-    def form_valid(self, form):
-        # obtener el id del TransferRequest
-        transfer_request_id = self.kwargs.get('pk')
-        # obtener el objeto TransferRequest
-        transfer_request = TransferRequest.objects.get(id=transfer_request_id)
-        # obtener el usuario que tiene en el campo service_requested
-        user = transfer_request.service_requested
-        # guardar el formulario manteniendo el service_requested
-        form.instance.service_requested = user
-        # form.instance.service_requested = self.request.user
-        messages.success(self.request, 'Formulario guardado exitosamente!')
-        return super().form_valid(form)
-
-    def post(self, request, *args, **kwargs):
-        # Obtén la fecha directamente del POST
-        fecha = request.POST.get('date')
-
-        # Actualiza la fecha en los datos del POST
-        request.POST = request.POST.copy()
-        request.POST['date'] = fecha
-        
-        # Llama al método post original para guardar el TransferRequest
-        response = super().post(request, *args, **kwargs)
-
-        # Obtén el objeto TransferRequest recién creado
-        transfer_request = self.object
-
-        # Procesa los desvíos adicionales
-        try:
-            waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
-        except ValueError:
-            waypoints_numbers = 0
-            print("Error: waypoints_numbers no es un entero válido")
-
-        for i in range(3, 3 + waypoints_numbers):
-            lat = request.POST.get(f'lat_{i}')
-            lng = request.POST.get(f'lng_{i}')
-            if lat and lng:
-                try:
-                    desviation = Desviation.objects.create(
-                        desviation_number=i - 2,
-                        waypoint_number=i,
-                        lat=lat,
-                        long=lng
-                    )
-                    transfer_request.deviation.add(desviation)
-                except Exception as e:
-                    print(f"Error al crear desvío {i - 2}: {e}")
-            else:
-                print(f"Latitud o longitud faltante para el desvío {i - 2}")
-
-        print(transfer_request)
-        return response
-    
-    def get_context_data(self,**kwargs):
-        context = super().get_context_data(**kwargs)
-        departure_points = DeparturePoint.objects.all()
-        context['departure'] = departure_points
-        context['desviations'] = self.object.deviation.all()
-        return context
-
-        return super().post(request, *args, **kwargs)
-
 # Añadir traslado modo invitado
 class GuestTransferSuccessView(TemplateView):
     template_name = 'loyal_ryde_system/guest_transfer_success.html'
@@ -340,7 +338,11 @@ class TransferRequestListView(LoginRequiredMixin, ListView):
     context_object_name = 'transfer_requests'
     
     def get_queryset(self):
-        return TransferRequest.objects.all().order_by('-date')
+        user = self.request.user
+        if user.is_superuser or (user.company and user.company.name == "Loyal Ride"):
+            return TransferRequest.objects.all().order_by('-date')
+        else:
+            return TransferRequest.objects.filter(company=user.company).order_by('-date')
 
 class TransferRequestExcelView(LoginRequiredMixin, ListView):
     model = TransferRequest
