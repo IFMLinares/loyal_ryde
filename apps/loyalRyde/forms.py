@@ -41,9 +41,9 @@ class TransferRequestForm(ModelForm):
             else:
                 form.field.widget.attrs['class'] = 'form-control'
 
-        if self.instance.pk:
-            company = self.instance.company
-            self.fields['person_to_transfer'].queryset = PeopleTransfer.objects.filter(company=company)
+        # if self.instance.pk:
+        #     company = self.instance.company
+        #     self.fields['person_to_transfer'].queryset = PeopleTransfer.objects.filter(company=company)
 
 
     class Meta:
