@@ -77,9 +77,11 @@ def get_people_transfer(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         phone = request.POST.get('phone')
-        company = request.POST.get('company')
+        # company = request.POST.get('company')
 
-        person = PeopleTransfer.objects.create(name=name, phone=phone, company=company)
+        person = PeopleTransfer.objects.create(name=name, phone=phone, 
+                                            #    company=company
+        )
         data = serializers.serialize('json', [person])
 
         return JsonResponse({'people_transfer': data}, status=200)
