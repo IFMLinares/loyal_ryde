@@ -257,7 +257,7 @@ class AddArrivalForm(ModelForm):
     
     class Meta:
         model = ArrivalPoint
-        fields = '__all__'
+        fields = ['name', 'state']
 
 class AddFleetForm(ModelForm):
     def __init__(self,*args,**kwargs):

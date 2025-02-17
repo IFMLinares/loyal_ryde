@@ -67,10 +67,11 @@
     document.getElementById('routeForm').addEventListener('submit', function(event) {
         event.preventDefault();
         var cityName = document.getElementById('id_name').value;
+        var stateName = document.getElementById('id_state').value;
         var geocoder = new google.maps.Geocoder();
 
-        geocoder.geocode({ 
-            'address': cityName,
+        geocoder.geocode({
+            'address': `${cityName}, ${stateName}, Venezuela`,
             'componentRestrictions': {
                 'country': 'VE'
             }
@@ -83,17 +84,20 @@
                     });
                 });
                 if (isVenezuelanCity) {
-                    // Buscar el componente de la ciudad
+                    // Buscar el componente de la ciudad y el estado
                     var cityComponent = results[0].address_components.find(component => component.types.includes('locality'));
-                    if (cityComponent) {
+                    var stateComponent = results[0].address_components.find(component => component.types.includes('administrative_area_level_1'));
+                    if (cityComponent && stateComponent) {
                         var cityResult = cityComponent.long_name;
+                        var stateResult = stateComponent.long_name;
                         document.getElementById('id_name').value = cityResult;
+                        document.getElementById('id_state').value = stateResult;
                         event.target.submit();
                     } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'No se pudo encontrar el nombre de la ciudad'
+                            text: 'No se pudo encontrar el nombre de la ciudad o el estado'
                         });
                     }
                 } else {

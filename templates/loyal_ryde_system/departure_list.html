@@ -58,7 +58,8 @@
                                     <input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_ecommerce_category_table .form-check-input" value="1" />
                                 </div>
                             </th>
-                            <th class="min-w-250px">Punto de Salida</th>
+                            <th class="min-w-250px">Ciudad</th>
+                            <th class="min-w-250px">Estado</th>
                             <th class="min-w-150px">Fecha de registro</th>
                             <th class="text-end min-w-70px">Acciones</th>
                         </tr>
@@ -77,6 +78,7 @@
                                     </div>
                                 </td>   
                                 <td>{{ departure.name }}</td>
+                                <td>{{ departure.state }}</td>
                                 <td>{{ departure.date_created|date:"d/m/Y" }}</td>
                                 <td class="text-end">
                                     <a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Acciones

@@ -148,22 +148,44 @@ class PeopleTransfer(models.Model):
         verbose_name_plural = 'Personas a transferir'
 
 class DeparturePoint(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Punto de salida", unique=True)
+    name = models.CharField(max_length=255, verbose_name="Ciudad")
+    state = models.CharField(max_length=255, verbose_name="Estado", blank=True, null=True)
     date_created = models.DateField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Salidas"
+
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.name} - {self.state}"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if DeparturePoint.objects.filter(name=self.name, state=self.state).exists():
+            raise ValidationError(f"La combinación de {self.name} y {self.state} ya existe.")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
 class ArrivalPoint(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Punto de Llegada", unique=True)
+    name = models.CharField(max_length=255, verbose_name="Ciudad")
+    state = models.CharField(max_length=255, verbose_name="Estado", blank=True, null=True)
     date_created = models.DateField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Destinos"
+
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.name} - {self.state}"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if ArrivalPoint.objects.filter(name=self.name, state=self.state).exists():
+            raise ValidationError(f"La combinación de {self.name} y {self.state} ya existe.")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
 class Fleet(models.Model):
     brand = models.CharField(max_length=256, verbose_name="Marca del Vehiculo", blank=True, null=True)
@@ -184,7 +206,7 @@ class Route(models.Model):
     date_created = models.DateField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.route_name}: {self.departure_point}-{self.arrival_point}"
+        return f"{self.route_name}: Desde: {self.departure_point}. Hasta: {self.arrival_point}"
 
 class DiscountCoupon(models.Model):
     DISCOUNT_TYPE_CHOICES = [
