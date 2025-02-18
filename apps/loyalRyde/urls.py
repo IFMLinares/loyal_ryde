@@ -77,7 +77,9 @@ urlpatterns = [
     path('reports/generales/', GeneralReportsView.as_view(), name='reportes_generales'),
     path('reports/company/', FilteredTransferRequestsView.as_view(), name='reports_company'),
     path('company/update/<int:pk>/', CompanyUpdateView.as_view(), name='company_update'),
-    
+    # perfil
+    path('profile/', ProfileView.as_view(), name='profile'),
+    # perfil
     
     
     # AJAX VIEWS

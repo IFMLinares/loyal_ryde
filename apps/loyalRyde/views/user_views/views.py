@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
-from django.views.generic import (CreateView, ListView, UpdateView, DeleteView)
+from django.views.generic import (CreateView, ListView, UpdateView, DeleteView, TemplateView)
 
 from django.contrib import messages
 
@@ -154,3 +154,8 @@ class DeleteUser(LoginRequiredMixin, DeleteView):
         context['text'] = "¿Está seguro de eliminar este usuario?"
         context['url_cancel'] = self.success_url
         return context
+    
+# perfil
+class ProfileView(LoginRequiredMixin,TemplateView):
+    template_name = 'loyal_ryde_system/perfil.html'
+# perfil

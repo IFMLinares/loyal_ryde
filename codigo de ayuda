@@ -1,0 +1,18 @@
+Dar permisos a la carpeta:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+
+Crear entorno virutal:
+python -m venv env
+
+Activar entorno virtual:
+env\Scripts\activate
+
+Instalar requerimientos:
+pip install -r requirements.txt
+
+Hacer las migraciones
+python manage.py makemigrations
+python manage.py migrate
+
+Correr el servidor
+python manage.py runserver
