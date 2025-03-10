@@ -98,7 +98,7 @@ def get_people_transfer(request):
 @csrf_exempt
 def approve_request(request):
     if request.method == 'POST':
-        if request.user.role != 'supervisor':
+        if request.user.role != 'supervisor' or request.user.role != 'administrador':
             return JsonResponse({'status': 'error', 'message': 'No tiene permisos para aprobar esta solicitud.'})
 
         request_id = request.POST.get('request_id')
