@@ -427,11 +427,13 @@ class TransferRequest(models.Model):
 
             if self.is_round_trip:
                 rates = {
-                    "driver_gain": str(self.rate.driver_price_round_trip)
+                    "driver_gain": str(self.rate.driver_price_round_trip),
+                    "service_type": str(self.rate.service_type),
                 }
             else:
                 rates = {
-                    "driver_gain": str(self.rate.driver_price)
+                    "driver_gain": str(self.rate.driver_price),
+                    "service_type": str(self.rate.service_type),
                 }
 
             channel_layer = get_channel_layer()
