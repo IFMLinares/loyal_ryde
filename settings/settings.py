@@ -188,14 +188,25 @@ REST_FRAMEWORK = {
     ),
 }
 
-
 JWT_AUTH = {
     # how long the original token is valid for
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=3),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=36500),
     # allow refreshing of tokens
     'JWT_ALLOW_REFRESH': True,
 }
 
+
+SIMPLE_JWT = {
+    # Configura un tiempo de vida extremadamente largo para el token de acceso
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=36500),  # 100 años
+    # Configura un tiempo de vida para el refresh token (opcional)
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=36500),  # 100 años
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 GOOGLE_MAPS_API_KEY = os.environ.get('DJANGO_GOOGLE_MAPS_API_KEY')
 
 CORS_ALLOW_ALL_ORIGINS = True
