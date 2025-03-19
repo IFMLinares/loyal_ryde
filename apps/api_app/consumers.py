@@ -6,17 +6,24 @@ class NotificationConsummer(WebsocketConsumer):
     
     def connect(self):
         user = self.scope['user']
-        print(user, user.is_authenticated)
+        print(f"Usuario conectado: {user}, autenticado: {user.is_authenticated}")
         if not user.is_authenticated:
+            self.close()
             return
+
         self.username = user.username
 
-        # Save username too use group name for this user
-
+        # Agregar al grupo del usuario
         async_to_sync(self.channel_layer.group_add)(
             self.username, self.channel_name
         )
         self.accept()
+
+        # Enviar un mensaje de confirmación al cliente
+        self.send(text_data=json.dumps({
+            "type": "connection_established",
+            "message": f"Conexión establecida para el usuario {self.username}"
+        }))
     
     def disconnect(self, close_code):
         # Leave room/group
@@ -25,10 +32,15 @@ class NotificationConsummer(WebsocketConsumer):
         )
 
     def receive(self, text_data):
-        # receive mesasge from websocket
         data = json.loads(text_data)
+        print(f"Mensaje recibido: {data}")
 
-        print('receive', json.dumps(data, index=2))
+        if data.get("type") == "subscribe":
+            # Confirmar la suscripción del cliente
+            self.send(text_data=json.dumps({
+                "type": "subscription_confirmed",
+                "message": f"Suscripción confirmada para el usuario {self.username}"
+            }))
     
     def send_group(self, group, source, data):
         response = {
