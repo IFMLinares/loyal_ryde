@@ -1,4 +1,43 @@
 {% load static %}
+<style>
+    #notification-dropdown {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        z-index: 1050;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        max-height: 300px; /* Altura máxima del dropdown */
+        overflow-y: auto; /* Habilitar scroll vertical */
+    }
+
+    #notification-list .menu-item {
+        padding: 10px;
+        transition: background-color 0.3s ease;
+    }
+
+    #notification-list .menu-item:hover {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+
+    #notification-list .text-muted {
+        font-size: 14px;
+    }
+
+    #notification-list .text-dark {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    #no-notifications {
+        font-size: 14px;
+        color: #6c757d;
+    }
+</style>
 <div id="kt_header" style="" class="header align-items-stretch">
 	<!--begin::Container-->
 	<div
@@ -142,6 +181,25 @@
 			<!--begin::Toolbar wrapper-->
 			<div class="d-flex align-items-stretch flex-shrink-0">
 				<!--begin::User menu-->
+				<!-- Contenedor de notificaciones -->
+				<div class="d-flex align-items-center ms-1 ms-lg-3" id="kt_header_notifications">
+					<div class="cursor-pointer symbol symbol-30px symbol-md-40px position-relative" id="notification-icon">
+						<i class="fas fa-bell" style="font-size: 20px;"></i>
+						<!-- Indicador de notificación -->
+						<span id="notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+							0
+						</span>
+					</div>
+					<!-- Dropdown de notificaciones -->
+					<div id="notification-dropdown" class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-primary fw-bold py-4 fs-6 w-275px" style="display: none;">
+						<div class="menu-item px-3">
+							<div id="notification-list" class="menu-content d-flex flex-column">
+								<!-- Mensaje inicial -->
+								<span id="no-notifications" class="text-muted text-center py-2">No hay notificaciones</span>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div
 					class="d-flex align-items-center ms-1 ms-lg-3"
 					id="kt_header_user_menu_toggle"
@@ -237,3 +295,178 @@
 	</div>
 	<!--end::Container-->
 </div>
+
+<script>
+    let socket;
+    let reconnectInterval = 5000; // 5 segundos
+
+    function connectWebSocket() {
+        socket = new WebSocket('ws://localhost:8000/ws/site_notifications/');
+
+        socket.onopen = function() {
+            console.log("WebSocket conectado");
+        };
+
+        socket.onmessage = function(event) {
+            console.log("Mensaje recibido del WebSocket:", event.data);
+            const data = JSON.parse(event.data);
+
+            if (data.event === 'new_transfer_request') {
+                console.log('Nueva solicitud de traslado:', data);
+                addNotification(`Nueva solicitud de traslado: ID ${data.id}`);
+            } else if (data.event === 'status_updated') {
+                console.log('Estado actualizado:', data);
+                addNotification(`Estado actualizado: ID ${data.id}, Nuevo estado: ${data.new_status}`);
+            }
+        };
+
+        socket.onclose = function(event) {
+            console.log('WebSocket cerrado. Intentando reconectar...');
+            setTimeout(connectWebSocket, reconnectInterval);
+        };
+
+        socket.onerror = function(error) {
+            console.error('Error en el WebSocket:', error);
+            socket.close();
+        };
+    }
+
+	const NOTIFICATION_EXPIRATION_TIME = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
+
+// Función para cargar notificaciones desde localStorage
+function loadNotifications() {
+    const storedNotifications = JSON.parse(localStorage.getItem('notifications')) || [];
+    const now = new Date().getTime();
+
+    // Filtrar notificaciones expiradas
+    const validNotifications = storedNotifications.filter(notification => now - notification.timestamp < NOTIFICATION_EXPIRATION_TIME);
+
+    // Actualizar localStorage con las notificaciones válidas
+    localStorage.setItem('notifications', JSON.stringify(validNotifications));
+
+    // Mostrar las notificaciones en el dropdown
+    let unreadCount = 0;
+    validNotifications.forEach(notification => {
+        if (!notification.read) {
+            unreadCount++;
+        }
+        addNotification(notification.message, false, notification.read); // No guardar de nuevo en localStorage
+    });
+
+    // Actualizar el contador de notificaciones no leídas
+    updateNotificationBadge(unreadCount);
+}
+// Función para guardar una notificación en localStorage
+function saveNotification(notification) {
+    const storedNotifications = JSON.parse(localStorage.getItem('notifications')) || [];
+    storedNotifications.push(notification);
+    localStorage.setItem('notifications', JSON.stringify(storedNotifications));
+}
+    // Función para añadir una notificación al dropdown
+    // Función para añadir una notificación al dropdown
+function addNotification(message, saveToStorage = true, isRead = false) {
+    const notificationList = document.getElementById('notification-list');
+    const notificationBadge = document.getElementById('notification-badge');
+    const noNotifications = document.getElementById('no-notifications');
+    const timestamp = new Date().getTime();
+
+    // Eliminar el mensaje "No hay notificaciones" si existe
+    if (noNotifications) {
+        noNotifications.remove();
+    }
+
+    // Crear un identificador único para la notificación
+    const notificationId = `notification-${timestamp}`;
+
+    // Crear el elemento de notificación
+    const notificationItem = document.createElement('div');
+    notificationItem.className = 'menu-item px-3 py-2 border-bottom';
+    notificationItem.id = notificationId;
+    notificationItem.innerHTML = `
+        <div class="d-flex align-items-center">
+            <div class="flex-grow-1">
+                <h6 class="mb-0 text-dark">${message}</h6>
+                <small class="text-muted" id="${notificationId}-time">Hace un momento</small>
+            </div>
+        </div>
+    `;
+
+    // Añadir la notificación al dropdown
+    notificationList.appendChild(notificationItem);
+
+    // Si la notificación no ha sido leída, actualizar el contador
+    if (!isRead) {
+        notificationBadge.classList.remove('d-none');
+        notificationBadge.innerText = parseInt(notificationBadge.innerText || 0) + 1;
+    }
+
+    // Guardar la notificación en localStorage si es necesario
+    if (saveToStorage) {
+        saveNotification({ message, timestamp, read: isRead });
+    }
+
+    // Actualizar dinámicamente el tiempo transcurrido
+    updateNotificationTime(notificationId, timestamp);
+}
+
+function updateNotificationBadge(unreadCount) {
+    const notificationBadge = document.getElementById('notification-badge');
+    if (unreadCount > 0) {
+        notificationBadge.classList.remove('d-none');
+        notificationBadge.innerText = unreadCount;
+    } else {
+        notificationBadge.classList.add('d-none');
+        notificationBadge.innerText = '';
+    }
+}
+function updateNotificationTime(notificationId, timestamp) {
+    const timeElement = document.getElementById(`${notificationId}-time`);
+
+    function calculateTimeElapsed() {
+        const now = new Date().getTime();
+        const elapsed = now - timestamp;
+
+        if (elapsed < 60000) {
+            timeElement.innerText = 'Hace un momento';
+        } else if (elapsed < 3600000) {
+            const minutes = Math.floor(elapsed / 60000);
+            timeElement.innerText = `Hace ${minutes} minuto${minutes > 1 ? 's' : ''}`;
+        } else if (elapsed < 86400000) {
+            const hours = Math.floor(elapsed / 3600000);
+            timeElement.innerText = `Hace ${hours} hora${hours > 1 ? 's' : ''}`;
+        } else {
+            const days = Math.floor(elapsed / 86400000);
+            timeElement.innerText = `Hace ${days} día${days > 1 ? 's' : ''}`;
+        }
+    }
+
+    // Actualizar el tiempo transcurrido cada minuto
+    calculateTimeElapsed();
+    setInterval(calculateTimeElapsed, 60000);
+}
+
+    // Mostrar/Ocultar el dropdown de notificaciones
+	document.getElementById('notification-icon').addEventListener('click', () => {
+    const dropdown = document.getElementById('notification-dropdown');
+    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+        dropdown.style.display = 'block'; // Mostrar el dropdown
+    } else {
+        dropdown.style.display = 'none'; // Ocultar el dropdown
+    }
+
+    // Marcar todas las notificaciones como leídas
+    const storedNotifications = JSON.parse(localStorage.getItem('notifications')) || [];
+    storedNotifications.forEach(notification => {
+        notification.read = true;
+    });
+    localStorage.setItem('notifications', JSON.stringify(storedNotifications));
+
+    // Reiniciar el contador de notificaciones no leídas
+    updateNotificationBadge(0);
+});
+    // Inicia la conexión WebSocket
+    document.addEventListener('DOMContentLoaded', () => {
+        loadNotifications();
+        connectWebSocket();
+    });
+</script>

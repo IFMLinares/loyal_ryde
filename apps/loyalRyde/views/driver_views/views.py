@@ -5,6 +5,8 @@ from babel.dates import format_date
 from datetime import datetime
 from io import BytesIO
 
+from django.db import models
+from django.db.models import Case, When, F, Q, Sum, Count
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.cell.cell import MergedCell
@@ -160,19 +162,40 @@ class DriverPayrollView(LoginRequiredMixin, ListView):
 
         # Anotar la cantidad de viajes por pagar y el monto pendiente a pagar
         drivers = drivers.annotate(
-            trips_to_pay=Count('transferrequest', filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=False)),
-            pending_amount=Sum(
-                F('transferrequest__rate__driver_price_round_trip') if F('transferrequest__is_round_trip') else F('transferrequest__rate__driver_price'),
+            trips_to_pay=Count(
+                'transferrequest',
                 filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=False)
             ),
-            trips_paid=Count('transferrequest', filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=True)),
+            pending_amount=Sum(
+                Case(
+                    When(
+                        transferrequest__is_round_trip=True,
+                        then=F('transferrequest__rate__driver_price_round_trip')
+                    ),
+                    default=F('transferrequest__rate__driver_price'),
+                    output_field=models.DecimalField()
+                ),
+                filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=False)
+            ),
+            trips_paid=Count(
+                'transferrequest',
+                filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=True)
+            ),
             paid_amount=Sum(
-                F('transferrequest__rate__driver_price_round_trip') if F('transferrequest__is_round_trip') else F('transferrequest__rate__driver_price'),
+                Case(
+                    When(
+                        transferrequest__is_round_trip=True,
+                        then=F('transferrequest__rate__driver_price_round_trip')
+                    ),
+                    default=F('transferrequest__rate__driver_price'),
+                    output_field=models.DecimalField()
+                ),
                 filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=True)
             )
         )
 
         return drivers
+    
 
 # Vista para exportar la nómina de un conductor a un archivo Excel
 class DriverPayrollExcelView(LoginRequiredMixin, View):

@@ -35,6 +35,18 @@
                             <!-- {{ form.as_p }} -->
                             
                             <div class="row">
+                                <!-- tipo de servicio -->
+                                <div class="col-md-12 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.service_type.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.service_type }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted
+                                    fs-7">{{ form.service_type.help_text }}</div>
+                                </div>
                                 <!-- Ruta -->
                                 <div class="col-md-6 mb-3">
                                     <!--begin::Label-->

@@ -21,36 +21,40 @@ $(document).ready(function () {
 		e.preventDefault();
 		var name = $("#name").val();
 		var phone = $("#phone").val();
-		var c = company;
-		console.log(name, phone, company);
+		var c = $("#id_company").val();
+		console.log(name, phone, c);
 		// Validación de campos
-		if (!name || !phone) {
+		if (!name || !phone || !c) {
 			if (!name) {
 				$("#name").css("border-color", "red");
 			}
 			if (!phone) {
 				$("#phone").css("border-color", "red");
 			}
+			if (!c) {
+				$("#id_company")[0].setCustomValidity("Debe seleccionar una empresa");
+				$("#id_company")[0].reportValidity();
+			}
 			return;
 		}
-		if (company	== "") {
-			company = "N/A";
+		if (c == "") {
+			c = "N/A";
 		}
-
+	
 		$.ajax({
 			url: url_form,
 			method: "POST",
 			data: {
 				name: name,
 				phone: phone,
-				company: company,
+				company: c,
 			},
 			success: function (response) {
 				console.log(response.people_transfer);
-
+	
 				$("#name").val("");
 				$("#phone").val("");
-				$("#company").val("");
+				$("#id_company").val("");
 				var people = JSON.parse(response.people_transfer);
 				people.forEach(function (person) {
 					var option = new Option(

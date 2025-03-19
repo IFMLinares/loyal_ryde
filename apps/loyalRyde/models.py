@@ -255,6 +255,19 @@ class Rates(models.Model):
     driver_gain_detour_local_quantity = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Ganancia del conductor por desvío local", null=True, blank=True)
     date_created = models.DateField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
 
+    # Nuevo campo para el tipo de servicio
+    SERVICE_TYPE_CHOICES = [
+        ('traslado', 'Traslado Ejecutivo'),
+        ('encomienda', 'Encomienda'),
+        ('conductor', 'Conductor'),
+    ]
+    service_type = models.CharField(
+        max_length=50,
+        choices=SERVICE_TYPE_CHOICES,
+        verbose_name="Tipo de Servicio",
+        default='Traslado Ejecutivo'
+    )
+
     def save(self, *args, **kwargs):
         # Calculamos el driver_price como el porcentaje de driver_gain aplicado al precio
         self.driver_price = self.price * (self.driver_gain / 100)
@@ -318,8 +331,8 @@ class TransferRequest(models.Model):
     rate = models.ForeignKey(Rates, on_delete=models.CASCADE, verbose_name="Tarifa")
     service_requested = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Usuario que Llenó el Formulario", blank=True, null=True)
     user_driver = models.ForeignKey(CustomUserDriver, on_delete=models.CASCADE, verbose_name="Usuario conductor", blank=True, null=True)
-    stop_time = models.ManyToManyField(TransferStop, verbose_name="Pausa del viaje", blank=True, null=True)
-    deviation = models.ManyToManyField(Desviation, verbose_name="Desvios", blank=True, null=True)
+    stop_time = models.ManyToManyField(TransferStop, verbose_name="Pausa del viaje", blank=True)
+    deviation = models.ManyToManyField(Desviation, verbose_name="Desvios", blank=True)
     date = models.DateField(verbose_name="Fecha del traslado", blank=True, null=True)  # DD/MM/AA
     date_created = models.DateTimeField(verbose_name="Feha de creación", auto_now_add=True, null=True, blank=True)
     hour = models.TimeField(verbose_name="Hora")  # Formato 12h
@@ -332,7 +345,7 @@ class TransferRequest(models.Model):
     airline = models.CharField(max_length=255, verbose_name="Aerolínea", blank=True, null=True)
     flight = models.CharField(max_length=255, verbose_name="Vuelo", blank=True, null=True)
     route_fly = models.CharField(max_length=255, verbose_name="Ruta de vuelo", blank=True, null=True)
-    person_to_transfer = models.ManyToManyField(PeopleTransfer, verbose_name="Persona(s) a Transferir", blank=True, null=True)
+    person_to_transfer = models.ManyToManyField(PeopleTransfer, verbose_name="Persona(s) a Transferir", blank=True)
     service_authorize = models.TextField(verbose_name="Autorización del Servicio", blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Estado", blank=True, null=True, default='esperando validación' )
     executive_transfer = models.BooleanField(default=False, blank=True, null=True, verbose_name="Traslado ejecutivo")
@@ -435,11 +448,16 @@ class TransferRequest(models.Model):
             print(persons_to_transfer)
     
     def save(self, *args, **kwargs):
+        is_new = self.pk is None  # Verifica si es un nuevo registro
+        previous_status = None
         # obtener compañía del service_requested y asignarla a la solicitud
-        try:
-            self.company = self.service_requested.company
-        except:
-            self.company = None
+        
+        if not self.company:
+            # obtener compañía del service_requested y asignarla a la solicitud
+            try:
+                self.company = self.service_requested.company
+            except:
+                pass
 
         # try:
         #     self.company = self.service_requested.company.name
@@ -459,6 +477,36 @@ class TransferRequest(models.Model):
         # self.apply_discount()
         self.final_price = self.price + (self.deviation.all().count() * self.rate.detour_local)
 
+
+                # Enviar notificación en tiempo real
+        channel_layer = get_channel_layer()
+        if is_new:
+            print("Enviando notificación de nueva solicitud de traslado...")
+            async_to_sync(channel_layer.group_send)(
+                'site_notifications',
+                {
+                    'type': 'send_notification',
+                    'message': {
+                        'event': 'new_transfer_request',
+                        'id': self.id,
+                        'status': self.status,
+                        'created_at': self.date_created.strftime('%Y-%m-%d %H:%M:%S'),
+                    }
+                }
+            )
+        elif previous_status != self.status and self.status == 'validada':
+            print("Enviando notificación de estado actualizado a 'validada'...")
+            async_to_sync(channel_layer.group_send)(
+                'site_notifications',
+                {
+                    'type': 'send_notification',
+                    'message': {
+                        'event': 'status_updated',
+                        'id': self.id,
+                        'new_status': self.status,
+                    }
+                }
+            )
         # Llama al método save original para guardar normalmente
         super().save(*args, **kwargs)
 

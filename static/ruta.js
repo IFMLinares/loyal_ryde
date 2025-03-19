@@ -91,7 +91,7 @@ function initMap() {
 }
 
 $(document).ready(function() {
-    
+
 });
 
 function updateMarkers() {
@@ -258,6 +258,7 @@ async function handleAddressChange() {
 
                 // Itera sobre las tarifas y genera el HTML para cada una
                 let tarifasHtml = "";
+                console.log(tarifas);
                 tarifas.forEach((tarifa, index) => {
                     tarifasHtml += `
                         <div class="mt-5 col-md-6">
@@ -267,10 +268,9 @@ async function handleAddressChange() {
                                 </svg>
                                 <span class="d-block fw-bold text-start">
                                     <span class="text-dark fw-bolder d-block fs-3">
-                                        <input type="radio" class="form-check-input rate-radio" name="rate-checkbox" value="${tarifa.rate_price}" data-rate-id="${tarifa.rate_id}" data-round-trip-price="${tarifa.rate_price_round_trip}"  data-detour-local="${tarifa.rate_detour_local}" required/> ${tarifa.rate_route}
+                                        <input type="radio" class="form-check-input rate-radio mt-1" name="rate-checkbox" value="${tarifa.rate_price}" data-rate-id="${tarifa.rate_id}" data-round-trip-price="${tarifa.rate_price_round_trip}"  data-detour-local="${tarifa.rate_detour_local}" required/> ${tarifa.rate_vehicle}
                                     </span>
-                                    <span class="text-dark">${tarifa.rate_route}</span> <br>
-                                    <span class="text-dark">Tipo de Vehiculo: ${tarifa.rate_vehicle}</span><br>
+                                    <span class="text-dark">Ruta: ${tarifa.rate_route}</span> <br>
                                     <span class="text-dark">Precio Base: </span> <span style="color:green">${tarifa.rate_price}$</span><br>
                                     <span class="text-dark">Precio Base Ida y vuelta: </span> <span style="color:green">${tarifa.rate_price_round_trip}$</span><br>
                                     <span class="text-dark">Precio de espera por hora (diurna) C/U: </span> <span style="color:green">${tarifa.rate_daytime_waiting_time}$<br>
@@ -281,6 +281,8 @@ async function handleAddressChange() {
                         </div>
                     `;
                 });
+                
+                // <span class="text-dark">Tipo de Vehiculo: ${tarifa.rate_vehicle}</span><br>
 
                 // Inserta el HTML generado en el elemento con ID rates_div
                 $("#rates_div").html(tarifasHtml).removeClass('d-none');

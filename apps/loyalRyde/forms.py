@@ -38,8 +38,13 @@ class TransferRequestForm(ModelForm):
                 form.field.widget.attrs['class'] = 'form-select mb-2'
                 form.field.widget.attrs['data-control'] = 'select2'
                 # form.field.widget.attrs['data-hide-search'] = 'true'
+            elif form.name == 'company':
+                form.field.widget.attrs['class'] = 'form-select mb-2'
+                form.field.widget.attrs['data-control'] = 'select2'
             else:
                 form.field.widget.attrs['class'] = 'form-control'
+        
+
 
         if self.instance.pk:
             selected_people = self.instance.person_to_transfer.all()
@@ -192,7 +197,7 @@ class AddRateForm(ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         for form in  self.visible_fields():
-            if form.name == 'route' or form.name== 'type_vehicle':
+            if form.name == 'route' or form.name== 'type_vehicle' or form.name == 'service_type':
                 form.field.widget.attrs['class'] = 'form-select mb-2'
                 form.field.widget.attrs['data-control'] = 'select2'
                 form.field.widget.attrs['data-hide-search'] = 'true'

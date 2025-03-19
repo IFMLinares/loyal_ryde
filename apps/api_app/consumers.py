@@ -93,3 +93,25 @@ class ConductorConsumer(AsyncWebsocketConsumer):
         transferencia_id = event["transferencia_id"]
         # Aquí puedes enviar la ID de la transferencia al cliente (conductor)
         await self.send(text_data=f"Transferencia validada: {transferencia_id}")
+
+class SiteNotificationConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.group_name = 'site_notifications'
+        print(f"Conectando al grupo: {self.group_name}")
+        await self.channel_layer.group_add(
+            self.group_name,
+            self.channel_name
+        )
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        # Elimina al usuario del grupo de WebSocket
+        await self.channel_layer.group_discard(
+            self.group_name,
+            self.channel_name
+        )
+
+    async def send_notification(self, event):
+        print("Mensaje recibido en el Consumer:", event)
+        # Envía la notificación al cliente
+        await self.send(text_data=json.dumps(event['message']))

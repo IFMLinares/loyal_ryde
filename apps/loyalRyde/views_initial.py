@@ -170,7 +170,7 @@ def get_rates(request):
                 rate_data.append({
                     "rate_id": n.id,
                     'rate_vehicle': f'{n.type_vehicle}',
-                    'rate_route': f'{n.route.route_name}: {n.route.departure_point}-{n.route.arrival_point}',
+                    'rate_route': f'{n.route.departure_point}-{n.route.arrival_point}',
                     'rate_price': n.price,
                     'rate_price_round_trip': n.price_round_trip,
                     'rate_driver_gain': n.driver_gain,

@@ -33,6 +33,17 @@
                                     <h1>LOYAL RIDE</h1>
                                     <h1>Transporte GGMN</h1>
                                 </div>
+                                <!-- Seleccione la empresa -->
+                                 
+                                {% if request.user.role == "administrador" %}
+                                    <div class="mt-5 col-md-12">
+                                        <h3>Seleccione una empresa:</h3>
+                                    </div>
+                                    <div class="mt-5 col-md-12">
+                                        {{ form.company }}
+                                    </div>
+                                {% endif %}
+
                                 <div class="mt-5 col-md-12">
                                     <h3>Servicio requerido:</h3>
                                 </div>
@@ -335,8 +346,6 @@
     let rates_ajax = "{% url 'core:rates_ajax' %}";
     let url_form = "{% url 'core:transfer_request_people_create' %}";
     let company = {{ request.user.company.pk }};
-    
-    console.log(company);
 </script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>

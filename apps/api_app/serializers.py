@@ -42,7 +42,6 @@ class OTPCodeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 # Serializer for TransferRequest
-
 class UserSerializer(serializers.ModelSerializer):
     company_image_url = serializers.SerializerMethodField()
     class Meta:
@@ -53,7 +52,6 @@ class UserSerializer(serializers.ModelSerializer):
         if obj.company and obj.company.image:
             return obj.company.image.url
         return None
-
 
 class PersonToTransferSerializer(serializers.ModelSerializer):
     class Meta:
