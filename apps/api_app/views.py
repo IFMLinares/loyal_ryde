@@ -15,7 +15,7 @@ from django.utils.crypto import get_random_string
 from rest_framework import status
 
 from ..loyalRyde.models import CustomUser, CustomUserDriver,TransferStop, Desviation, TransferRequest, OTPCode
-from .serializers import UserSerializers, CustomUserDriverSerializer,TransferStopSerializer, DesviationSerializer,TransferRequestSerializer,TransferRequestStatusUpdateSerializer
+from .serializers import UserSerializers, CustomUserDriverSerializer,TransferStopSerializer, DesviationSerializer,TransferRequestSerializer,TransferRequestStatusUpdateSerializer, RateSerializer
 
 class UserView(APIView):
 
@@ -286,17 +286,12 @@ class TransferRequestDetailView(APIView):
         serialized_transfer_data['fields']['deviations'] = serialized_deviations_data
         serialized_transfer_data['fields']['id'] = transfer_request.id
 
-        if transfer_request.is_round_trip:
-            rates = {
-                "driver_gain": str(transfer_request.rate.driver_price_round_trip)
-            }
-        else:
-            rates = {
-                "driver_gain": str(transfer_request.rate.driver_price)
-            }
+        # Serializar las tarifas completas
+        rate_serializer = RateSerializer(transfer_request.rate)
+        rates = rate_serializer.data
 
         return Response({
             "transferencia_id": transfer_request.id,
             "transferencia_data": serialized_transfer_data,  # No convertir a JSON string
-            "rates": rates
+            "rates": rates  # Enviar todas las tarifas serializadas
         }, status=status.HTTP_200_OK)
