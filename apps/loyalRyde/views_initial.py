@@ -181,7 +181,8 @@ def get_rates(request):
                     'rate_daytime_waiting_time': n.daytime_waiting_time,
                     'rate_nightly_waiting_time': n.nightly_waiting_time,
                     'rate_detour_local': n.detour_local,
-                    'rate_service_type': n.service_type,
+                    # validacion de si exsite el campo si no es vacio (en blanco)
+                    'rate_service_type': n.service_type if n.service_type else 'No disponible',
                     # Agrega más campos según tus necesidades
                 })
                 print(rate_data)
