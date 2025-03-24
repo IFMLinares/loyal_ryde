@@ -34,6 +34,7 @@
                                     <th>Placa</th>
                                     <th>Viajes por Pagar</th>
                                     <th>Monto Pendiente</th>
+                                    <th>Monto por Desvíos</th> <!-- Nueva columna -->
                                     <th>Viajes Pagados</th>
                                     <th>Monto Pagado</th>
                                     <th>Acciones</th>
@@ -47,6 +48,7 @@
                                     <td>{{ driver.plaque }}</td>
                                     <td>{{ driver.trips_to_pay }}</td>
                                     <td>{{ driver.pending_amount|default:0 }}$</td>
+                                    <td>{{ driver.deviation_amount|default:0 }}$</td> <!-- Mostrar el monto por desvíos -->
                                     <td>{{ driver.trips_paid }}</td>
                                     <td>{{ driver.paid_amount|default:0 }}$</td>
                                     <td>

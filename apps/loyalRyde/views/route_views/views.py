@@ -16,12 +16,22 @@ class RouteCreateView(LoginRequiredMixin, CreateView):
     template_name = 'loyal_ryde_system/add_route.html'
     success_url = reverse_lazy('core:route_list')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['url_return'] = self.success_url
+        return context
+
 #  Agregar Ruta
 class RouteUpdate(LoginRequiredMixin, UpdateView):
     model = Route
     form_class = AddRouteForm
     template_name = 'loyal_ryde_system/add_route.html'
     success_url = reverse_lazy('core:route_list')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['url_return'] = self.success_url
+        return context
 
 class RouteDeleteView(LoginRequiredMixin, DeleteView):
     model = Route

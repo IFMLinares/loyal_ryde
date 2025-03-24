@@ -276,6 +276,18 @@ class Rates(models.Model):
         self.driver_price_round_trip = self.price_round_trip * (self.driver_gain / 100)
         self.gain_loyal_ride_round_trip = self.price_round_trip - self.driver_price_round_trip
 
+        # Calculamos el driver_gain_detour_local_quantity
+        if self.detour_local and self.driver_gain_detour_local:
+            self.driver_gain_detour_local_quantity = self.detour_local * (self.driver_gain_detour_local / 100)
+
+        # Calculamos el driver_daytime_waiting_time
+        if self.daytime_waiting_time and self.driver_gain_waiting_time:
+            self.driver_daytime_waiting_time = self.daytime_waiting_time * (self.driver_gain_waiting_time / 100)
+
+        # Calculamos el driver_nightly_waiting_time
+        if self.nightly_waiting_time and self.driver_gain_waiting_time:
+            self.driver_nightly_waiting_time = self.nightly_waiting_time * (self.driver_gain_waiting_time / 100)
+
         super().save(*args, **kwargs)
 
     def __str__(self):

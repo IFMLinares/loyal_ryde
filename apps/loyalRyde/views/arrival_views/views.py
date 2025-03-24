@@ -18,6 +18,7 @@ class ArrivalPointCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Registrar Destino"
+        context['url_return'] = self.success_url
         return context
 
 # Actualizar Destino
@@ -30,6 +31,7 @@ class ArrivalPointUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Actualizar Destino"
+        context['url_return'] = self.success_url
         return context
 
     def form_valid(self, form):

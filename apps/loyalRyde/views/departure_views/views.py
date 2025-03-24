@@ -18,6 +18,7 @@ class DeparturePointCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Registrar Salida"
+        context['url_return'] = self.success_url
         return context
 
     def form_valid(self, form):
@@ -35,6 +36,7 @@ class DepartureUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Actualizar Salida"
+        context['url_return'] = self.success_url
         return context
 
     def form_valid(self, form):

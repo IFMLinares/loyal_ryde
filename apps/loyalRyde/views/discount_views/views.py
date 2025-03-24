@@ -27,16 +27,29 @@ class DiscountCouponCreateView(CreateView):
             send_mail(subject, plain_message, 'from@example.com', [user.email], html_message=html_message)
         return response
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['url_return'] = self.success_url
+        return context
+
+
 class DiscountCouponListView(ListView):
     model = DiscountCoupon
     template_name = 'loyal_ryde_system/discount_coupon_list.html'
     context_object_name = 'coupons'
+    
 
 class DiscountCouponUpdateView(UpdateView):
     model = DiscountCoupon
     form_class = DiscountCouponForm
     template_name = 'loyal_ryde_system/update_discount_coupon.html'
     success_url = reverse_lazy('discount_coupon_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['url_return'] = self.success_url
+        return context
+
 
 class DiscountCouponDetailView(DetailView):
     model = DiscountCoupon

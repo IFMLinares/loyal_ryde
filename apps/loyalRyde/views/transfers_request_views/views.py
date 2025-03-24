@@ -679,19 +679,22 @@ class TransferRequestPDFView(LoginRequiredMixin, View):
         # Información del solicitante del servicio
         service_requested_info = [
             ["Solicitado por", f"{transfer_request.service_requested.first_name} {transfer_request.service_requested.last_name}"],
-            ["Empresa", transfer_request.service_requested.company.name]
+            ["Empresa", transfer_request.company.name]
         ]
 
         # Información del conductor
-        driver_info = [
-            ["Nombre del Conductor", f"{transfer_request.user_driver.user.first_name} {transfer_request.user_driver.user.last_name}"],
-            ["Marca del Vehículo", transfer_request.user_driver.marca],
-            ["Modelo del Vehículo", transfer_request.user_driver.model],
-            ["Color del Vehículo", transfer_request.user_driver.color],
-            ["Número de Placa", transfer_request.user_driver.plaque],
-            ["Número de Pasajeros", transfer_request.user_driver.passengers_numbers],
-            ["Tipo de Vehículo", transfer_request.user_driver.type.type]
-        ]
+        try:
+            driver_info = [
+                ["Nombre del Conductor", f"{transfer_request.user_driver.user.first_name} {transfer_request.user_driver.user.last_name}"],
+                ["Marca del Vehículo", transfer_request.user_driver.marca],
+                ["Modelo del Vehículo", transfer_request.user_driver.model],
+                ["Color del Vehículo", transfer_request.user_driver.color],
+                ["Número de Placa", transfer_request.user_driver.plaque],
+                ["Número de Pasajeros", transfer_request.user_driver.passengers_numbers],
+                ["Tipo de Vehículo", transfer_request.user_driver.type.type]
+            ]
+        except:
+            driver_info = []
 
         # Información de desviaciones
         deviation_info = []

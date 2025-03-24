@@ -69,6 +69,7 @@ class DriverAdd(LoginRequiredMixin, CreateView):
     
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
+        context['url_return'] = self.success_url
         type = FleetType.objects.all()
         context['type'] = type
         print("Contexto:")
@@ -106,6 +107,7 @@ class DriverUpdateView(LoginRequiredMixin, UpdateView):
         type = FleetType.objects.all()
         context['type'] = type
         context['driver'] = CustomUserDriver.objects.get(user=self.get_object())
+        context['url_return'] = self.success_url
         return context
 
 #  Listado de conductores
@@ -164,7 +166,8 @@ class DriverPayrollView(LoginRequiredMixin, ListView):
         drivers = drivers.annotate(
             trips_to_pay=Count(
                 'transferrequest',
-                filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=False)
+                filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=False),
+                distinct=True
             ),
             pending_amount=Sum(
                 Case(
@@ -175,11 +178,13 @@ class DriverPayrollView(LoginRequiredMixin, ListView):
                     default=F('transferrequest__rate__driver_price'),
                     output_field=models.DecimalField()
                 ),
-                filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=False)
+                filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=False),
+                distinct=True
             ),
             trips_paid=Count(
                 'transferrequest',
-                filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=True)
+                filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=True),
+                distinct=True,
             ),
             paid_amount=Sum(
                 Case(
@@ -190,7 +195,20 @@ class DriverPayrollView(LoginRequiredMixin, ListView):
                     default=F('transferrequest__rate__driver_price'),
                     output_field=models.DecimalField()
                 ),
-                filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=True)
+                filter=Q(transferrequest__status__in=['finalizada', 'Finalizada'], transferrequest__paid_driver=True),
+                distinct=True,
+            ),
+            
+            # Cálculo del monto total por desvíos
+            deviation_amount=Sum(
+                F('transferrequest__rate__driver_gain_detour_local_quantity') *
+                F('transferrequest__deviation__desviation_number'),
+                filter=Q(
+                    transferrequest__status__in=['finalizada', 'Finalizada'],
+                    transferrequest__paid_driver=False,
+                    transferrequest__deviation__desviation_number__gt=0
+                ),
+                output_field=models.DecimalField()
             )
         )
 
@@ -213,7 +231,7 @@ class DriverPayrollExcelView(LoginRequiredMixin, View):
         ws.append([])
 
         # Escribir el nombre del conductor en mayúsculas y negrita en la segunda fila
-        ws.merge_cells('A2:P2')
+        ws.merge_cells('A2:O2')
         cell = ws.cell(row=2, column=1)
         cell.value = driver.user.get_full_name().upper()
         cell.font = cell.font.copy(bold=True)
@@ -221,8 +239,8 @@ class DriverPayrollExcelView(LoginRequiredMixin, View):
 
         # Escribir los encabezados en la tercera fila
         headers = [
-            "FECHA", "DIA", "HORA", "SALIDA", "DESTINO", "PASAJEROS", "EMPRESA", "SERVICIO TAXI", 
-            "HORA ESP DIURNA", "HORA ESP NOCTUR.", "Desvios", "Monto Desvios", "Vehículo", "COSTO TOTAL SERVICIO"
+            "FECHA", "DIA", "HORA", "SALIDA", "DESTINO", "PASAJEROS", "EMPRESA", "SERVICIO TAXI",
+            "Desvios (Precio)", "Desvios (Cantidad)", "Desvios (Total)", "Vehículo", "COSTO TOTAL SERVICIO"
         ]
         ws.append(headers)
 
@@ -248,10 +266,15 @@ class DriverPayrollExcelView(LoginRequiredMixin, View):
             rate = transfer_request.rate.driver_price_round_trip if transfer_request.is_round_trip else transfer_request.rate.driver_price
             passengers = ', '.join([str(p) for p in transfer_request.person_to_transfer.all()])
             vehicle_type = str(transfer_request.rate.type_vehicle) if transfer_request.rate and transfer_request.rate.type_vehicle else ''
-            company_name = transfer_request.company
-            desvios = transfer_request.deviation.count()
-            monto_desvios = desvios * transfer_request.rate.detour_local
-            costo_total_servicio = rate + monto_desvios
+            company_name = transfer_request.company.name
+
+            # Cálculos de desvíos
+            desvios_price = transfer_request.rate.driver_gain_detour_local_quantity or 0
+            desvios_quantity = transfer_request.deviation.count()
+            desvios_total = desvios_price * desvios_quantity
+
+            # Costo total del servicio
+            costo_total_servicio = rate + desvios_total
             total_cost += costo_total_servicio
 
             row = [
@@ -263,12 +286,11 @@ class DriverPayrollExcelView(LoginRequiredMixin, View):
                 passengers,
                 company_name,
                 rate,
-                transfer_request.rate.daytime_waiting_time if transfer_request.rate else '',
-                transfer_request.rate.nightly_waiting_time if transfer_request.rate else '',
-                desvios,
-                monto_desvios,
+                str(desvios_price) + "$",
+                desvios_quantity,
+                str(desvios_total) + "$",
                 vehicle_type,
-                costo_total_servicio  # COSTO TOTAL SERVICIO
+                str(costo_total_servicio) + "$" # COSTO TOTAL SERVICIO
             ]
             ws.append(row)
 
@@ -279,16 +301,16 @@ class DriverPayrollExcelView(LoginRequiredMixin, View):
 
         # Añadir la fila "Total a pagar"
         total_row_index = ws.max_row + 1
-        ws.append([""] * 14)
-        ws.merge_cells(start_row=total_row_index, start_column=1, end_row=total_row_index, end_column=13)
+        ws.append([""] * 12)
+        ws.merge_cells(start_row=total_row_index, start_column=1, end_row=total_row_index, end_column=11)
         cell = ws.cell(row=total_row_index, column=1)
         cell.value = "Total a pagar"
         cell.alignment = Alignment(horizontal='center', vertical='center')
         cell.font = cell.font.copy(bold=True)
         cell.border = thin_border
 
-        total_cell = ws.cell(row=total_row_index, column=14)
-        total_cell.value = total_cost
+        total_cell = ws.cell(row=total_row_index, column=13)
+        total_cell.value = str(total_cost) + "$"
         total_cell.alignment = Alignment(horizontal='center', vertical='center')
         total_cell.font = total_cell.font.copy(bold=True)
         total_cell.border = thin_border
@@ -321,5 +343,3 @@ class DriverPayrollExcelView(LoginRequiredMixin, View):
         response = HttpResponse(response, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = f'attachment; filename=nomina_conductor_{driver.user.get_full_name()}.xlsx'
         return response
-
-

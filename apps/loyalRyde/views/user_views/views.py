@@ -40,6 +40,7 @@ class UserAdd(LoginRequiredMixin, CreateView):
                 return HttpResponseRedirect(reverse_lazy('core:user_list_operator'))
         return render(request, self.template_name, {'form': form})
 
+
 #  Agregar usuario (de las empresas)
 class UserCompanyAdd(LoginRequiredMixin, CreateView):
     model = CustomUser

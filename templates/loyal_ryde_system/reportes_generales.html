@@ -21,7 +21,7 @@
                 <select id="company_name" class="form-control me-2">
                     <option value="Todas">Todas</option>
                     {% for company in companies %}
-                        <option value="{{ company.name }}" {% if company.name == selected_company %}selected{% endif %}>{{ company.name }}</option>
+                        <option value="{{ company.id }}" {% if company.name == selected_company %}selected{% endif %}>{{ company.name }}</option>
                     {% endfor %}
                 </select>
                 <button id="filter_button" class="btn btn-primary me-2">Filtrar</button>
@@ -55,8 +55,8 @@
 {% endblock content %}
 
 {% block extra_js %}
-<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<!-- <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script>
     $(document).ready(function() {
