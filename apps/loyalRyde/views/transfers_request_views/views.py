@@ -73,7 +73,7 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         
         # Si el usuario no es administrador, asignar automáticamente la empresa del usuario
         # if self.request.user.role != 'administrador':
-        form.instance.company = self.request.user.company
+        # form.instance.company = self.request.company
 
         transfer_request = form.save()
 
