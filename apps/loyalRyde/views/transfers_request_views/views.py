@@ -67,13 +67,15 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         send_mail(subject, plain_message, from_email, recipients, html_message=html_message)
 
     def form_valid(self, form):
-        # Guarda el formulario directamente
-        
         form.instance.service_requested = self.request.user
-        
-        # Si el usuario no es administrador, asignar automáticamente la empresa del usuario
-        # if self.request.user.role != 'administrador':
-        form.instance.company = self.request.company
+
+        # Asigna el valor de company según el rol del usuario
+        if self.request.user.role == "administrador":
+            form.instance.company = form.cleaned_data.get('company')
+        else:
+            form.instance.company = self.request.user.company
+
+        print(f"Company assigned: {form.instance.company}")  # Depuración
 
         transfer_request = form.save()
 
@@ -103,6 +105,12 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def post(self, request, *args, **kwargs):
+        print(request.POST)  # Depuración
+        print(request.POST.get('company'))  
+        print(request.POST.get('company'))  
+        print(request.POST.get('company'))  
+        print(request.POST.get('company'))  
+        print(request.POST.get('company'))  # Depuración   
         # Obtén la fecha directamente del POST
         fecha = request.POST.get('date')
 

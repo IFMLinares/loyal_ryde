@@ -471,20 +471,6 @@ class TransferRequest(models.Model):
     def save(self, *args, **kwargs):
         is_new = self.pk is None  # Verifica si es un nuevo registro
         previous_status = None
-        # obtener compañía del service_requested y asignarla a la solicitud
-        
-        # if not self.company:
-        #     # obtener compañía del service_requested y asignarla a la solicitud
-        #     try:
-        #         self.company = self.service_requested.company
-        #     except:
-        #         pass
-
-        # try:
-        #     self.company = self.service_requested.company.name
-        # except: 
-        #     self.company = None
-        # Validación personalizada antes de guardar
         if self.status == 'aprobada':
             # Realiza la funcionalidad adicional que necesitas
             if self.user_driver:
@@ -538,3 +524,4 @@ class TransferRequest(models.Model):
         verbose_name = 'Solicitud de traslado'
         verbose_name_plural = 'Solicitudes de traslado'
         ordering = ["-date_created"]
+
