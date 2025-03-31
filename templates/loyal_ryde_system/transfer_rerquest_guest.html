@@ -117,103 +117,35 @@
                                                         <input type="time" class="form-control" id="id_hour" name="hour"
                                                             required value="{{ form.hour.value }}" />
                                                     </div>
-                                                    <div class="mt-8 col-md-12">
+                                                    <!-- <div class="mt-8 col-md-12">
                                                         <h3>Tipo de servicio:</h3>
-                                                    </div>
+                                                    </div> -->
                                                     <div class="row">
-                                                        <div class="col-md-4">
-                                                            <div
-                                                                class="form-check form-check-custom form-check-solid mt-5">
-
-                                                                {{ form.executive_transfer }}
-                                                                <!-- <input class="form-check-input" type="checkbox" value="" id="id_executive_transfer"  name="executive_transfer"/> -->
-                                                                <label class="form-check-label"
-                                                                    for="id_executive_transfer" style="color: black;">
-                                                                    <i class="fas fa-solid fa-car-side"
-                                                                        style="color: #009ef6; font-size: 20px;"></i>
-                                                                    TRASLADO EJECUTIVO
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div
-                                                                class="form-check form-check-custom form-check-solid mt-5">
-                                                                {{ form.encomienda }}
-                                                                <!-- <input class="form-check-input" type="checkbox" value="" id="id_encomienda"  name="encomienda"/> -->
-                                                                <label class="form-check-label" for="id_encomienda"
-                                                                    style="color: black;">
-                                                                    <i class="fas fa-solid fa-dolly"
-                                                                        style="color: #009ef6; font-size: 20px;"></i>
-                                                                    ENCOMIENDA
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div
-                                                                class="form-check form-check-custom form-check-solid mt-5">
-                                                                {{ form.driver }}
-                                                                <!-- <input class="form-check-input" type="checkbox" value="" id="id_driver"  name="driver"/> -->
-                                                                <label class="form-check-label" for="id_driver"
-                                                                    style="color: black;">
-                                                                    <i class="fas fa-solid fa-user"
-                                                                        style="color: #009ef6; font-size: 20px;"></i>
-                                                                    CONDUCTOR
-                                                                </label>
-                                                            </div>
-                                                        </div>
 
                                                         <div class="mt-8 col-md-12">
                                                             <h3>Ruta:</h3>
                                                         </div>
-                                                        <div class="mt-5 col-md-4">
-                                                            <label class="form-label"
-                                                                for="id_departure_site_route">Seleccione punto de
-                                                                salida:</label>
-                                                            <select class="form-select"
-                                                                aria-label="Seleccione un punto de origen"
-                                                                name="departure_site_route" id="id_departure_site_route"
-                                                                required>
-                                                                <option disabled selected>Seleccione un punto de origen
-                                                                </option>
-                                                                {% for opcion in departure %}
-                                                                <option value="{{ opcion.name }}">{{ opcion.name }}
-                                                                </option>
-                                                                {% endfor %}
-                                                            </select>
-                                                        </div>
 
-                                                        <div class="mt-5 col-md-4">
+                                                        <div class="mt-5 col-md-6">
                                                             <label class="form-label" for="id_route">Dirección exacta
                                                                 del punto de salida:</label>
                                                             {{ form.destination_direc }}
                                                             <!-- <input class="form-control" type="text" name="destination_direc" id="id_destination_direc"> -->
                                                         </div>
 
-                                                        <div class="mt-5 col-md-4">
+                                                        <div class="mt-5 col-md-6">
                                                             <label class="form-label" for="id_route">Punto de
                                                                 referencia:</label>
                                                             {{ form.departure_landmark }}
                                                             <!-- <input class="form-control" type="text" name="departure_landmark" id="id_departure_landmark"> -->
                                                         </div>
-
-                                                        <div class="mt-5 col-md-4">
-                                                            <label class="form-label"
-                                                                for="id_destination_route">Destino:</label>
-                                                            <select class="form-select"
-                                                                aria-label="Seleccione un punto de origen"
-                                                                name="destination_route" id="id_destination_route"
-                                                                required>
-                                                                <option disabled selected>Seleccione un punto de Destino
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="mt-5 col-md-4">
+                                                        <div class="mt-5 col-md-6">
                                                             <label class="form-label" for="id_route">Dirección exacta
                                                                 del destino:</label>
                                                             {{ form.departure_direc }}
                                                             <!-- <input class="form-control" type="text" name="departure_direc" id="id_departure_direc"> -->
                                                         </div>
-                                                        <div class="mt-5 col-md-4">
+                                                        <div class="mt-5 col-md-6">
                                                             <label class="form-label" for="id_route">Punto de
                                                                 referencia:</label>
                                                             {{ form.destination_landmark }}
@@ -266,10 +198,12 @@
                                                             placeholder="Teléfono">
                                                     </div>
                                                     <div class="mt-5 col-md-3">
-                                                        <label class="form-label"
+                                                        <!-- <label class="form-label"
                                                             for="id_person_to_transfer">Empresa:</label>
                                                         <input class="form-control" type="text" id="company"
-                                                            name="company" placeholder="Empresa">
+                                                            name="company" placeholder="Empresa"> -->
+                                                            
+                                                            <input type="hidden" name="company" id="id_company" value="N/A">
                                                     </div>
                                                     <div class="mt-13 col-md-3">
                                                         <button type="button" id="people-transfer-form"

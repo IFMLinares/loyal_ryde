@@ -81,10 +81,15 @@ def get_people_transfer(request):
         phone = request.POST.get('phone')
         company_id = request.POST.get('company')
 
-        try:
-            company = Company.objects.get(id=company_id)
-        except Company.DoesNotExist:
-            return JsonResponse({'error': 'La empresa no existe.'}, status=400)
+        # Validar si el company_id es un número o "N/A"
+        if company_id == "N/A":
+            company = None
+        else:
+            try:
+                company = Company.objects.get(id=company_id)
+            except Company.DoesNotExist:
+                return JsonResponse({'error': 'La empresa no existe.'}, status=400)
+
 
         # Verificar si ya existe un registro con los datos proporcionados
         person = PeopleTransfer.objects.filter(name=name, phone=phone, company=company).first()

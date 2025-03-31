@@ -249,7 +249,7 @@ class GuestTransferCreateView(CreateView):
     def form_valid(self, form):
         # Guarda el formulario directamente
         form.instance.service_requested = None
-        form.instance.company = "N/A Modo Invitado"
+        form.instance.company = None
         
         transfer_request = form.save()
 

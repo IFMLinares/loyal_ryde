@@ -481,6 +481,18 @@ class TransferRequest(models.Model):
         if not self.pk:
             super().save(*args, **kwargs)
 
+        if not self.company:
+            guest_company, created = Company.objects.get_or_create(
+                name="Modo invitado",
+                defaults={
+                    "email": None,
+                    "rif": "N/A",
+                    "address": None,
+                    "phone": None,
+                }
+            )
+            self.company = guest_company
+
         # self.apply_discount()
         self.final_price = self.price + (self.deviation.all().count() * self.rate.detour_local)
 
