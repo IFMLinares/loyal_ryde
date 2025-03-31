@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -448,9 +449,14 @@ class TransferRequest(models.Model):
                     "service_type": str(self.rate.service_type),
                 }
 
+            
+            # Normalizar el nombre del grupo
+            group_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', conductor.username)  # Reemplazar caracteres no válidos
+            group_name = group_name[:100]  # Asegurarse de que el nombre tenga menos de 100 caracteres
+
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
-                conductor.username,
+                group_name,
                 {
                     "type": "transferencia_validada",
                     "transferencia_id": self.id,
@@ -458,6 +464,7 @@ class TransferRequest(models.Model):
                     "rates": rates
                 },
             )
+            print(f"Notificación enviada al grupo: {group_name}")
             print(serialized_transfer_data)
             print(persons_to_transfer)
     

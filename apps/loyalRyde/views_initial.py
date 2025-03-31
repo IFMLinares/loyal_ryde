@@ -16,6 +16,8 @@ from django.views.decorators.http import require_POST
 from django.urls import reverse_lazy
 from django.views.generic import (TemplateView)
 
+from django.core.mail import send_mail
+
 from .forms import *
 from .models import *
 # Create your views here.
@@ -98,9 +100,11 @@ def get_people_transfer(request):
 @csrf_exempt
 def approve_request(request):
     if request.method == 'POST':
-        if request.user.role != 'administrador':
-            if request.user.role != 'supervisor' or request.user.role != 'administrador':
-                return JsonResponse({'status': 'error', 'message': 'No tiene permisos para aprobar esta solicitud.'})
+        print(request.user.role)
+        # Permitir solo a administradores o supervisores aprobar solicitudes
+        if request.user.role not in ['administrador', 'supervisor']:
+            return JsonResponse({'status': 'error', 'message': 'No tiene permisos para aprobar esta solicitud.'})
+
 
         request_id = request.POST.get('request_id')
         transfer_request = TransferRequest.objects.get(id=request_id)
@@ -112,6 +116,33 @@ def approve_request(request):
         transfer_request.approved_by = request.user
         transfer_request.save()
         return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido validada con éxito.'})
+
+def send_approval_email(transfer_request):
+    # Obtener los correos de los administradores
+    admin_emails = CustomUser.objects.filter(role='administrador').values_list('email', flat=True)
+
+    # Obtener los correos de los usuarios de la misma empresa
+    company_emails = CustomUser.objects.filter(company=transfer_request.company).values_list('email', flat=True)
+
+    # Obtener el correo del conductor asociado
+    driver_email = transfer_request.user_driver.user.email if transfer_request.user_driver else None
+
+    # Combinar todos los correos en una lista única
+    recipients = set(admin_emails) | set(company_emails)
+    if driver_email:
+        recipients.add(driver_email)
+
+    # Crear el asunto y el mensaje del correo
+    subject = f"Solicitud de traslado aprobada (ID: {transfer_request.id})"
+    html_message = render_to_string('emails/approve_transfer.html', {
+        'transfer_request': transfer_request,
+        'message': 'La solicitud de traslado ha sido aprobada.',
+    })
+    plain_message = strip_tags(html_message)
+    from_email = 'loyalride.test@gmail.com'
+
+    # Enviar el correo
+    send_mail(subject, plain_message, from_email, list(recipients), html_message=html_message)
 
 @csrf_exempt
 def approve_request_admin(request):
@@ -126,8 +157,11 @@ def approve_request_admin(request):
             return JsonResponse({'status': 'error', 'message': 'No ha seleccionado un conductor.'})
         else:
             transfer_request.status = 'aprobada'
-            # transfer_request.approved_by = request.user
             transfer_request.save()
+
+            # Enviar notificación por correo
+            send_approval_email(transfer_request)
+
             return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido aprobada con éxito.'})
 
 @csrf_exempt

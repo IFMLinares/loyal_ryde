@@ -33,6 +33,19 @@
                                     <h1>LOYAL RIDE</h1>
                                     <h1>Transporte GGMN</h1>
                                 </div>
+                                
+                                 
+                                {% if request.user.role == "administrador" %}
+                                    <div class="mt-5 col-md-12">
+                                        <h3>Seleccione una empresa:</h3>
+                                    </div>
+                                    <div class="mt-5 col-md-12">
+                                        {{ form.company }}
+                                    </div>
+                                {% else %}
+                                    <input type="hidden" name="company" id="id_company" value="{{ request.user.company.pk }}">
+                                {% endif %}
+                                
                                 <div class="mt-5 col-md-12">
                                     <h3>Servicio requerido:</h3>
                                 </div>

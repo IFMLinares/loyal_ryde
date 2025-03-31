@@ -42,6 +42,18 @@
                                     <div class="mt-5 col-md-12">
                                         {{ form.company }}
                                     </div>
+                                {% else %}
+                                <input type="hidden" name="company" id="id_company" value="{{ request.user.company.pk }}">
+                                {% endif %}
+                                
+                                {% if request.user.role == "administrador" %}
+                                    <div class="mt-5 col-md-12">
+                                        <h3>Seleccione un cliente:</h3>
+                                    </div>
+                                    <div class="mt-5 col-md-12">
+                                        {{ form.client }}
+                                    </div>
+                                {% else %}
                                 {% endif %}
 
                                 <div class="mt-5 col-md-12">

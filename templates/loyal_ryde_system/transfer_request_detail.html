@@ -119,7 +119,7 @@
                                         <h5 class="card-title"><i class="fas fa-users"></i> Lista de personas para el traslado</h5>
                                         <ul class="list-group">
                                             {% for person in detail.person_to_transfer.all %}
-                                            <li class="list-group-item">{{ person.name }} {{ person.company }}</li>
+                                            <li class="list-group-item">{{ person.name }}</li>
                                             {% endfor %}
                                         </ul>
                                     </div>
