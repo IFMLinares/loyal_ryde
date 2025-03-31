@@ -473,12 +473,12 @@ class TransferRequest(models.Model):
         previous_status = None
         # obtener compañía del service_requested y asignarla a la solicitud
         
-        if not self.company:
-            # obtener compañía del service_requested y asignarla a la solicitud
-            try:
-                self.company = self.service_requested.company
-            except:
-                pass
+        # if not self.company:
+        #     # obtener compañía del service_requested y asignarla a la solicitud
+        #     try:
+        #         self.company = self.service_requested.company
+        #     except:
+        #         pass
 
         # try:
         #     self.company = self.service_requested.company.name
