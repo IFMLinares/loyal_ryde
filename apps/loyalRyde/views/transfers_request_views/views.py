@@ -70,10 +70,7 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         # Guarda el formulario directamente
         
         form.instance.service_requested = self.request.user
-        
-        # Si el usuario no es administrador, asignar automáticamente la empresa del usuario
-        # if self.request.user.role != 'administrador':
-        form.instance.company = self.request.company
+        # form.instance.company = self.request.company
 
         transfer_request = form.save()
 
