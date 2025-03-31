@@ -300,9 +300,14 @@
     let socket;
     let reconnectInterval = 5000; // 5 segundos
 
-    function connectWebSocket() {
-        socket = new WebSocket('ws://localhost:8000/ws/site_notifications/');
 
+    function connectWebSocket() {
+		// Construir la URL del WebSocket dinámicamente
+		const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+		const host = window.location.host;
+		const wsUrl = `${protocol}//${host}/ws/site_notifications/`;
+
+		console.log(wsUrl);
         socket.onopen = function() {
             console.log("WebSocket conectado");
         };
