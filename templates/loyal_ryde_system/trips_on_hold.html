@@ -110,11 +110,13 @@
                                         <div class="menu-item px-3">
                                             {% if item.status == 'validada' %}
                                                 {% if user.is_authenticated and user.role == 'administrador' %}
+                                                <a href="{% url 'core:transfer_request_update' pk=item.id %}" class="menu-link px-3">Editar</a>
                                                     <a href="#" class="btn btn-xs btn-primary aprobar" data-id="{{ item.id }}">Aprobar</a>
                                                 {% endif %}
                                             {% endif %}
                                             {% if item.status == 'esperando validación' %}
-                                                <a href="#" class="btn btn-xs btn-primary validar" data-id="{{ item.id }}">Validar</a>
+                                            <a href="{% url 'core:transfer_request_update' pk=item.id %}" class="menu-link px-3">Editar</a>
+                                                <a href="#" class="btn btn-xs btn-primary validar" data-id="{{ item.id }}">&nbsp;&nbsp;Validar&nbsp;&nbsp;</a>
                                             {% endif %}
                                         </div>
                                     
