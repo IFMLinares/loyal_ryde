@@ -92,11 +92,11 @@
                                                     <div class="menu-item px-3">
                                                         {% if transfer_request.status == 'validada' %}
                                                             {% if user.is_authenticated and user.role == 'administrador' %}
-                                                                <a href="#" class="btn btn-xs btn-primary aprobar" data-id="{{ transfer_request.id }}">Aprobar</a>
+                                                                <a href="#" class="btn btn-xs btn-primary aprobar" data-id="{{ transfer_request.id }}">&nbsp;Aprobar&nbsp;</a>
                                                             {% endif %}
                                                         {% endif %}
                                                         {% if transfer_request.status == 'esperando validación' %}
-                                                            <a href="#" class="btn btn-xs btn-primary validar" data-id="{{ transfer_request.id }}">Validar</a>
+                                                            <a href="#" class="btn btn-xs btn-primary validar" data-id="{{ transfer_request.id }}">&nbsp;&nbsp;Validar&nbsp;&nbsp;</a>
                                                         {% endif %}
                                                     </div>
                                                     <div class="menu-item px-3 pt-xl-1">
