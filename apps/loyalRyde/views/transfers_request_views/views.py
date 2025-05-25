@@ -176,7 +176,7 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
     def post(self, request, *args, **kwargs):
         # Obtén la fecha directamente del POST
         fecha = request.POST.get('date')
-
+        print(request.POST)
         # Actualiza la fecha en los datos del POST
         request.POST = request.POST.copy()
         request.POST['date'] = fecha
@@ -210,9 +210,15 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
                     print(f"Error al crear desvío {i - 2}: {e}")
             else:
                 print(f"Latitud o longitud faltante para el desvío {i - 2}")
-
-        print(transfer_request)
         return response
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if self.request.method == 'POST':
+            person_ids = self.request.POST.getlist('person_to_transfer')
+            if person_ids:
+                form.fields['person_to_transfer'].queryset = PeopleTransfer.objects.filter(pk__in=person_ids)
+        return form
     
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)

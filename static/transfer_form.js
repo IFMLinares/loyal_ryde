@@ -40,7 +40,8 @@ $(document).ready(function () {
 		if (c == "") {
 			c = "N/A";
 		}
-	
+		console.log(name, phone, c);
+		// Realiza la petición AJAX
 		$.ajax({
 			url: url_form,
 			method: "POST",
@@ -54,7 +55,7 @@ $(document).ready(function () {
 	
 				$("#name").val("");
 				$("#phone").val("");
-				$("#id_company").val("");
+				// $("#id_company").val("");
 				var people = JSON.parse(response.people_transfer);
 				people.forEach(function (person) {
 					var option = new Option(
