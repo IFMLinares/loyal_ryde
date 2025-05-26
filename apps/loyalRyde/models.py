@@ -20,6 +20,9 @@ payment_method_choices = [
         (2, 'CREDITO'),
         (3, 'TARJETA DE CRÉDITO'),
         (4, 'PAGO MOVIL'),
+        (5, 'EFECTIVO'),
+        (6, 'DOALRES'),
+        (7, 'EUROS'),
     ]
 
 TYPES_CHOICES = [
