@@ -128,7 +128,7 @@
 <script src="{% static 'ssets/js/custom/utilities/modals/users-search.js' %}"></script>
 <script>
     $(document).ready(function() {
-        $('#kt_ecommerce_category_table').DataTable({
+        var table = $('#kt_ecommerce_category_table').DataTable({
             "paging": true,
             "searching": true,
             "ordering": true,
@@ -136,6 +136,9 @@
             "language": {
                 "url": "{% static 'datatables/es.json' %}"
             }
+        });
+        $('[data-kt-ecommerce-category-filter="search"]').on('keyup', function() {
+            table.search(this.value).draw();
         });
     });
 </script>
