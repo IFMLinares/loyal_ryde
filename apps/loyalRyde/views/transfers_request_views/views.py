@@ -550,6 +550,7 @@ class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
                     end_date = datetime.strptime(end_date, '%d/%m/%Y')
                     transfer_requests = transfer_requests.filter(date__range=(start_date, end_date))
 
+                print(f"Transfer requests: {transfer_requests}")  # Depuración
                 data = {
                     'name': company.name,
                     'email': company.email,
@@ -562,13 +563,13 @@ class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
                         {
                             'date': tr.date.strftime('%d/%m/%Y'),
                             'hour': tr.hour.strftime('%H:%M'),  # Formato corregido
-                            'departure_site_route': tr.departure_site_route,
-                            'destination_route': tr.destination_route,
+                            'departure_site_route': tr.rate.route.departure_point.name + ' - ' + tr.rate.route.departure_point.state,
+                            'destination_route': tr.rate.route.arrival_point.name + ' - ' + tr.rate.route.arrival_point.state,
                             'price': tr.price,
                             'deviation_count': tr.deviation.count(),
                             'final_price': tr.final_price,
                             'grafo_ceco': tr.ceco_grafo_pedido,
-                            'service_requested': tr.service_requested.company.name,
+                            'service_requested': tr.service_requested.first_name + ' ' +tr.service_requested.last_name ,
                             'status': tr.status,
                             'id': tr.id,
                             'pdf_url': reverse('core:transfer_request_pdf', kwargs={'pk': tr.id})  # URL del PDF
