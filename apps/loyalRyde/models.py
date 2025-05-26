@@ -113,7 +113,7 @@ class CustomUser(AbstractUser):
 
 class CustomUserDriver(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    ci = models.CharField(max_length=256, verbose_name="Cedula de Identidad", help_text='Cedula de identidad es obligatorio', blank=True, null=True)
+    # ci = models.CharField(max_length=256, verbose_name="Cedula de Identidad", help_text='Cedula de identidad es obligatorio', blank=True, null=True)
     marca = models.CharField(max_length=256, verbose_name="Marca del Vehiculo", blank=True, null=True)
     model = models.CharField(max_length=256, verbose_name="Modelo del vehiculo", blank=True, null=True)
     color = models.CharField(max_length=256, verbose_name="Color del vehiculo", blank=True, null=True)
