@@ -135,14 +135,14 @@
                                     <td class="d-flex">
                                         <!--begin:: Avatar -->
                                         <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                            <a href="../../demo1/dist/apps/user-management/users/view.html">
+                                            <a href="{% url 'core:driver_update'  pk=driver.user.id %}">
                                                 <div class="symbol-label fs-3 bg-light-warning text-warning">{{ driver.user.first_name|title|slice:":1" }}</div>
                                             </a>
                                         </div>
                                         <!--end::Avatar-->
                                         <!--begin::User details-->
                                         <div class="d-flex flex-column">
-                                            <a href="../../demo1/dist/apps/user-management/users/view.html" class="text-gray-800 text-hover-primary mb-1">{{ driver.user.first_name }} {{ driver.user.last_name }}</a>
+                                            <a href="{% url 'core:driver_update'  pk=driver.user.id %}" class="text-gray-800 text-hover-primary mb-1">{{ driver.user.first_name }} {{ driver.user.last_name }}</a>
                                             <span>{{ driver.user.email }}</span>
                                         </div>
                                         <!--begin::User details-->

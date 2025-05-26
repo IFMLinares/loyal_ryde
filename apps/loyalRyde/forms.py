@@ -93,6 +93,8 @@ class CustomUserCreationForm(UserCreationForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         for form in  self.visible_fields():
+            if form.name == 'username' and self.instance and self.instance.pk:
+                form.field.widget.attrs['readonly'] = True
             if form.name == 'role' or form.name == 'company' or form.name == 'status':
                 form.field.widget.attrs['class'] = 'form-select mb-2'
                 form.field.widget.attrs['data-control'] = 'select2'
@@ -102,6 +104,12 @@ class CustomUserCreationForm(UserCreationForm):
             else:
                 form.field.widget.attrs['class'] = 'form-control mb-2'
     
+    def clean_username(self):
+        # Si es edición, no permitir cambiar el username y no validar duplicado contra sí mismo
+        if self.instance and self.instance.pk:
+            return self.instance.username
+        return self.cleaned_data['username']
+
     class Meta(UserCreationForm.Meta):
         model = CustomUser
         exclude = ['password1','password2']
