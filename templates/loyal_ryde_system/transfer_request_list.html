@@ -26,6 +26,7 @@
                                         <th>Salida</th>
                                         <th>Destino</th>
                                         <th>Solicitado</th>
+                                        <th>Personas a llevar</th>
                                         <th>Precio base</th>
                                         <th>Aprobado por</th>
                                         <th>Metodo de pago</th>
@@ -41,6 +42,13 @@
                                             <td class="text-center">{{ transfer_request.rate.route.departure_point.name }}</td>
                                             <td class="text-center">{{ transfer_request.rate.route.arrival_point.name }}</td>
                                             <td class="text-center">{{ transfer_request.company.name }}</td>
+                                            <td class="text-center">
+                                                {% for person in transfer_request.person_to_transfer.all %}
+                                                    {{ person.name }}{% if not forloop.last %},  {% endif %}
+                                                {% empty %}
+                                                    <span class="text-muted">Sin personas</span>
+                                                {% endfor %}
+                                            </td>
                                             <td class="text-center">{{ transfer_request.rate.price }}$</td>
                                             <td class="text-center">{{ transfer_request.approved_by|default:"N/A" }}</td>
                                             <td class="text-center">{{ transfer_request.get_payment_method_display }}</td>

@@ -175,7 +175,7 @@
             }
         });
 
-        $('#searchInput').on('keyup', function() {
+        $('[data-kt-ecommerce-category-filter="search"]').on('keyup', function() {
             table.search(this.value).draw();
         });
     });
