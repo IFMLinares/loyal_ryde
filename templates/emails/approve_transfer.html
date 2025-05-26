@@ -68,8 +68,29 @@
                                                     <p>Detalles:</p>
                                                     <ul>
                                                         <li><strong>Conductor:</strong> {{ transfer_request.user_driver.user.get_full_name }}</li>
-                                                        <li><strong>Usuario solicitante:</strong> {{ transfer_request.service_requested.get_full_name }}</li>
+                                                        <li><strong>Pasajero(s):</strong>
+                                                            <ul>
+                                                                {% for p in passengers %}
+                                                                    <li>{{ p.name }} ({{ p.phone }})</li>
+                                                                {% empty %}
+                                                                    <li>No hay pasajeros registrados.</li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        </li>
+                                                        <li><strong>Salida:</strong> {{ transfer_request.departure_direc }}</li>
+                                                        <li><strong>Destino:</strong> {{ transfer_request.destination_direc }}</li>
+                                                        <li><strong>Desvíos:</strong>
+                                                            <ul>
+                                                                {% for d in deviations %}
+                                                                    <li>{{ d.desviation_direc }}</li>
+                                                                {% empty %}
+                                                                    <li>Sin desvíos</li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        </li>
                                                         <li><strong>Fecha del traslado:</strong> {{ transfer_request.date }}</li>
+                                                        <li><strong>Hora:</strong> {{ transfer_request.hour }}</li>
+                                                        <li><strong>Empresa solicitante:</strong> {{ transfer_request.company.name }}</li>
                                                         <li><strong>Estado:</strong> {{ transfer_request.status }}</li>
                                                     </ul>
                                                     <p>Por favor, revise el sistema para más detalles.</p>

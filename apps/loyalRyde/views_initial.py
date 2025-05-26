@@ -125,22 +125,25 @@ def approve_request(request):
 def send_approval_email(transfer_request):
     # Obtener los correos de los administradores
     admin_emails = CustomUser.objects.filter(role='administrador').values_list('email', flat=True)
-
-    # Obtener los correos de los usuarios de la misma empresa
     company_emails = CustomUser.objects.filter(company=transfer_request.company).values_list('email', flat=True)
-
-    # Obtener el correo del conductor asociado
     driver_email = transfer_request.user_driver.user.email if transfer_request.user_driver else None
 
-    # Combinar todos los correos en una lista única
     recipients = set(admin_emails) | set(company_emails)
     if driver_email:
         recipients.add(driver_email)
+
+    # Obtener datos adicionales
+    print(transfer_request)
+    passengers = transfer_request.person_to_transfer.all()
+    deviations = transfer_request.deviation.all()
+
 
     # Crear el asunto y el mensaje del correo
     subject = f"Solicitud de traslado aprobada (ID: {transfer_request.id})"
     html_message = render_to_string('emails/approve_transfer.html', {
         'transfer_request': transfer_request,
+        'passengers': passengers,
+        'deviations': deviations,
         'message': 'La solicitud de traslado ha sido aprobada.',
     })
     plain_message = strip_tags(html_message)
