@@ -4,6 +4,8 @@ import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
 from django.core.mail import EmailMultiAlternatives
+from django.contrib import messages
+
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncMonth
 from django.http import JsonResponse
@@ -15,6 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.urls import reverse_lazy
 from django.views.generic import (TemplateView)
+from django.shortcuts import redirect, get_object_or_404
 
 from django.core.mail import send_mail
 
@@ -281,3 +284,14 @@ def delete_coupon(request):
             return JsonResponse({'status': 'error', 'message': 'El cupón no existe.'})
     return JsonResponse({'status': 'error', 'message': 'Método no permitido.'})
 
+
+
+def toggle_paid_driver(request, pk):
+    transfer = get_object_or_404(TransferRequest, pk=pk)
+    transfer.paid_driver = not transfer.paid_driver
+    transfer.save()
+    if transfer.paid_driver:
+        messages.success(request, "¡El viaje fue marcado como pagado al conductor!")
+    else:
+        messages.success(request, "¡El viaje fue marcado como NO pagado al conductor!")
+    return redirect(request.META.get('HTTP_REFERER', '/'))

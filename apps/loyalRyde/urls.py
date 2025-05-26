@@ -76,6 +76,9 @@ urlpatterns = [
     path('reports/excel/', TransferRequestExcelView.as_view(), name='transfer_request_excel'),
     path('reports/generales/', GeneralReportsView.as_view(), name='reportes_generales'),
     path('reports/company/', FilteredTransferRequestsView.as_view(), name='reports_company'),
+    path('transfer/toggle-paid-driver/<int:pk>/', toggle_paid_driver, name='toggle_paid_driver'),
+
+    path('toggle-paid-driver/<int:pk>/', toggle_paid_driver, name='toggle_paid_driver'),
     path('company/update/<int:pk>/', CompanyUpdateView.as_view(), name='company_update'),
     # perfil
     path('profile/', ProfileView.as_view(), name='profile'),
