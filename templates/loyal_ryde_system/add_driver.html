@@ -140,7 +140,7 @@
                         
                         <div class="mb-3 fv-row">
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.first_name.label }}</label>
                                     <!--end::Label-->
@@ -152,7 +152,7 @@
                                         {{ form.first_name.help_text }}
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.last_name.label }}</label>
                                     <!--end::Label-->
@@ -162,6 +162,18 @@
                                     <!--begin::Description-->
                                     <div class="text-muted fs-7">
                                         {{ form.last_name.help_text }}
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <!--begin::Label-->
+                                    <label class="required form-label">{{ form.ci.label }}</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    {{ form.ci }}
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="text-muted fs-7">
+                                        {{ form.ci.help_text }}
                                     </div>
                                 </div>
                             </div>

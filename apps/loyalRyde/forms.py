@@ -90,9 +90,21 @@ class AddCompanyForm(ModelForm):
 
 class CustomUserCreationForm(UserCreationForm):
 
+    ci = CharField(
+        required=False,
+        label="Cédula de Identidad",
+        widget=TextInput(attrs={'class': 'form-control mb-2'})
+    )
+
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         for form in  self.visible_fields():
+            if self.instance and self.instance.pk:
+                try:
+                    driver = CustomUserDriver.objects.get(user=self.instance)
+                    self.fields['ci'].initial = driver.ci
+                except CustomUserDriver.DoesNotExist:
+                    pass
             if form.name == 'username' and self.instance and self.instance.pk:
                 form.field.widget.attrs['readonly'] = True
             if form.name == 'role' or form.name == 'company' or form.name == 'status':

@@ -54,6 +54,7 @@ class DriverAdd(LoginRequiredMixin, CreateView):
             fleet = FleetType.objects.get(id=request.POST.get('type')) 
             custom_user_driver = CustomUserDriver(
                 user=user,
+                ci=request.POST.get('ci'),
                 marca=request.POST.get('marca'),
                 model=request.POST.get('model'),
                 color=request.POST.get('color'),
@@ -89,9 +90,10 @@ class DriverUpdateView(LoginRequiredMixin, UpdateView):
         user = form.save(commit=False)
         user.save()
         
-        # Actualizar instancia de CustomUserDriver
+        # Actualizar instancia de CustomUserDriver  
         custom_user_driver = CustomUserDriver.objects.get(user=user)
         fleet = FleetType.objects.get(id=self.request.POST.get('type'))
+        custom_user_driver.ci = self.request.POST.get('ci')
         custom_user_driver.marca = self.request.POST.get('marca')
         custom_user_driver.model = self.request.POST.get('model')
         custom_user_driver.color = self.request.POST.get('color')
