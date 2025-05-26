@@ -28,6 +28,7 @@
                                         <th>Solicitado</th>
                                         <th>Personas a llevar</th>
                                         <th>Precio base</th>
+                                        <th>Precio ida y vuelta</th> 
                                         <th>Aprobado por</th>
                                         <th>Metodo de pago</th>
                                         <th>Estatus</th>
@@ -50,6 +51,7 @@
                                                 {% endfor %}
                                             </td>
                                             <td class="text-center">{{ transfer_request.rate.price }}$</td>
+                                            <td class="text-center">{{ transfer_request.rate.price_round_trip }}$</td>  
                                             <td class="text-center">{{ transfer_request.approved_by|default:"N/A" }}</td>
                                             <td class="text-center">{{ transfer_request.get_payment_method_display }}</td>
                                             <td class="text-center">
