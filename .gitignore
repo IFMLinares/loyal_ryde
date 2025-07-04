@@ -7,5 +7,4 @@ db.sqlite3
 /media/
 /staticfiles/
 .env
-*.rdb
 dump.rdb
