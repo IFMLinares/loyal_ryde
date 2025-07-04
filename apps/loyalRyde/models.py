@@ -88,7 +88,6 @@ class Company(models.Model):
 
     def __str__(self):
         return f"{self.name}"
-        return self.user.username
 
     class Meta:
         verbose_name = 'Compañia'
@@ -391,6 +390,8 @@ class TransferRequest(models.Model):
     comprobante = models.ImageField(upload_to='comprobantes/', blank=True, null=True, verbose_name="Comprobante del Viaje")
     paid = models.BooleanField(default=False, verbose_name="Pagado", blank=True, null=True)
     paid_driver = models.BooleanField(default=False, verbose_name="Pagado", blank=True, null=True)
+    hora_espera_diurna = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Hora de espera diurna", default=0.00, blank=True, null=True)
+    hora_espera_nocturna = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Hora de espera nocturna", default=0.00, blank=True, null=True)
 
     def apply_discount(self):
         if self.discount_coupon and self.discount_coupon.is_valid():
@@ -533,6 +534,79 @@ class TransferRequest(models.Model):
         # Llama al método save original para guardar normalmente
         super().save(*args, **kwargs)
 
+    def get_total_daytime_waiting_time(self):
+        total_price = Decimal('0.00')
+        cost = self.rate.daytime_waiting_time if self.rate else Decimal('0.00')
+        hours = self.hora_espera_diurna if self.hora_espera_diurna else Decimal('0.00')
+        if hours:
+            total_price = cost * Decimal(hours)
+        
+        total_price = round(total_price, 2)
+        return total_price
+    
+    def get_total_nightly_waiting_time(self):
+        total_price = Decimal('0.00')
+        cost = self.rate.nightly_waiting_time if self.rate else Decimal('0.00')
+        hours = self.hora_espera_nocturna if self.hora_espera_nocturna else Decimal('0.00')
+        if hours:
+            total_price = cost * Decimal(hours)
+        
+        total_price = round(total_price, 2)
+        return total_price
+
+    def get_total_round_trip(self):
+        total_price = Decimal('0.00')
+        if self.is_round_trip:
+            total_price = self.rate.price_round_trip if self.rate else Decimal('0.00')
+        else:
+            total_price = self.rate.price if self.rate else Decimal('0.00')
+        
+        total_price = round(total_price, 2)
+        return total_price
+
+    def get_normal_total(self):
+        total_price = Decimal('0.00')
+        if self.is_round_trip:
+            total_price = self.rate.price_round_trip if self.rate else Decimal('0.00')
+        else:
+            total_price = self.rate.price if self.rate else Decimal('0.00')
+        
+        total_price += self.get_total_daytime_waiting_time()
+        total_price += self.get_total_nightly_waiting_time()
+        total_price += (self.deviation.all().count() * self.rate.detour_local)
+        
+        total_price = round(total_price, 2)
+        return total_price
+
+    def get_len_deviation(self):
+        return self.deviation.all().count()
+    
+    def get_total_deviation(self):
+        total_price = Decimal('0.00')
+        if self.deviation.all().count() > 0:
+            total_price = self.rate.detour_local * self.deviation.all().count()
+        
+        total_price = round(total_price, 2)
+        return total_price
+
+    def get_total_price(self):
+        price = 0
+        if self.is_round_trip   :
+            price = self.get_total_round_trip()
+            print(f"Precio total de ida y vuelta: {price}")
+        else:
+            price = self.get_normal_total()
+            print(f"Precio total normal: {price}")
+        
+        price += self.get_total_daytime_waiting_time()
+        print(f"Precio total con tiempo de espera diurno: {price}")
+        price += self.get_total_nightly_waiting_time()
+        print(f"Precio total con tiempo de espera nocturno: {price}")
+        price += self.get_total_deviation()
+        print(f"Precio total con desviaciones: {price}")
+        return price
+
+        
     def __str__(self):
         return f"Solicitud de Transferencia {self.id}"
     

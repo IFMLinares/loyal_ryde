@@ -215,9 +215,28 @@
                                         <p class="card-text">
                                             <span class="text-dark">{{ detail.rate.route.route_name|title }}</span> <br>
                                             <span class="text-dark">Precio Base: </span> <span style="color:green">{{ detail.rate.price }}$</span><br>
+                                            <span class="text-dark">Precio ida y vuelta: </span> <span style="color:green">{{ detail.rate.price_round_trip }}$</span><br>
                                             <span class="text-dark">Precio de espera por hora (diurna) C/U: </span> <span style="color:green">{{ detail.rate.daytime_waiting_time }}$<br>
                                             <span class="text-dark">Precio de espera por hora (noctura) C/U: </span> <span style="color:green">{{ detail.rate.nightly_waiting_time }}$</span><br>
                                             <span class="text-dark">Precio por desvio local C/U: </span> <span style="color:green">{{ detail.rate.detour_local }}$</span><br>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-dollar-sign"></i> Totalizaciones</h5>
+                                        <p class="card-text">
+                                            {% if detail.is_round_trip %}
+                                                <span class="text-dark">Costo traslado (Ida y vuelta): </span> <span style="color:green">{{ detail.get_total_round_trip }}$</span><br>
+                                            {% else %}
+                                                <span class="text-dark">Costo traslado: </span> <span style="color:green">{{ detail.get_normal_total }}$</span><br>
+                                            {% endif %}
+                                            <span class="text-dark">Horas de espera (diruna): <span style="color:green; font-size: 14px;">{{ detail.hora_espera_diurna }} </span>Hora(s)</span> <span style="color:green; font-size: 14px;">{{ detail.get_total_daytime_waiting_time }} $</span></span> <br>
+                                            <span class="text-dark">Horas de espera (nocturna): <span style="color:green; font-size: 14px;">{{ detail.hora_espera_nocturna }} </span>Hora(s)</span> <span style="color:green; font-size: 14px;">{{ detail.get_total_nightly_waiting_time }} $</span></span> <br>
+                                            <span class="text-dark">Desvios: </span> <span style="color:green"> {{ detail.get_len_deviation }} desvios -></span><span style="color:green; font-size: 14px;">{{ detail.get_total_deviation }} $</span><br>
+                                            <span class="text-dark" style="font-size: 18px;">Total: </span> <span style="color:green; font-size: 18px;">{{ detail.get_total_price }}$</span><br> 
                                         </p>
                                     </div>
                                 </div>

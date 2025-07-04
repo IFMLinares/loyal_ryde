@@ -249,6 +249,19 @@
                                 </div>
                                 {{ form.observations }}
                             </div>
+                            <div class="mt-5 col-md-12">
+                                <div class="col-md-12">
+                                    <h3>Horas de espera:</h3>
+                                </div>
+                            </div>
+                            <div class="mt-5 col-md-6">
+                                <label class="form-label" for="id_final_price">Horas de espera (diurnas):</label>
+                                {{ form.hora_espera_diurna }}
+                            </div>
+                            <div class="mt-5 col-md-6">
+                                <label class="form-label" for="id_final_price">Horas de espera (nocturnas):</label>
+                                {{ form.hora_espera_nocturna }}
+                            </div>
                             <input type="hidden" name="status" id="status" value="{{form.instance.status}}">
                         </div>
                         <br>
