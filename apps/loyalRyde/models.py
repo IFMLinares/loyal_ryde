@@ -571,10 +571,6 @@ class TransferRequest(models.Model):
         else:
             total_price = self.rate.price if self.rate else Decimal('0.00')
         
-        total_price += self.get_total_daytime_waiting_time()
-        total_price += self.get_total_nightly_waiting_time()
-        total_price += (self.deviation.all().count() * self.rate.detour_local)
-        
         total_price = round(total_price, 2)
         return total_price
 
@@ -604,9 +600,10 @@ class TransferRequest(models.Model):
         print(f"Precio total con tiempo de espera nocturno: {price}")
         price += self.get_total_deviation()
         print(f"Precio total con desviaciones: {price}")
+
         return price
 
-        
+
     def __str__(self):
         return f"Solicitud de Transferencia {self.id}"
     
@@ -614,4 +611,3 @@ class TransferRequest(models.Model):
         verbose_name = 'Solicitud de traslado'
         verbose_name_plural = 'Solicitudes de traslado'
         ordering = ["-date_created"]
-
