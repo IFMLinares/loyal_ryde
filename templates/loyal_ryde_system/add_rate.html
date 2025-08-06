@@ -10,7 +10,7 @@
 
 {% block content %}
 
-<div class="post d-flex flex-column-fluid" id="kt_post">
+<div class="post d-flex flex-column-fluid" id="kt_post" data-aos="fade-up">
     <!--begin::Container-->
     <div id="kt_content_container" class="container-xxl">
         <form class="form d-flex flex-column flex-lg-row" method="post" >
@@ -36,7 +36,7 @@
                             
                             <div class="row">
                                 <!-- tipo de servicio -->
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-12 mb-3" data-aos="fade-down">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.service_type.label }}</label>
                                     <!--end::Label-->
@@ -48,7 +48,7 @@
                                     fs-7">{{ form.service_type.help_text }}</div>
                                 </div>
                                 <!-- Ruta -->
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3" data-aos="fade-right">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.route.label }}</label>
                                     <!--end::Label-->
@@ -61,7 +61,7 @@
                                     </div>
                                 </div>
                                 <!-- Tipo de Vehiculo -->
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3" data-aos="fade-left">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.type_vehicle.label }}</label>
                                     <!--end::Label-->
@@ -74,7 +74,7 @@
                                     </div>
                                 </div>
                                 <!-- Precio ida -->
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3" data-aos="fade-right">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.price.label }}</label>
                                     <!--end::Label-->
@@ -87,7 +87,7 @@
                                     </div>
                                 </div>
                                 <!-- Precio ida y vuelta -->
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3"data-aos="fade-down">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.price_round_trip.label }}</label>
                                     <!--end::Label-->
@@ -100,7 +100,7 @@
                                     </div>
                                 </div>
                                 <!-- Costo desvío local -->
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3" data-aos="fade-left">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.detour_local.label }}</label>
                                     <!--end::Label-->
@@ -113,7 +113,7 @@
                                     </div>
                                 </div>
                                 <!-- Hora de espera diurna -->
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3" data-aos="fade-right">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.daytime_waiting_time.label }}</label>
                                     <!--end::Label-->
@@ -126,7 +126,7 @@
                                     </div>
                                 </div>
                                 <!-- Hora de espera nocturna -->
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3" data-aos="fade-left">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.nightly_waiting_time.label }}</label>
                                     <!--end::Label-->
@@ -142,7 +142,7 @@
                                 <!-- Ganancias del conductor -->
                                 <hr>
                                 <h3>Ganancias conductor</h3>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3" data-aos="fade-right">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.driver_gain.label }}</label>
                                     <!--end::Label-->
@@ -155,7 +155,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3" data-aos="fade-down">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.driver_gain_waiting_time.label }}</label>
                                     <!--end::Label-->
@@ -168,7 +168,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3" data-aos="fade-left">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.driver_gain_detour_local.label }}</label>
                                     <!--end::Label-->
@@ -180,7 +180,7 @@
                                         {{ form.driver_gain_detour_local.help_text }}
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3"data-aos="fade-right">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.driver_price.label }}</label>
                                     <!--end::Label-->
@@ -192,7 +192,7 @@
                                         {{ form.driver_price.help_text }}
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3" data-aos="fade-left">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.driver_price_round_trip.label }}</label>
                                     <!--end::Label-->
@@ -205,7 +205,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3" data-aos="fade-right">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.driver_gain_detour_local_quantity.label }}</label>
                                     <!--end::Label-->
@@ -217,7 +217,7 @@
                                         {{ form.driver_gain_detour_local_quantity.help_text }}
                                     </div>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3" data-aos="fade-down">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.driver_daytime_waiting_time.label }}</label>
                                     <!--end::Label-->
@@ -229,7 +229,7 @@
                                         {{ form.driver_daytime_waiting_time.help_text }}
                                     </div>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3" data-aos="fade-left">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.driver_nightly_waiting_time.label }}</label>
                                     <!--end::Label-->
@@ -245,7 +245,7 @@
                                 <!-- Ganancias empresa -->
                                 <hr>
                                 <h3>Ganancias Loyal Ride</h3>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3" data-aos="fade-right">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.gain_loyal_ride.label }}</label>
                                     <!--end::Label-->
@@ -257,7 +257,7 @@
                                         {{ form.gain_loyal_ride.help_text }}
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3" data-aos="fade-left">
                                     <!--begin::Label-->
                                     <label class="required form-label">{{ form.gain_loyal_ride_round_trip.label }}</label>
                                     <!--end::Label-->

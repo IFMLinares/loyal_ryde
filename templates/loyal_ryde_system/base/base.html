@@ -1,104 +1,88 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-	<!--begin::Head-->
-	<head>
-		<base href="../" />
-		<title>Loyal Ride {% block title %}{% endblock title %}</title>
-		<meta charset="utf-8" />
-		<meta
-			name="description"
-			content="Sistema de administración LOYAL RIDE"
-		/>
-		<meta name="keywords" content="" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta property="og:locale" content="es_ES" />
-		<link
-			rel="shortcut icon"
-			href="{% static 'assets/media/logos/favicon.ico'%}"
-		/>
-		
-		<link href="{% static 'assets/css/custom.css'%}" rel="stylesheet" type="text/css" />
+<!--begin::Head-->
 
-		<link
-			rel="stylesheet"
-			href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700"
-		/>
+<head>
+	<base href="../" />
+	<title>Loyal Ride {% block title %}{% endblock title %}</title>
+	<meta charset="utf-8" />
+	<meta name="description" content="Sistema de administración LOYAL RIDE" />
+	<meta name="keywords" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta property="og:locale" content="es_ES" />
+	<link rel="shortcut icon" href="{% static 'assets/media/logos/favicon.ico'%}" />
 
-		<!--begin::Global Stylesheets Bundle(used by all pages)-->
-		<link
-			href="{% static 'assets/plugins/global/plugins.bundle.css' %}"
-			rel="stylesheet"
-			type="text/css"
-		/>
-		<link
-			href="{% static 'assets/css/style.bundle.css' %}"
-			rel="stylesheet"
-			type="text/css"
-		/>
-		<style>
-			.font_white {
-				color: white
-			}
-		</style>
-		<!--end::Global Stylesheets Bundle-->
-		{% block extra_css %} {% endblock extra_css %}
-	</head>
-	<!--end::Head-->
-	<!--begin::Body-->
-	<body
-		id="kt_body"
-		class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled aside-enabled aside-fixed"
-		style="
+	<link href="{% static 'assets/css/custom.css'%}" rel="stylesheet" type="text/css" />
+
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+
+	<!--begin::Global Stylesheets Bundle(used by all pages)-->
+	<link href="{% static 'assets/plugins/global/plugins.bundle.css' %}" rel="stylesheet" type="text/css" />
+	<link href="{% static 'assets/css/style.bundle.css' %}" rel="stylesheet" type="text/css" />
+	<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+	<style>
+		.font_white {
+			color: white
+		}
+	</style>
+	<!--end::Global Stylesheets Bundle-->
+	{% block extra_css %} {% endblock extra_css %}
+</head>
+<!--end::Head-->
+<!--begin::Body-->
+
+<body id="kt_body" class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled aside-enabled aside-fixed" style="
 			--kt-toolbar-height: 55px;
 			--kt-toolbar-height-tablet-and-mobile: 55px;
-		"
-	>
-		<!--begin::Main-->
-		<!--begin::Root-->
-		<div class="d-flex flex-column flex-root">
-			<!--begin::Page-->
-			<div class="page d-flex flex-row flex-column-fluid">
-				<!--begin::Aside-->
-				{% include "loyal_ryde_system/base/sidebar.html" %}
-				<!--end::Aside-->
-				<!--begin::Wrapper-->
-				<div
-					class="wrapper d-flex flex-column flex-row-fluid"
-					id="kt_wrapper"
-				>
-					<!--begin::Header-->
-					{% include "loyal_ryde_system/base/topbar.html" %}
-					<!--end::Header-->
+		">
+	<!--begin::Main-->
+	<!--begin::Root-->
+	<div class="d-flex flex-column flex-root">
+		<!--begin::Page-->
+		<div class="page d-flex flex-row flex-column-fluid">
+			<!--begin::Aside-->
+			{% include "loyal_ryde_system/base/sidebar.html" %}
+			<!--end::Aside-->
+			<!--begin::Wrapper-->
+			<div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
+				<!--begin::Header-->
+				{% include "loyal_ryde_system/base/topbar.html" %}
+				<!--end::Header-->
 
-					{% block toolbar %}
-						{% include "loyal_ryde_system/base/toolbar.html" %}
-					{% endblock toolbar %}
+				{% block toolbar %}
+				{% include "loyal_ryde_system/base/toolbar.html" %}
+				{% endblock toolbar %}
 
-					<!--begin::Content-->
-					{% block content %} {% endblock content %}
-					<!--end::Content-->
-					<!--begin::Footer-->
+				<!--begin::Content-->
+				{% block content %} {% endblock content %}
+				<!--end::Content-->
+				<!--begin::Footer-->
 
-					<!--end::Footer-->
-				</div>
-				
-				{% include "loyal_ryde_system/base/footer.html" %}
-				<!--end::Wrapper-->
+				<!--end::Footer-->
 			</div>
-			<!--end::Page-->
-		</div>
-		{% include "loyal_ryde_system/base/topbar_left.html" %}
 
-		<!--begin::Javascript-->
-		<script>
-			var hostUrl = "{% static 'assets/' %}";
-		</script>
-		<!--begin::Global Javascript Bundle(used by all pages)-->
-		<script src="{% static 'assets/plugins/global/plugins.bundle.js' %}"></script>
-		<script src="{% static 'assets/js/scripts.bundle.js' %}"></script>
-		<script src="{% static 'assets/js/sweetalert2/sweet-alert-2-11.js'%}"></script>
-		<!-- <script>
+			{% include "loyal_ryde_system/base/footer.html" %}
+			<!--end::Wrapper-->
+		</div>
+		<!--end::Page-->
+	</div>
+	{% include "loyal_ryde_system/base/topbar_left.html" %}
+
+	<!--begin::Javascript-->
+	<script>
+		var hostUrl = "{% static 'assets/' %}";
+	</script>
+	<!--begin::Global Javascript Bundle(used by all pages)-->
+	<script src="{% static 'assets/plugins/global/plugins.bundle.js' %}"></script>
+	<script src="{% static 'assets/js/scripts.bundle.js' %}"></script>
+	<script src="{% static 'assets/js/sweetalert2/sweet-alert-2-11.js'%}"></script>
+	<!-- AOS Animate On Scroll JS -->
+	<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+	<script>
+		AOS.init();
+	</script>
+	<!-- <script>
 			{% if messages %}
 				var success_message = '';
 				{% for message in messages %}
@@ -113,40 +97,41 @@
 				});
 			{% endif %}
 		</script> -->
-		{% block error_js %}
-		<script>
-			{% if form.errors %}
-				var errors = '';
-				{% for field in form %}
-					{% for error in field.errors %}
-						errors += '<p style="margin-top: 7px; margin-bottom: 7px;">{{ field.label|title }}: {{ error }}</p>';
-					{% endfor %}
-				{% endfor %}
-				Swal.fire({
-					title: 'Error!',
-					html: errors, // Cambia 'text' por 'html'
-					icon: "error",
-					width: 500,
-					height: 700
-					// footer: '<a href="#">Why do I have this issue?</a>'
-				});
-			{% endif %}
-			</script>
-		{% endblock error_js %}
-		{% if messages %}
-			<script>
-				Swal.fire({
-					icon: 'success',
-					title: 'Éxito',
-					html: '{% for message in messages %}<p>{{ message }}</p>{% endfor %}',
-					showConfirmButton: true,
-					confirmButtonText: 'Cerrar'
-				});
-			</script>
+	{% block error_js %}
+	<script>
+		{% if form.errors %}
+		var errors = '';
+		{% for field in form %}
+		{% for error in field.errors %}
+		errors += '<p style="margin-top: 7px; margin-bottom: 7px;">{{ field.label|title }}: {{ error }}</p>';
+		{% endfor %}
+		{% endfor %}
+		Swal.fire({
+			title: 'Error!',
+			html: errors, // Cambia 'text' por 'html'
+			icon: "error",
+			width: 500,
+			height: 700
+			// footer: '<a href="#">Why do I have this issue?</a>'
+		});
 		{% endif %}
-		<!--end::Global Javascript Bundle-->
-		{% block extra_js %} {% endblock extra_js %}
-		<!--end::Javascript-->
-	</body>
-	<!--end::Body-->
+	</script>
+	{% endblock error_js %}
+	{% if messages %}
+	<script>
+		Swal.fire({
+			icon: 'success',
+			title: 'Éxito',
+			html: '{% for message in messages %}<p>{{ message }}</p>{% endfor %}',
+			showConfirmButton: true,
+			confirmButtonText: 'Cerrar'
+		});
+	</script>
+	{% endif %}
+	<!--end::Global Javascript Bundle-->
+	{% block extra_js %} {% endblock extra_js %}
+	<!--end::Javascript-->
+</body>
+<!--end::Body-->
+
 </html>
