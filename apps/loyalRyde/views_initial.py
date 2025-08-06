@@ -247,6 +247,7 @@ def get_rates(request):
         except (Route.DoesNotExist, Rates.DoesNotExist, ValueError):
             return JsonResponse({"error": "No se encontró una tarifa para esta ruta o los parámetros son inválidos."}, status=404)
 
+@csrf_exempt
 @require_POST
 def verify_discount_code(request):
     code = request.POST.get('code')

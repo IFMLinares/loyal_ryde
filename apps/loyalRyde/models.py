@@ -499,7 +499,8 @@ class TransferRequest(models.Model):
             self.company = guest_company
 
         # self.apply_discount()
-        self.final_price = self.price + (self.deviation.all().count() * self.rate.detour_local)
+        print(self.deviation.all())
+        # self.final_price = self.price + (self.deviation.all().count() * self.rate.detour_local)
 
 
                 # Enviar notificación en tiempo real

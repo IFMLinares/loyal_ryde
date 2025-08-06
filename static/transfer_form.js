@@ -353,47 +353,61 @@ $(document).ready(function () {
 	})
 
 	$('#id_discount_code').on('input', function () {
-        var code = $(this).val();
-        var discountMessage = $('#discount_message');
-        var discountedPriceContainer = $('#discounted_price_container');
-        var discountedPriceInput = $('#id_discounted_price');
+		var code = $(this).val();
+		var discountMessage = $('#discount_message');
+		var discountedPriceContainer = $('#discounted_price_container');
+		var discountedPriceInput = $('#id_discounted_price');
+		var price = parseFloat($('#id_price').val());
+		var aditionalPrice = parseFloat($('#id_aditional').val()) || 0;
+		var subtotal = price + aditionalPrice;
 
-        if (code.length > 0) {
-            $.ajax({
-                url: urlverify_discount_code,
-                type: 'POST',
-                data: {
-                    'code': code,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
-                },
-                success: function (data) {
-                    if (data.valid) {
-                        discountMessage.html('<span class="text-success">Código válido. Descuento: ' + data.discount_value + ' (' + data.discount_type + ')</span>');
-                        console.log(data.discount_value, data.discount_type);
-                        updateDiscountedPrice(data.discount_value, data.discount_type);
-                        discountedPriceContainer.removeClass('d-none');
-                    } else {
-                        discountMessage.html('<span class="text-danger">' + data.message + '</span>');
-                        discountedPriceContainer.addClass('d-none');
-                        discountedPriceInput.val('');
-                        $('#id_final_price').val($('#id_price').val());
-                        $("#id_final_price").val(discountedPrice.toFixed(2));
-                        AditionalDetour();
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                    discountMessage.html('<span class="text-danger">Error al verificar el código de descuento.</span>');
-                    discountedPriceContainer.addClass('d-none');
-                    discountedPriceInput.val('');
-                }
-            });
-        } else {
-            discountMessage.html('');
-            discountedPriceContainer.addClass('d-none');
-            discountedPriceInput.val('');
-        }
-    });
+		if (code.length > 0) {
+			$.ajax({
+				url: urlverify_discount_code,
+				type: 'POST',
+				data: {
+					'code': code,
+					'csrfmiddlewaretoken': '{{ csrf_token }}'
+				},
+				success: function (data) {
+					console.log(data);
+					if (data.valid) {
+						discountMessage.html('<span class="text-success">Código válido. Descuento: ' + data.discount_value +  ')</span>');
+						// verificar si es fixed o percentage
+						var discountedPrice = parseFloat($('#id_price').val());
+						if (data.discount_type === 'percentage') {
+							// calcular el porcentaje a restar
+							var discountAmount = (data.discount_value / 100) * subtotal;
+							$('#id_final_price').val((subtotal - discountAmount).toFixed(2));
+
+						} else if (data.discount_type === 'fixed') {
+							// si es fixed calcular el total menos el descuento
+							discountedPrice = subtotal - data.discount_value;
+							$('#id_final_price').val(discountedPrice.toFixed(2));
+						}
+						// updateDiscountedPrice(data.discount_value, data.discount_type);
+					} else {
+						discountMessage.html('<span class="text-danger">' + data.message + '</span>');
+						discountedPriceContainer.addClass('d-none');
+						discountedPriceInput.val('');
+						$('#id_final_price').val($('#id_price').val());
+						$("#id_final_price").val(discountedPrice.toFixed(2));
+						AditionalDetour();
+					}
+				},
+				error: function (xhr, status, error) {
+					console.error('Error:', error);
+					discountMessage.html('<span class="text-danger">Error al verificar el código de descuento.</span>');
+					discountedPriceContainer.addClass('d-none');
+					discountedPriceInput.val('');
+				}
+			});
+		} else {
+			discountMessage.html('');
+			discountedPriceContainer.addClass('d-none');
+			discountedPriceInput.val('');
+		}
+	});
 
 	$("#id_departure_site_route").change(function () {
         const selectedDeparture = $(this).val();

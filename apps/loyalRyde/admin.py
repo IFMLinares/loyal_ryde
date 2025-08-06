@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import TransferRequest, Company, AbstractUser, CustomUser, CustomUserDriver, TransferStop,Desviation, ArrivalPoint, DeparturePoint, PeopleTransfer, Rates, Route
+from .models import TransferRequest, Company, AbstractUser, CustomUser, CustomUserDriver, TransferStop,Desviation, ArrivalPoint, DeparturePoint, PeopleTransfer, Rates, Route, DiscountCoupon
 # Register your models here.
 
+admin.site.register(DiscountCoupon)
 admin.site.register(CustomUser)
 admin.site.register(Company)
 admin.site.register(CustomUserDriver)

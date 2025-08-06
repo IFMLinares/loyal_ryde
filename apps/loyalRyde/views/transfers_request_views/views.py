@@ -67,6 +67,8 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         send_mail(subject, plain_message, from_email, recipients, html_message=html_message)
 
     def form_valid(self, form):
+        print("Form is valid, proceeding to save TransferRequest...")  # Depuración
+        print(f"Form data: {form.cleaned_data}")  # Depuración
         form.instance.service_requested = self.request.user
 
         # Asigna el valor de company según el rol del usuario
@@ -76,6 +78,14 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
             form.instance.company = self.request.user.company
 
         print(f"Company assigned: {form.instance.company}")  # Depuración
+
+        # Guardar el discount_code si viene en el formulario
+        discount_code_value = self.request.POST.get('discount_code')
+        discount_coupon = None
+        if discount_code_value:
+            discount_coupon = DiscountCoupon.objects.filter(code=discount_code_value).first()
+            if discount_coupon:
+                form.instance.discount_coupon = discount_coupon
 
         transfer_request = form.save()
 
@@ -88,8 +98,6 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
             transfer_request.price = rate.price_round_trip
         else:
             transfer_request.price = rate.price
-
-        # Aplica el cupón de descuento si existe
 
         # Calcula el precio final basado en los desvíos
         waypoints_numbers = form.cleaned_data.get('waypoints_numbers', 0)
@@ -105,14 +113,10 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)  # Depuración
-        print(request.POST.get('company'))  
-        print(request.POST.get('company'))  
-        print(request.POST.get('company'))  
-        print(request.POST.get('company'))  
-        print(request.POST.get('company'))  # Depuración   
         # Obtén la fecha directamente del POST
         fecha = request.POST.get('date')
+        discount_code = self.request.POST.get('discount_code')
+        discount_code = DiscountCoupon.objects.filter(code=discount_code).first()
 
         # Convierte la fecha al formato que Django espera
         fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
@@ -125,7 +129,6 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
 
         # Obtén el objeto TransferRequest recién creado
         transfer_request = self.object
-        # Procesa los desvíos adicionales
 
         try:
             waypoints_numbers = int(request.POST.get('waypoints_numbers', 0))
