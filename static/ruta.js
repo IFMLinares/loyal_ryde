@@ -217,23 +217,44 @@ function geocodeLatLng(latLng, callback) {
     });
 }
 
+async function getCityAndStateFromAddress(address) {
+    var geocoder = new google.maps.Geocoder();
+    return new Promise((resolve, reject) => {
+        geocoder.geocode({ 'address': address }, function (results, status) {
+            if (status === 'OK' && results[0]) {
+                const components = results[0].address_components;
+                let city = "", state = "";
+                components.forEach(comp => {
+                    if (comp.types.includes("locality")) city = comp.long_name;
+                    if (comp.types.includes("administrative_area_level_1")) state = comp.long_name;
+                });
+                resolve({ city, state });
+            } else {
+                resolve({ city: "", state: "" });
+            }
+        });
+    });
+}
+
 async function handleAddressChange() {
     const departureAddress = $("#id_destination_direc").val();
     const arrivalAddress = $("#id_departure_direc").val();
     const nro = $('#id_person_to_transfer option:selected').length;
 
     try {
-        const departureCity = await getCityFromAddress(departureAddress);
-        const arrivalCity = await getCityFromAddress(arrivalAddress);
+        const departure = await getCityAndStateFromAddress(departureAddress);
+        const arrival = await getCityAndStateFromAddress(arrivalAddress);
 
-        console.log(departureCity, arrivalCity);
+        console.log(departure, arrival);
 
         $.ajax({
             url: rates_ajax,  // URL de la vista Django
             type: "GET",
             data: {
-                departure_city: departureCity,
-                arrival_city: arrivalCity,
+                departure_city: departure.city,
+                departure_state: departure.state,
+                arrival_city: arrival.city,
+                arrival_state: arrival.state,
                 nro: nro,
             },
             success: function (data) {
@@ -365,7 +386,7 @@ async function handleAddressChange() {
             }
         });
     } catch (error) {
-        console.error("Error al obtener la ciudad de la dirección:", error);
+        console.error("Error al obtener la ciudad/estado de la dirección:", error);
     }
 }
 

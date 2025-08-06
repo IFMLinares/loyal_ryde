@@ -200,18 +200,29 @@ def get_routes_by_departure(request):
 def get_rates(request):
     if request.method == "GET":
         departure_city = request.GET.get("departure_city")
+        departure_state = request.GET.get("departure_state")
         arrival_city = request.GET.get("arrival_city")
-        print(departure_city, arrival_city)
-        nro = int(request.GET.get("nro"))
+        arrival_state = request.GET.get("arrival_state")
+        nro = request.GET.get("nro")
+        print(departure_city, departure_state, arrival_city, arrival_state)
+
+        # Validar que todos los parámetros estén presentes y no sean None o vacíos
+        if not all([departure_city, departure_state, arrival_city, arrival_state, nro]):
+            return JsonResponse({"error": "Faltan parámetros requeridos para buscar la tarifa."}, status=400)
 
         try:
-            # Buscar la ruta con los nombres de las ciudades de salida y destino
-            route = Route.objects.get(departure_point__name__icontains=departure_city, arrival_point__name__icontains=arrival_city)
+            nro = int(nro)
+            # Buscar la ruta con los nombres de las ciudades y estados de salida y destino
+            route = Route.objects.get(
+                departure_point__name__icontains=departure_city,
+                departure_point__state__icontains=departure_state,
+                arrival_point__name__icontains=arrival_city,
+                arrival_point__state__icontains=arrival_state
+            )
             # Luego, busca la tarifa asociada a esa ruta
             rate = Rates.objects.filter(route=route)
             rate_data = []
             for n in rate:
-                # if n.vehicle.passengers_numbers >= nro:
                 rate_data.append({
                     "rate_id": n.id,
                     'rate_vehicle': f'{n.type_vehicle}',
@@ -226,17 +237,15 @@ def get_rates(request):
                     'rate_daytime_waiting_time': n.daytime_waiting_time,
                     'rate_nightly_waiting_time': n.nightly_waiting_time,
                     'rate_detour_local': n.detour_local,
-                    # validacion de si exsite el campo si no es vacio (en blanco)
                     'rate_service_type': n.service_type if n.service_type else 'No disponible',
-                    # Agrega más campos según tus necesidades
                 })
                 print(rate_data)
             response_data = {
                 "rates": rate_data
             }
             return JsonResponse(response_data)
-        except (Route.DoesNotExist, Rates.DoesNotExist):
-            return JsonResponse({"error": "No se encontró una tarifa para esta ruta."}, status=404)
+        except (Route.DoesNotExist, Rates.DoesNotExist, ValueError):
+            return JsonResponse({"error": "No se encontró una tarifa para esta ruta o los parámetros son inválidos."}, status=404)
 
 @require_POST
 def verify_discount_code(request):
