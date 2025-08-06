@@ -29,7 +29,7 @@
                     <!--begin::Card body-->
                     <div class="card-body text-center pt-0">
                         <!--begin::Image input-->
-                        <div class="image-input image-input-empty image-input-outline mb-3" data-kt-image-input="true" style="background-image: url({% static 'assets/media/svg/files/blank-image.svg'%})">
+                        <div class="image-input image-input-empty image-input-outline mb-3" data-kt-image-input="true" style="background-image: url({% if form.instance.image %}{{ form.instance.image.url }}{% else %}{% static 'assets/media/svg/files/blank-image.svg' %}{% endif %})">
                             <!--begin::Preview existing avatar-->
                             <div class="image-input-wrapper w-150px h-150px"></div>
                             <!--end::Preview existing avatar-->

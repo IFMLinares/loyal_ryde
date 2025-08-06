@@ -256,44 +256,6 @@
 				</div>
 				{% if user.is_authenticated and user.role == 'administrador' %}
 				<!-- Contenido para administradores -->
-				<!-- Emergencias -->
-				<div class="menu-item">
-					<div class="menu-content pt-8 pb-2">
-						<span
-							class="font_white text-uppercase fs-8 ls-1"
-							>Emergencias</span
-						>
-					</div>
-				</div>
-				<div
-					data-kt-menu-trigger="click"
-					class="menu-item menu-accordion"
-				>
-					<span class="menu-link">
-						<span class="menu-icon">
-							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<i class="fas fa-solid fa-exclamation"></i>
-							<!--end::Svg Icon-->
-						</span>
-						<span class="menu-title">Emergencias</span>
-						<span class="menu-arrow"></span>
-					</span>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link"
-								href="{% url 'core:index' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Ver emergencias</span
-								>
-							</a>
-						</div>
-					</div>
-				</div>
 				
 				<!-- Empresas -->
 				<div class="menu-item">
@@ -712,45 +674,6 @@
 											</a>
 										</div>
 									</div>
-				</div>
-				
-				<!-- Comentarios -->
-				<div class="menu-item">
-					<div class="menu-content pt-8 pb-2">
-						<span
-							class="font_white text-uppercase fs-8 ls-1"
-							>Comentarios</span
-						>
-					</div>
-				</div>
-				<div
-					data-kt-menu-trigger="click"
-					class="menu-item menu-accordion"
-				>
-					<span class="menu-link">
-						<span class="menu-icon">
-							<!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-							<i class="fas fa-solid fa-tag"></i>
-							<!--end::Svg Icon-->
-						</span>
-						<span class="menu-title">Comentarios</span>
-						<span class="menu-arrow"></span>
-					</span>
-					<div class="menu-sub menu-sub-accordion menu-active-bg">
-						<div class="menu-item">
-							<a
-								class="menu-link"
-								href="{% url 'core:index' %}"
-							>
-								<span class="menu-bullet">
-									<span class="bullet bullet-dot"></span>
-								</span>
-								<span class="menu-title"
-									>Ver comentarios</span
-								>
-							</a>
-						</div>
-					</div>
 				</div>
 
 				<!-- Cupones -->

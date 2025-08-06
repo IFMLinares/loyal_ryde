@@ -108,14 +108,14 @@
                                     <td class="d-flex align-items-center">
                                         <!--begin:: Avatar -->
                                         <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                            <a href="../../demo1/dist/apps/user-management/users/view.html">
+                                            <a >
                                                 <div class="symbol-label fs-3 bg-light-danger text-danger">{{ user.first_name|slice:":1" }}</div>
                                             </a>
                                         </div>
                                         <!--end::Avatar-->
                                         <!--begin::User details-->
                                         <div class="d-flex flex-column">
-                                            <a href="../../demo1/dist/apps/user-management/users/view.html" class="text-gray-800 text-hover-primary mb-1">{{ user.first_name }} {{ user.last_name }}</a>
+                                            <a href="{% url 'core:update_user_operator' pk=user.id %}" class="text-gray-800 text-hover-primary mb-1">{{ user.first_name }} {{ user.last_name }}</a>
                                             <span>{{ user.email }}</span>
                                         </div>
                                         <!--begin::User details-->

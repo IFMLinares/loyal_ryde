@@ -91,7 +91,7 @@
                                     <!--end::Thumbnail-->
                                     <div class="ms-5">
                                         <!--begin::Title-->
-                                        <a href="" class="text-gray-800 text-hover-primary fs-5 fw-bolder mb-1" data-kt-ecommerce-category-filter="category_name">{{ companie.name }}</a>
+                                        <a href="{% url 'core:company_update' pk=companie.id %}" class="text-gray-800 text-hover-primary fs-5 fw-bolder mb-1" data-kt-ecommerce-category-filter="category_name">{{ companie.name }}</a>
                                         <!--end::Title-->
                                         <!--begin::Description-->
                                         <div class="text-muted fs-7 fw-bolder">{{ companie.address }}.</div>
