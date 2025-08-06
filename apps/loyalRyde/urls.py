@@ -101,4 +101,7 @@ urlpatterns = [
     path('transfer_request/<int:pk>/pdf/', TransferRequestPDFView.as_view(), name='transfer_request_pdf'),
     path('guest-transfer/success/<int:pk>/', GuestTransferSuccessView.as_view(), name='guest_transfer_success'),
     path('reports/company_filtered/', CompanyFilteredTransferRequestsView.as_view(), name='reports_company_filtered'),
+    # Vistas para iniciar y finalizar traslado
+    path('transfer/start/', TransferStartView.as_view(), name='transfer_start'),
+    path('transfer/finish/', TransferFinishView.as_view(), name='transfer_finish'),
 ]

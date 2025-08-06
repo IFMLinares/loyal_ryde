@@ -436,7 +436,7 @@ class TransferRequestExcelView(LoginRequiredMixin, ListView):
 
         # Escribir los encabezados
         headers = [
-            "Fecha", "Dia", "Hora", "Pasajero", "Origen", "Destino", 
+            "Fecha", "Dia", "Horas", "Pasajero", "Origen", "Destino", 
             "MONTO base $", "Horas Espera Cant.", 
             "Horas Espera $", "Desvios Cant", 
             "Desvios US$", "Lugar", 
@@ -465,11 +465,11 @@ class TransferRequestExcelView(LoginRequiredMixin, ListView):
             for person in transfer_request.person_to_transfer.all():
                 row = [
                     transfer_request.date.strftime('%d/%m/%Y') if transfer_request.date else '',
-                    transfer_request.date.strftime('%A') if transfer_request.date else '',
+                    format_date(transfer_request.date, 'EEEE', locale='es') if transfer_request.date else '',
                     transfer_request.hour.strftime('%H:%M') if transfer_request.hour else '',
                     person.name if person else '',
-                    transfer_request.departure_site_route if transfer_request.departure_site_route else '',
-                    transfer_request.destination_route if transfer_request.destination_route else '',
+                    transfer_request.departure_direc if transfer_request.departure_direc else '',
+                    transfer_request.destination_direc if transfer_request.destination_direc else '',
                     transfer_request.price if transfer_request.price else '',
                     transfer_request.stop_time.count() if transfer_request.stop_time else '',
                     sum(stop.total_time.total_seconds() / 3600 for stop in transfer_request.stop_time.all()) * transfer_request.rate.daytime_waiting_time if transfer_request.stop_time and transfer_request.rate.daytime_waiting_time else '',
@@ -598,7 +598,7 @@ class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
         if company_name:
             company = Company.objects.filter(name=company_name).first()
             if company:
-                transfer_requests = TransferRequest.objects.filter(company=company.name)
+                transfer_requests = TransferRequest.objects.filter(company=company)
 
                 if status and status != 'all':
                     transfer_requests = transfer_requests.filter(status=status)
@@ -619,7 +619,7 @@ class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
 
                 # Agregar encabezados
                 headers = [
-                    "Fecha", "Dia", "Hora", "Pasajero", "Origen", "Destino", 
+                    "Fecha", "Dia", "Hora", "Pasajeros", "Origen", "Destino", 
                     "MONTO base $", "Horas Espera Cant.", 
                     "Horas Espera $", "Desvios Cant", 
                     "Desvios US$", "Lugar", 
@@ -634,17 +634,17 @@ class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
                         tr.date.strftime('%A'),  # Día de la semana
                         tr.hour.strftime('%H:%M'),
                         ', '.join([p.name for p in tr.person_to_transfer.all()]),  # Pasajeros
-                        tr.departure_site_route,
-                        tr.destination_route,
+                        tr.departure_direc,
+                        tr.destination_direc,
                         tr.price,
                         sum([stop.total_time.total_seconds() / 3600 for stop in tr.stop_time.all()]),  # Horas de espera
                         sum([stop.total_time.total_seconds() / 3600 * tr.rate.daytime_waiting_time for stop in tr.stop_time.all()]),  # Horas de espera $
                         tr.deviation.count(),
                         sum([d.desviation_number for d in tr.deviation.all()]),  # Desvios US$
-                        tr.departure_site_route,
+                        tr.destination_direc,
                         tr.final_price,
                         tr.ceco_grafo_pedido,
-                        tr.service_requested.username if tr.service_requested else ''
+                        tr.service_requested.company.name if tr.service_requested else ''
                     ])
 
                 # Guardar el archivo en un objeto BytesIO
@@ -682,7 +682,7 @@ class TransferRequestPDFView(LoginRequiredMixin, View):
 
         # Información de salida y destino
         departure_destination_info = [
-            ["Dirección de Salida", transfer_request.departure_direc],
+            ["Dirección de Salidas", transfer_request.departure_direc],
             ["Punto de Referencia de Salida", transfer_request.departure_landmark],
             ["Ruta de Destino", transfer_request.destination_route],
             ["Dirección de Destino", transfer_request.destination_direc],

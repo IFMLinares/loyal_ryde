@@ -324,6 +324,14 @@ def get_whatsapp_link(request):
             persons = ', '.join([f"{p.name} ({p.phone})" for p in transfer.person_to_transfer.all()])
             deviations = ', '.join([d.desviation_direc for d in transfer.deviation.all()])
             empresa = transfer.company.name if transfer.company else "Modo invitado"
+            # Generar id codificado en base64
+            import base64
+            encoded_id = base64.b64encode(str(transfer.id).encode()).decode()
+            # Construir enlaces
+            url_base = request.build_absolute_uri('/')[:-1]  # Quita el slash final
+            iniciar_url = f"{url_base}/transfer/start/?id={encoded_id}"
+            finalizar_url = f"{url_base}/transfer/finish/?id={encoded_id}"
+
             mensaje = (
                 f"Solicitud de traslado aprobada\n"
                 f"ID: {transfer.id}\n"
@@ -336,6 +344,8 @@ def get_whatsapp_link(request):
                 f"Hora: {transfer.hour}\n"
                 f"Empresa solicitante: {empresa}\n"
                 f"Estado: {transfer.status}\n"
+                f"Iniciar traslado: \n{iniciar_url}\n"
+                f"Finalizar traslado: \n{finalizar_url}\n"
             )
             # Codifica el mensaje para URL
             from urllib.parse import quote

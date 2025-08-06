@@ -25,6 +25,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, F, Q, Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+import base64
+
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
 from django.views.generic import (CreateView, DeleteView, ListView, UpdateView, View)
@@ -345,3 +347,40 @@ class DriverPayrollExcelView(LoginRequiredMixin, View):
         response = HttpResponse(response, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = f'attachment; filename=nomina_conductor_{driver.user.get_full_name()}.xlsx'
         return response
+    
+class TransferStartView(LoginRequiredMixin, View):
+    template_name = 'loyal_ryde_system/transfer_status_message.html'
+
+    def get(self, request, *args, **kwargs):
+        encoded_id = request.GET.get('id')
+        if not encoded_id:
+            return render(request, self.template_name, {'message': 'ID no proporcionado.'})
+        try:
+            decoded_id = int(base64.b64decode(encoded_id).decode())
+        except Exception:
+            return render(request, self.template_name, {'message': 'ID inválido.'})
+        transfer = get_object_or_404(TransferRequest, pk=decoded_id)
+        if transfer.status != 'aprobada':
+            return render(request, self.template_name, {'message': 'No se puede iniciar el traslado. El estado debe ser "aprobada".'})
+        transfer.status = 'en proceso'
+        transfer.save()
+        return render(request, self.template_name, {'message': 'Traslado iniciado.'})
+
+
+class TransferFinishView(LoginRequiredMixin, View):
+    template_name = 'loyal_ryde_system/transfer_status_message.html'
+
+    def get(self, request, *args, **kwargs):
+        encoded_id = request.GET.get('id')
+        if not encoded_id:
+            return render(request, self.template_name, {'message': 'ID no proporcionado.'})
+        try:
+            decoded_id = int(base64.b64decode(encoded_id).decode())
+        except Exception:
+            return render(request, self.template_name, {'message': 'ID inválido.'})
+        transfer = get_object_or_404(TransferRequest, pk=decoded_id)
+        if transfer.status != 'en proceso':
+            return render(request, self.template_name, {'message': 'No se puede finalizar el traslado. El estado debe ser "en proceso".'})
+        transfer.status = 'finalizada'
+        transfer.save()
+        return render(request, self.template_name, {'message': 'Traslado finalizado.'})
