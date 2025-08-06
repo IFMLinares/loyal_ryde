@@ -60,7 +60,7 @@ Inicio
                                         <span class="text-muted">Sin personas</span>
                                         {% endfor %}
                                     </td>
-                                    <td class="text-center">{{ transfer_request.final_price }}$</td>
+                                    <td class="text-center">{{ transfer_request.get_total_price }}$</td>
                                     <td class="text-center">{{ transfer_request.approved_by|default:"N/A" }}</td>
                                     <td class="text-center">{{ transfer_request.get_payment_method_display }}</td>
                                     <td class="text-center">
