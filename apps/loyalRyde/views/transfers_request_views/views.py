@@ -554,6 +554,7 @@ class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
                     transfer_requests = transfer_requests.filter(date__range=(start_date, end_date))
 
                 print(f"Transfer requests: {transfer_requests}")  # Depuración
+                
                 data = {
                     'name': company.name,
                     'email': company.email,
@@ -571,7 +572,7 @@ class FilteredTransferRequestsView(LoginRequiredMixin, TemplateView):
                             'price': tr.price,
                             'deviation_count': tr.deviation.count(),
                             'final_price': tr.final_price,
-                            'grafo_ceco': tr.ceco_grafo_pedido,
+                            'payment_method': dict(payment_method_choices).get(tr.payment_method, tr.payment_method),
                             'service_requested': tr.service_requested.first_name + ' ' +tr.service_requested.last_name ,
                             'status': tr.status,
                             'id': tr.id,

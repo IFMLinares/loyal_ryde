@@ -60,7 +60,7 @@
                                     <th>Desvios</th>
                                     <!-- <th>Lugar</th> -->
                                     <th>Monto total $</th>
-                                    <th>GRAFO/CECO</th>
+                                    <th>Método de pago</th>
                                     <th>Solicitante</th>
                                 </tr>
                             </thead>
@@ -78,7 +78,7 @@
                                         <td class="text-center">{{ transfer_request.deviation.count }}</td>
                                         <!-- <td class="text-center">{{ transfer_request.diversion_place }}</td> -->
                                         <td class="text-center">{{ transfer_request.final_price }}</td>
-                                        <td class="text-center">{{ transfer_request.grafo_ceco }}</td>
+<td class="text-center">{{ transfer_request.get_payment_method_display }}</td>
                                         <td class="text-center">{{ transfer_request.service_requested.company.name }}</td>
                                     </tr>
                                 {% endfor %}
