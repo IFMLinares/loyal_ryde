@@ -4,6 +4,18 @@ $(document).ready(function () {
 		showDropdowns: true,
 		minYear: 1901,
 		maxYear: parseInt(moment().format("DD/MM/YYYY"), 10),
+		    locale: {
+        format: "DD/MM/YYYY",
+        separator: " - ",
+        applyLabel: "Aplicar",
+        cancelLabel: "Cancelar",
+        daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+        monthNames: [
+            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        ],
+        firstDay: 1
+    }
 	});
 	$("#id_in_town").change(function () {
 		if ($(this).prop("checked")) {

@@ -54,9 +54,9 @@
                                 <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_date">Fecha del traslado:</label>
                                     {% if form.date.value %}
-                                    <input class="form-control" type="date" placeholder="Selecciona una fecha" id="" name="date" required value='{{ form.date.value|date:"Y-m-d" }}'/> 
+                                    <input class="form-control" type="text" placeholder="DD/MM/AAAA" id="id_date" name="date" required value='{{ form.date.value|date:"d/m/Y" }}' pattern="\d{2}/\d{2}/\d{4}" />
                                     {% else %}
-                                    <input class="form-control" placeholder="Selecciona una fecha" id="id_date" name="date" required /> 
+                                    <input class="form-control" type="text" placeholder="DD/MM/AAAA" id="id_date" name="date" required pattern="\d{2}/\d{2}/\d{4}" />
                                     {% endif %}
                                 </div>
                                 <div class="mt-5 col-md-6">
@@ -332,4 +332,17 @@
     });
 </script>
 
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    var dateInput = document.getElementById('id_date');
+    if (dateInput && dateInput.value) {
+        // Convierte DD/MM/AAAA a YYYY-MM-DD
+        var parts = dateInput.value.split('/');
+        if (parts.length === 3) {
+            var formatted = parts[2] + '-' + parts[1] + '-' + parts[0];
+            dateInput.value = formatted;
+        }
+    }
+});
+</script>
 {% endblock extra_js %}

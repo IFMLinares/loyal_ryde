@@ -115,11 +115,19 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         # Obtén la fecha directamente del POST
         fecha = request.POST.get('date')
+        print(fecha)
         discount_code = self.request.POST.get('discount_code')
         discount_code = DiscountCoupon.objects.filter(code=discount_code).first()
 
         # Convierte la fecha al formato que Django espera
-        fecha = datetime.strptime(fecha, '%m/%d/%Y').strftime('%Y-%m-%d')
+        # Permite tanto 'YYYY-MM-DD' como 'MM/DD/YYYY'
+        try:
+            # Si ya está en formato 'YYYY-MM-DD', úsalo directamente
+            fecha_obj = datetime.strptime(fecha, '%Y-%m-%d')
+        except ValueError:
+            # Si no, intenta 'MM/DD/YYYY'
+            fecha_obj = datetime.strptime(fecha, '%m/%d/%Y')
+        fecha = fecha_obj.strftime('%Y-%m-%d')
         # Actualiza la fecha en los datos del POST
         request.POST = request.POST.copy()
         request.POST['date'] = fecha
