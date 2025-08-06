@@ -31,6 +31,7 @@ urlpatterns = [
     path('users/list-supervisor/', UserSupervisorListView.as_view(), name='user_list_supervisor'),
     path('update/operator/<int:pk>/', UserOperatorUpdateView.as_view(), name='update_user_operator'),
     path('update/supervisor/<int:pk>/', UserSupervisorUpdateView.as_view(), name='update_user_supervisor'),
+    path('transfer-request/whatsapp-link/', get_whatsapp_link, name='get_whatsapp_link'),
     # delete user
     path('delete/user/<int:pk>/', DeleteUser.as_view(), name='delete_user'),
     path('company/list/', CompaniesListView.as_view(), name='companies_list'),

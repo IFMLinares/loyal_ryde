@@ -104,4 +104,24 @@ $(document).ready(function() {
     var timeParts = dateTimeParts[1].split(':');
     return new Date(dateParts[2], dateParts[1] - 1, dateParts[0], timeParts[0], timeParts[1]).getTime();
 };
+
+$(document).on('click', '.whatsapp-btn', function() {
+    var transferId = $(this).data('transfer-id');
+    $.ajax({
+        url: '/transfer-request/whatsapp-link/',
+        method: 'POST',
+        data: {
+            transfer_id: transferId,
+            csrfmiddlewaretoken: csr_token
+        },
+        success: function(response) {
+            if (response.status === 'success') {
+                window.open(response.whatsapp_url, '_blank');
+            } else {
+                alert(response.message);
+            }
+        }
+    });
+});
+
 });

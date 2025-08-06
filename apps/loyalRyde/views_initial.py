@@ -285,7 +285,6 @@ def delete_coupon(request):
     return JsonResponse({'status': 'error', 'message': 'Método no permitido.'})
 
 
-
 def toggle_paid_driver(request, pk):
     transfer = get_object_or_404(TransferRequest, pk=pk)
     transfer.paid_driver = not transfer.paid_driver
@@ -295,3 +294,45 @@ def toggle_paid_driver(request, pk):
     else:
         messages.success(request, "¡El viaje fue marcado como NO pagado al conductor!")
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+@csrf_exempt
+def get_whatsapp_link(request):
+    if request.method == 'POST':
+        transfer_id = request.POST.get('transfer_id')
+        try:
+            transfer = TransferRequest.objects.get(id=transfer_id)
+            driver = transfer.user_driver
+            phone = driver.user.phone
+            # Normaliza el número (quita espacios, guiones, etc)
+            phone = ''.join(filter(str.isdigit, phone))
+            if phone.startswith('0'):
+                phone = phone[1:]
+            whatsapp_number = f"58{phone}"
+
+            # Construye el mensaje
+            persons = ', '.join([f"{p.name} ({p.phone})" for p in transfer.person_to_transfer.all()])
+            deviations = ', '.join([d.desviation_direc for d in transfer.deviation.all()])
+            empresa = transfer.company.name if transfer.company else "Modo invitado"
+            mensaje = (
+                f"Solicitud de traslado aprobada\n"
+                f"ID: {transfer.id}\n"
+                f"Conductor: {driver.user.get_full_name()}\n"
+                f"Pasajero(s): {persons}\n"
+                f"Salida: {transfer.departure_direc}\n"
+                f"Destino: {transfer.destination_direc}\n"
+                f"Desvíos: {deviations if deviations else 'Sin desvíos'}\n"
+                f"Fecha: {transfer.date}\n"
+                f"Hora: {transfer.hour}\n"
+                f"Empresa solicitante: {empresa}\n"
+                f"Estado: {transfer.status}\n"
+            )
+            # Codifica el mensaje para URL
+            from urllib.parse import quote
+            mensaje_url = quote(mensaje)
+            whatsapp_url = f"https://wa.me/{whatsapp_number}?text={mensaje_url}"
+
+            return JsonResponse({'status': 'success', 'whatsapp_url': whatsapp_url})
+        except TransferRequest.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Transferencia no encontrada.'})
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido.'})

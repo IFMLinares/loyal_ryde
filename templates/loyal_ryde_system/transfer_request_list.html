@@ -1,154 +1,196 @@
 {% extends "loyal_ryde_system/base/base.html" %}
 {% load static %}
 {% block title %}
-    Inicio
+Inicio
 {% endblock title %}
 {% block extra_css %}
-<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css"/>
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+<style>
+    .btn-action-tall {
+        min-height: 25px;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        font-size: 18px;
+    }
+</style>
 {% endblock extra_css %}
 {% block content %}
-    <div class="post d-flex flex-column-fluid" id="kt_post">
-        <!--begin::Container-->
-        <div id="kt_content_container" class="container-xxl">
-            <!--begin::Navbar-->
-            <div class="card mb-5 mb-xxl-12" data-aos="zoom-in-right">
-                <div class="card-body">
-                    <div class="col-md-12 text-center pb-0">
-                        <h1>Lista de traslados Transporte GGMN</h1>
-                    </div>
-                    <div class="mb-10 pt-9">
-                        <div class="table-responsive">
-                            <table class="table table-rounded table-striped border gy-7 gs-7" id="transfer_list_table">
-                                <thead>
-                                    <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
-                                        <th>id</th>
-                                        <th>Fecha y Hora</th>
-                                        <th>Salida</th>
-                                        <th>Destino</th>
-                                        <th>Solicitado</th>
-                                        <th>Personas a llevar</th>
-                                        <th>Precio base</th>
-                                        <th>Precio ida y vuelta</th> 
-                                        <th>Aprobado por</th>
-                                        <th>Metodo de pago</th>
-                                        <th>Estatus</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for transfer_request in transfer_requests %}
-                                        <tr>
-                                            <td>{{ transfer_request.id }}</td>
-                                            <td class="text-center" data-order="{{ transfer_request.date|date:'Y-m-d' }} {{ transfer_request.hour|date:'H:i' }}">{{ transfer_request.date|date:'d/m/Y'}}-{{ transfer_request.hour|date:'G:i' }}</td>
-                                            <td class="text-center">{{ transfer_request.rate.route.departure_point.name }}</td>
-                                            <td class="text-center">{{ transfer_request.rate.route.arrival_point.name }}</td>
-                                            <td class="text-center">{{ transfer_request.company.name }}</td>
-                                            <td class="text-center">
-                                                {% for person in transfer_request.person_to_transfer.all %}
-                                                    {{ person.name }}{% if not forloop.last %},  {% endif %}
-                                                {% empty %}
-                                                    <span class="text-muted">Sin personas</span>
-                                                {% endfor %}
-                                            </td>
-                                            <td class="text-center">{{ transfer_request.rate.price }}$</td>
-                                            <td class="text-center">{{ transfer_request.rate.price_round_trip }}$</td>  
-                                            <td class="text-center">{{ transfer_request.approved_by|default:"N/A" }}</td>
-                                            <td class="text-center">{{ transfer_request.get_payment_method_display }}</td>
-                                            <td class="text-center">
-                                                <span class="d-inline-block position-relative ms-2">
-                                                    <!--begin::Label-->
-                                                    <span class="d-inline-block mb-2 fs-1tx fw-bolder">
-                                                        {{ transfer_request.status|title }}
-                                                    </span>
-                                                    {% if transfer_request.status == 'esperando validacion' %}
-                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-warning translate rounded"></span>
-                                                    {% elif transfer_request.status == 'validada' %}
-                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-primary translate rounded"></span>
-                                                    {% elif transfer_request.status == 'aprobada' %}
-                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-success translate rounded"></span>
-                                                    {% elif transfer_request.status == 'en proceso' %}
-                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-info translate rounded"></span>
-                                                    {% elif transfer_request.status == 'cancelada' %}
-                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-danger translate rounded"></span>
-                                                    {% elif transfer_request.status == 'finalizada' %}
-                                                    <span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-secondary translate rounded"></span>
-                                                    {% endif %}
-                                                    <!--end::Line-->
-                                                </span>
-                                            </td>
-                                            <td class="text-end">
-                                                <a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Acciones
-                                                <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
-                                                <span class="svg-icon svg-icon-5 m-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                        <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor" />
-                                                    </svg>
-                                                </span>
-                                                <!--end::Svg Icon--></a>
-                                                <!--begin::Menu-->
-                                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
-                                                    <!--begin::Menu item-->
-                                                    <div class="menu-item px-3">
-                                                        <a href="{% url 'core:transfer_request_update' pk=transfer_request.id %}" class="menu-link px-3">Editar</a>
-                                                    </div>
-                                                    <!--end::Menu item-->
-                                                    <!--begin::Menu item-->
-                                                    <!-- <div class="menu-item px-3">
-                                                        <a href="#" class="menu-link px-3" data-kt-users-table-filter="delete_row">Eliminar</a>
-                                                    </div> -->
-                                                    <div class="menu-item px-3">
-                                                        <a href="{% url 'core:transfer_request_detail' pk=transfer_request.id %}" class="menu-link px-3" data-kt-users-table-filter="delete_row">Ver</a>
-                                                    </div>
-                                                    <div class="menu-item px-3">
-                                                        {% if transfer_request.status == 'validada' %}
-                                                            {% if user.is_authenticated and user.role == 'administrador' %}
-                                                                <a href="#" class="btn btn-xs btn-primary aprobar" data-id="{{ transfer_request.id }}">&nbsp;Aprobar&nbsp;</a>
-                                                            {% endif %}
-                                                        {% endif %}
-                                                        {% if transfer_request.status == 'esperando validación' %}
-                                                            <a href="#" class="btn btn-xs btn-primary validar" data-id="{{ transfer_request.id }}">&nbsp;&nbsp;Validar&nbsp;&nbsp;</a>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="menu-item px-3 pt-xl-1">
-                                                        <a href="#" class="btn btn-xs btn-danger cancelar" data-id="{{ transfer_request.id }}">Cancelar</a>
-                                                    </div>
-                                                    <!--end::Menu item-->
-                                                </div>
-                                                <!--end::Menu-->
-                                            </td>
-                                            <!-- <td></td> -->
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>                            
-                        </div>
+<div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+        <!--begin::Navbar-->
+        <div class="card mb-5 mb-xxl-12" data-aos="zoom-in-right">
+            <div class="card-body">
+                <div class="col-md-12 text-center pb-0">
+                    <h1>Lista de traslados Transporte GGMN</h1>
+                </div>
+                <div class="mb-10 pt-9">
+                    <div class="table-responsive">
+                        <table class="table table-rounded table-striped border gy-7 gs-7" id="transfer_list_table">
+                            <thead>
+                                <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
+                                    <th>id</th>
+                                    <th>Fecha y Hora</th>
+                                    <th>Salida</th>
+                                    <th>Destino</th>
+                                    <th>Solicitado</th>
+                                    <th>Personas a llevar</th>
+                                    <th>Precio base</th>
+                                    <th>Precio ida y vuelta</th>
+                                    <th>Aprobado por</th>
+                                    <th>Metodo de pago</th>
+                                    <th>Estatus</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transfer_request in transfer_requests %}
+                                <tr>
+                                    <td>{{ transfer_request.id }}</td>
+                                    <td class="text-center"
+                                        data-order="{{ transfer_request.date|date:'Y-m-d' }} {{ transfer_request.hour|date:'H:i' }}">
+                                        {{ transfer_request.date|date:'d/m/Y'}}-{{ transfer_request.hour|date:'G:i' }}
+                                    </td>
+                                    <td class="text-center">{{ transfer_request.rate.route.departure_point.name }}</td>
+                                    <td class="text-center">{{ transfer_request.rate.route.arrival_point.name }}</td>
+                                    <td class="text-center">{{ transfer_request.company.name }}</td>
+                                    <td class="text-center">
+                                        {% for person in transfer_request.person_to_transfer.all %}
+                                        {{ person.name }}{% if not forloop.last %}, {% endif %}
+                                        {% empty %}
+                                        <span class="text-muted">Sin personas</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td class="text-center">{{ transfer_request.rate.price }}$</td>
+                                    <td class="text-center">{{ transfer_request.rate.price_round_trip }}$</td>
+                                    <td class="text-center">{{ transfer_request.approved_by|default:"N/A" }}</td>
+                                    <td class="text-center">{{ transfer_request.get_payment_method_display }}</td>
+                                    <td class="text-center">
+                                        <span class="d-inline-block position-relative ms-2">
+                                            <!--begin::Label-->
+                                            <span class="d-inline-block mb-2 fs-1tx fw-bolder">
+                                                {{ transfer_request.status|title }}
+                                            </span>
+                                            {% if transfer_request.status == 'esperando validacion' %}
+                                            <span
+                                                class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-warning translate rounded"></span>
+                                            {% elif transfer_request.status == 'validada' %}
+                                            <span
+                                                class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-primary translate rounded"></span>
+                                            {% elif transfer_request.status == 'aprobada' %}
+                                            <span
+                                                class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-success translate rounded"></span>
+                                            {% elif transfer_request.status == 'en proceso' %}
+                                            <span
+                                                class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-info translate rounded"></span>
+                                            {% elif transfer_request.status == 'cancelada' %}
+                                            <span
+                                                class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-danger translate rounded"></span>
+                                            {% elif transfer_request.status == 'finalizada' %}
+                                            <span
+                                                class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-secondary translate rounded"></span>
+                                            {% endif %}
+                                            <!--end::Line-->
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="#" class="btn btn-light btn-active-light-primary btn-sm"
+                                            data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Acciones
+                                            <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
+                                            <span class="svg-icon svg-icon-5 m-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none">
+                                                    <path
+                                                        d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
+                                                        fill="currentColor" />
+                                                </svg>
+                                            </span>
+                                            <!--end::Svg Icon--></a>
+                                        <!--begin::Menu-->
+                                        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4"
+                                            data-kt-menu="true">
+                                            <!--begin::Menu item-->
+                                            <div class="menu-item px-3">
+                                                <a href="{% url 'core:transfer_request_update' pk=transfer_request.id %}"
+                                                    class="menu-link px-3">Editar</a>
+                                            </div>
+                                            <div class="menu-item px-3">
+                                                <a href="{% url 'core:transfer_request_detail' pk=transfer_request.id %}"
+                                                    class="menu-link px-3"
+                                                    data-kt-users-table-filter="delete_row">Ver</a>
+                                            </div>
+                                            <div class="menu-item px-3">
+                                                {% if transfer_request.status == 'validada' %}
+                                                {% if user.is_authenticated and user.role == 'administrador' %}
+                                                <a href="#"
+    class="btn btn-xs btn-primary aprobar d-flex justify-content-center align-items-center p-2"
+    data-id="{{ transfer_request.id }}" title="Aprobar">
+    <i class="fas fa-check-circle text-white" style="font-size:22px;"></i>
+                                                </a>
+                                                {% endif %}
+                                                {% endif %}
+                                                {% if transfer_request.status == 'esperando validación' %}
+                                                <a href="#"
+    class="btn btn-sm btn-primary btn-action-tall validar d-flex justify-content-center align-items-center p-2"
+    data-id="{{ transfer_request.id }}" title="Validar">
+    <i class="fas fa-clipboard-check text-white" style="font-size:22px;"></i>
+                                                </a>
+                                                {% endif %}
+                                            </div>
+                                            <div class="menu-item px-3 pt-xl-1">
+                                                {% if user.is_authenticated and user.role == 'administrador' %}
+                                                <button
+    class="btn btn-sm btn-success btn-action-tall whatsapp-btn w-100 d-flex justify-content-center align-items-center p-2"
+    data-transfer-id="{{ transfer_request.id }}"
+    title="Enviar por WhatsApp">
+    <i class="fab fa-whatsapp text-white" style="font-size:22px;"></i>
+                                                </button>
+                                                {% endif %}
+                                            </div>
+                                            <div class="menu-item px-3 pt-xl-1">
+                                                <a href="#"
+    class="btn btn-sm btn-danger btn-action-tall cancelar d-flex justify-content-center align-items-center p-2"
+    data-id="{{ transfer_request.id }}" title="Cancelar">
+    <i class="fas fa-times-circle text-white" style="font-size:22px;"></i>
+                                                </a>
+                                            </div>
+                                            <!--end::Menu item-->
+                                        </div>
+                                        <!--end::Menu-->
+                                    </td>
+                                    <!-- <td></td> -->
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-            <!--end::Navbar-->
         </div>
-        <!--end::Container-->
-{% endblock content %}
-{% block extra_js %}
+        <!--end::Navbar-->
+    </div>
+    <!--end::Container-->
+    {% endblock content %}
+    {% block extra_js %}
 
-		<!--begin::Page Vendors Javascript(used by this page)-->
-		<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
-		<!--end::Page Vendors Javascript-->
-		<!--begin::Page Custom Javascript(used by this page)-->
-		<script src="{% static 'assets/js/custom/apps/user-management/users/list/table.js' %}"></script>
-		<script src="{% static 'assets/js/custom/apps/user-management/users/list/export-users.js' %}"></script>
-		<script src="{% static 'assets/js/custom/apps/user-management/users/list/add.js' %}"></script>
-		<script src="{% static 'assets/js/widgets.bundle.js' %}"></script>
-		<script src="{% static 'assets/js/custom/widgets.js' %}"></script>
-		<script src="{% static 'assets/js/custom/apps/chat/chat.js' %}"></script>
-		<script src="{% static 'assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
-		<script src="{% static 'assets/js/custom/utilities/modals/create-app.js' %}"></script>
-		<script src="{% static 'ssets/js/custom/utilities/modals/users-search.js' %}"></script>
-<script>
-let url_approve_ajax = "{% url 'core:transfer_request_approve' %}";
-let url_approve_ajax_admin = "{% url 'core:transfer_request_approve_admin' %}";
-let url_cancel_ajax = "{% url 'core:transfer_request_cancel' %}";
-let csr_token = "{{ csrf_token }}";
-</script>
-<script src="{% static 'trasnfer_request_list.js' %}"></script>
-{% endblock extra_js %}
+    <!--begin::Page Vendors Javascript(used by this page)-->
+    <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+    <!--end::Page Vendors Javascript-->
+    <!--begin::Page Custom Javascript(used by this page)-->
+    <script src="{% static 'assets/js/custom/apps/user-management/users/list/table.js' %}"></script>
+    <script src="{% static 'assets/js/custom/apps/user-management/users/list/export-users.js' %}"></script>
+    <script src="{% static 'assets/js/custom/apps/user-management/users/list/add.js' %}"></script>
+    <script src="{% static 'assets/js/widgets.bundle.js' %}"></script>
+    <script src="{% static 'assets/js/custom/widgets.js' %}"></script>
+    <script src="{% static 'assets/js/custom/apps/chat/chat.js' %}"></script>
+    <script src="{% static 'assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
+    <script src="{% static 'assets/js/custom/utilities/modals/create-app.js' %}"></script>
+    <script src="{% static 'ssets/js/custom/utilities/modals/users-search.js' %}"></script>
+    <script>
+        let url_approve_ajax = "{% url 'core:transfer_request_approve' %}";
+        let url_approve_ajax_admin = "{% url 'core:transfer_request_approve_admin' %}";
+        let url_cancel_ajax = "{% url 'core:transfer_request_cancel' %}";
+        let csr_token = "{{ csrf_token }}";
+    </script>
+    <script src="{% static 'trasnfer_request_list.js' %}"></script>
+    {% endblock extra_js %}
