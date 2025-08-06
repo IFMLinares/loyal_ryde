@@ -295,11 +295,11 @@
                                         <!-- Hidden fields for map functionality -->
                                         <div class="d-none">
                                             <select class="form-select" aria-label="Seleccione un punto de origen" name="departure_site_route" id="id_departure_site_route" required>
-                                                <option value="{{ detail.departure_site_route }}">{{ detail.departure_direc }}</option>
+                                                <option value="{{ detail.departure_site_route }}">{{ detail.departure_site_route }}</option>
                                             </select>
                                             <input class="form-control" type="text" name="destination_direc" id="id_destination_direc" value="{{ detail.destination_direc }}" disabled />
                                             <select class="form-select" aria-label="Seleccione un punto de origen" name="destination_route" id="id_destination_route" required>
-                                                <option value="{{ detail.destination_route }}" selected disabled>{{ detail.destination_direc }}</option>
+                                                <option value="{{ detail.destination_route }}" selected disabled>{{ detail.destination_route }}</option>
                                             </select>
                                             <input class="form-control" type="text" name="departure_direc" id="id_departure_direc" value="{{ detail.departure_direc }}" disabled />
                                             <div id="waypointsContainer" class="mt-3">

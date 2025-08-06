@@ -159,7 +159,7 @@
                                             <input class="form-control" type="text" waypoint="true" placeholder="Ingrese desvío" value="{{ desvio.desviation_direc }}">
                                             <input type="hidden" id="id_lat_{{ desvio.waypoint_number }}" name="lat_{{ desvio.waypoint_number }}" value="{{ desvio.lat }}">
                                             <input type="hidden" id="id_long_{{ desvio.waypoint_number }}" name="lng_{{ desvio.waypoint_number }}" value="{{ desvio.long }}">
-                                            <button type="button" class="btn btn-danger mt-3" onclick="removeWaypointMarker({{ desvio.waypoint_number }})">Eliminar</button>
+                                            <button type="button" class="btn btn-danger mt-3 delete-waypoint">Eliminar</button>
                                         </div>
                                     {% endfor %}
                                 </div>

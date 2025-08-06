@@ -187,6 +187,11 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
     def post(self, request, *args, **kwargs):
         # Obtén la fecha directamente del POST
         fecha = request.POST.get('date')
+        "INFOR ENVIADA"
+        "INFOR ENVIADA"
+        "INFOR ENVIADA"
+        "INFOR ENVIADA"
+        "INFOR ENVIADA"
         print(request.POST)
         # Actualiza la fecha en los datos del POST
         request.POST = request.POST.copy()
@@ -214,7 +219,8 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
                         desviation_number=i - 2,
                         waypoint_number=i,
                         lat=lat,
-                        long=lng
+                        long=lng,
+                        desviation_direc=request.POST.get(f'waypoint-{i}', '')
                     )
                     transfer_request.deviation.add(desviation)
                 except Exception as e:
