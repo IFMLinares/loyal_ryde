@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TransferRequest, Company, AbstractUser, CustomUser, CustomUserDriver, TransferStop,Desviation, ArrivalPoint, DeparturePoint, PeopleTransfer, Rates
+from .models import TransferRequest, Company, AbstractUser, CustomUser, CustomUserDriver, TransferStop,Desviation, ArrivalPoint, DeparturePoint, PeopleTransfer, Rates, Route
 # Register your models here.
 
 admin.site.register(CustomUser)
@@ -11,6 +11,7 @@ admin.site.register(ArrivalPoint)
 admin.site.register(DeparturePoint)
 admin.site.register(PeopleTransfer)
 admin.site.register(Rates)
+admin.site.register(Route)
 
 @admin.register(TransferRequest)
 class TransferRequestAdmin(admin.ModelAdmin):
