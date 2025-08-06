@@ -43,7 +43,7 @@ class DiscountCouponUpdateView(UpdateView):
     model = DiscountCoupon
     form_class = DiscountCouponForm
     template_name = 'loyal_ryde_system/update_discount_coupon.html'
-    success_url = reverse_lazy('discount_coupon_list')
+    success_url = reverse_lazy('loyalRyde:discount_coupon_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
