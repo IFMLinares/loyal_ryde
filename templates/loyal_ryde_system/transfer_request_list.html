@@ -30,14 +30,13 @@ Inicio
                             <thead>
                                 <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
                                     <th>id</th>
-                                    <th>Fecha y Hora</th>
+                                    <th>Fecha Hora</th>
                                     <th>Salida</th>
                                     <th>Destino</th>
                                     <th>Solicitado</th>
-                                    <th>Personas a llevar</th>
-                                    <th>Precio base</th>
-                                    <th>Precio ida y vuelta</th>
-                                    <th>Aprobado por</th>
+                                    <th>Pasajeros</th>
+                                    <th>Precio</th>
+                                    <th>Aprobado</th>
                                     <th>Metodo de pago</th>
                                     <th>Estatus</th>
                                     <th>Acciones</th>
@@ -61,8 +60,7 @@ Inicio
                                         <span class="text-muted">Sin personas</span>
                                         {% endfor %}
                                     </td>
-                                    <td class="text-center">{{ transfer_request.rate.price }}$</td>
-                                    <td class="text-center">{{ transfer_request.rate.price_round_trip }}$</td>
+                                    <td class="text-center">{{ transfer_request.final_price }}$</td>
                                     <td class="text-center">{{ transfer_request.approved_by|default:"N/A" }}</td>
                                     <td class="text-center">{{ transfer_request.get_payment_method_display }}</td>
                                     <td class="text-center">
