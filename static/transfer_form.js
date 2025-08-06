@@ -4,18 +4,18 @@ $(document).ready(function () {
 		showDropdowns: true,
 		minYear: 1901,
 		maxYear: parseInt(moment().format("DD/MM/YYYY"), 10),
-		    locale: {
-        format: "DD/MM/YYYY",
-        separator: " - ",
-        applyLabel: "Aplicar",
-        cancelLabel: "Cancelar",
-        daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
-        monthNames: [
-            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-        ],
-        firstDay: 1
-    }
+			locale: {
+		format: "DD/MM/YYYY",
+		separator: " - ",
+		applyLabel: "Aplicar",
+		cancelLabel: "Cancelar",
+		daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+		monthNames: [
+			"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+			"Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+		],
+		firstDay: 1
+	}
 	});
 	$("#id_in_town").change(function () {
 		if ($(this).prop("checked")) {
@@ -296,23 +296,23 @@ $(document).ready(function () {
 	}
 
 
-    $('#addWaypointBtn').on('click', function(){
-        AditionalDetour();
-    });
+	$('#id_discount_code').on('input', function () {
+		AditionalDetour();
+	});
 
-    function AditionalDetour(){
-        var detour_price = $('input[name="rate-checkbox"]:checked');
-        var detourLocalValue = parseFloat(detour_price.data('detour-local'));
-        var waypointCount = $('#waypointsContainer').children().length; // Asegúrate de definir waypointCount
+	function AditionalDetour(){
+		var detour_price = $('input[name="rate-checkbox"]:checked');
+		var detourLocalValue = parseFloat(detour_price.data('detour-local'));
+		var waypointCount = $('#waypointsContainer').children().length; // Asegúrate de definir waypointCount
 
-        // Si detourLocalValue es NaN, se devuelve 0
-        if (isNaN(detourLocalValue)) {
-            detourLocalValue = 0;
-        }
+		// Si detourLocalValue es NaN, se devuelve 0
+		if (isNaN(detourLocalValue)) {
+			detourLocalValue = 0;
+		}
 
-        $('#id_aditional').val(detourLocalValue * waypointCount);
+		$('#id_aditional').val(detourLocalValue * waypointCount);
 		$('#id_final_price').val(parseFloat($('#id_price').val()) + parseFloat($('#id_aditional').val()));
-    }
+	}
 
 	// Añadir evento para actualizar el precio cuando se cambia el checkbox de ida y vuelta
 	$("#id_is_round_trip").change(function () {
@@ -339,32 +339,33 @@ $(document).ready(function () {
 	});
 
 	
-    function updateDiscountedPrice(discountValue, discountType) {
-        const selectedRate = $("input[name='rate-checkbox']:checked");
-        if (selectedRate.length > 0) {
-            const selectedPrice = parseFloat(selectedRate.val());
-            const roundTripPrice = parseFloat(selectedRate.data("round-trip-price"));
-            const isRoundTrip = $("#id_is_round_trip").is(":checked");
+	function updateDiscountedPrice(discountValue, discountType) {
+		const selectedRate = $("input[name='rate-checkbox']:checked");
+		if (selectedRate.length > 0) {
+			const selectedPrice = parseFloat(selectedRate.val());
+			const roundTripPrice = parseFloat(selectedRate.data("round-trip-price"));
+			const isRoundTrip = $("#id_is_round_trip").is(":checked");
 
-            let price = isRoundTrip ? roundTripPrice : selectedPrice;
-            let discountedPrice;
+			let price = isRoundTrip ? roundTripPrice : selectedPrice;
+			let discountedPrice;
 
-            if (discountType === 'percentage') {
-                discountedPrice = price * (1 - (discountValue / 100));
-            } else if (discountType === 'fixed') {
-                discountedPrice = price - discountValue;
-            }
+			if (discountType === 'percentage') {
+				discountedPrice = price * (1 - (discountValue / 100));
+			} else if (discountType === 'fixed') {
+				discountedPrice = price - discountValue;
+			}
 
-            $("#id_discounted_price").val(discountedPrice.toFixed(2));
-            $("#id_final_price").val(discountedPrice.toFixed(2));
-        }
-    }
+			$("#id_discounted_price").val(discountedPrice.toFixed(2));
+			$("#id_final_price").val(discountedPrice.toFixed(2));
+		}
+	}
 
 	$('input[name="rate-checkbox"]').on('change', function(){
 		AditionalDetour();
 	})
 
-	$('#id_discount_code').on('input', function () {
+	$('#id_discount_code').on('keyup', function () {
+		console.log('Descuento')
 		var code = $(this).val();
 		var discountMessage = $('#discount_message');
 		var discountedPriceContainer = $('#discounted_price_container');
@@ -422,37 +423,37 @@ $(document).ready(function () {
 	});
 
 	$("#id_departure_site_route").change(function () {
-        const selectedDeparture = $(this).val();
+		const selectedDeparture = $(this).val();
 
-        // Realizar la petición AJAX
-        $.ajax({
-            url: url_routes_ajax,  // URL de la vista Django
-            type: "GET",
-            data: { departure: selectedDeparture },
-            success: function (data) {
-                // Limpiar el select de destino
-                $("#id_destination_route").empty();
-                console.log(data)
-                // Agregar las opciones de destino
-                $("#id_destination_route").append(
-                    $("<option>", {
-                        value: '',
-                        text: 'Selecciona un punto de destino',
-                        selected: true,
-                        disabled: true
-                    })
-                );
-                data.forEach(function (route) {
-                    $("#id_destination_route").append(
-                        $("<option>", {
-                            value: route.arrival_point,
-                            text: route.arrival_point
-                        })
-                    );
-                });
-            }
-        });
-    });
+		// Realizar la petición AJAX
+		$.ajax({
+			url: url_routes_ajax,  // URL de la vista Django
+			type: "GET",
+			data: { departure: selectedDeparture },
+			success: function (data) {
+				// Limpiar el select de destino
+				$("#id_destination_route").empty();
+				console.log(data)
+				// Agregar las opciones de destino
+				$("#id_destination_route").append(
+					$("<option>", {
+						value: '',
+						text: 'Selecciona un punto de destino',
+						selected: true,
+						disabled: true
+					})
+				);
+				data.forEach(function (route) {
+					$("#id_destination_route").append(
+						$("<option>", {
+							value: route.arrival_point,
+							text: route.arrival_point
+						})
+					);
+				});
+			}
+		});
+	});
 	
 	// Añade la función getCityFromAddress
 });
