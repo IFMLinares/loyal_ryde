@@ -111,6 +111,7 @@
                                         </div>
                                     </th>
                                     <th class="min-w-125px">Nombre</th>
+                                    <th class="min-w-125px">Cédula</th>
                                     <th class="min-w-125px">Vehiculo</th>
                                     <th class="min-w-125px">Color</th>
                                     <th class="min-w-125px">Placa</th>
@@ -146,6 +147,9 @@
                                             <span>{{ driver.user.email }}</span>
                                         </div>
                                         <!--begin::User details-->
+                                    </td>
+                                    <td>
+                                        {{ driver.ci }} 
                                     </td>
                                     <td>
                                         {{ driver.marca }} {{ driver.model }} 
