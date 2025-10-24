@@ -201,8 +201,10 @@ def get_rates(request):
     if request.method == "GET":
         departure_city = request.GET.get("departure_city")
         departure_state = request.GET.get("departure_state")
+        departure_sector = request.GET.get("departure_sector", "")
         arrival_city = request.GET.get("arrival_city")
         arrival_state = request.GET.get("arrival_state")
+        arrival_sector = request.GET.get("arrival_sector", "")
         nro = request.GET.get("nro")
         print(departure_city, departure_state, arrival_city, arrival_state)
 
@@ -212,13 +214,36 @@ def get_rates(request):
 
         try:
             nro = int(nro)
-            # Buscar la ruta con los nombres de las ciudades y estados de salida y destino
-            route = Route.objects.get(
-                departure_point__name__icontains=departure_city,
-                departure_point__state__icontains=departure_state,
-                arrival_point__name__icontains=arrival_city,
-                arrival_point__state__icontains=arrival_state
-            )
+            # Estrategia de resolución de ruta (más específico primero):
+            # 1) Si hay sector de llegada, intentar por sector+estado
+            # 2) Si no, intentar por ciudad+estado (como antes)
+
+            route = None
+
+            # Intento 1: sector de llegada específico (prefiere coincidencia exacta primero)
+            if arrival_sector:
+                route_qs = Route.objects.filter(
+                    departure_point__name__icontains=departure_city,
+                    departure_point__state__icontains=departure_state,
+                    arrival_point__state__icontains=arrival_state,
+                )
+                # exacto por sector
+                route = route_qs.filter(arrival_point__name__iexact=arrival_sector).first()
+                # si no, icontains por sector
+                if route is None:
+                    route = route_qs.filter(arrival_point__name__icontains=arrival_sector).first()
+
+            # Intento 2: fallback a ciudad si no se encontró por sector
+            if route is None:
+                route = Route.objects.filter(
+                    departure_point__name__icontains=departure_city,
+                    departure_point__state__icontains=departure_state,
+                    arrival_point__name__icontains=arrival_city,
+                    arrival_point__state__icontains=arrival_state,
+                ).first()
+
+            if route is None:
+                raise Route.DoesNotExist()
             # Luego, busca la tarifa asociada a esa ruta
             rate = Rates.objects.filter(route=route)
             rate_data = []

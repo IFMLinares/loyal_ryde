@@ -84,20 +84,26 @@
                     });
                 });
                 if (isVenezuelanCity) {
-                    // Buscar el componente de la ciudad y el estado
-                    var cityComponent = results[0].address_components.find(component => component.types.includes('locality'));
-                    var stateComponent = results[0].address_components.find(component => component.types.includes('administrative_area_level_1'));
-                    if (cityComponent && stateComponent) {
-                        var cityResult = cityComponent.long_name;
+                    // Buscar sector/barrio/sublocalidad o, en su defecto, la ciudad, y el estado
+                    var components = results[0].address_components;
+                    var sectorComponent = components.find(c => c.types.includes('neighborhood'))
+                                         || components.find(c => c.types.includes('sublocality'))
+                                         || components.find(c => c.types.includes('sublocality_level_1'))
+                                         || components.find(c => c.types.includes('route'));
+                    var cityComponent = components.find(component => component.types.includes('locality'));
+                    var stateComponent = components.find(component => component.types.includes('administrative_area_level_1'));
+
+                    if (stateComponent && (sectorComponent || cityComponent)) {
+                        var nameResult = sectorComponent ? sectorComponent.long_name : cityComponent.long_name;
                         var stateResult = stateComponent.long_name;
-                        document.getElementById('id_name').value = cityResult;
+                        document.getElementById('id_name').value = nameResult;
                         document.getElementById('id_state').value = stateResult;
                         event.target.submit();
                     } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'No se pudo encontrar el nombre de la ciudad o el estado'
+                            text: 'No se pudo encontrar el sector/ciudad o el estado'
                         });
                     }
                 } else {

@@ -223,14 +223,18 @@ async function getCityAndStateFromAddress(address) {
         geocoder.geocode({ 'address': address }, function (results, status) {
             if (status === 'OK' && results[0]) {
                 const components = results[0].address_components;
-                let city = "", state = "";
+                let city = "", state = "", sector = "";
                 components.forEach(comp => {
                     if (comp.types.includes("locality")) city = comp.long_name;
                     if (comp.types.includes("administrative_area_level_1")) state = comp.long_name;
+                    // Sector-level candidates ordered by specificity
+                    if (!sector && (comp.types.includes("neighborhood") || comp.types.includes("sublocality") || comp.types.includes("sublocality_level_1") || comp.types.includes("route"))) {
+                        sector = comp.long_name;
+                    }
                 });
-                resolve({ city, state });
+                resolve({ city, state, sector });
             } else {
-                resolve({ city: "", state: "" });
+                resolve({ city: "", state: "", sector: "" });
             }
         });
     });
@@ -242,8 +246,8 @@ async function handleAddressChange() {
     const nro = $('#id_person_to_transfer option:selected').length;
 
     try {
-        const departure = await getCityAndStateFromAddress(departureAddress);
-        const arrival = await getCityAndStateFromAddress(arrivalAddress);
+    const departure = await getCityAndStateFromAddress(departureAddress);
+    const arrival = await getCityAndStateFromAddress(arrivalAddress);
 
         console.log(departure, arrival);
 
@@ -253,8 +257,10 @@ async function handleAddressChange() {
             data: {
                 departure_city: departure.city,
                 departure_state: departure.state,
+                departure_sector: departure.sector || "",
                 arrival_city: arrival.city,
                 arrival_state: arrival.state,
+                arrival_sector: arrival.sector || "",
                 nro: nro,
             },
             success: function (data) {
