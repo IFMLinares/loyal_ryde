@@ -54,7 +54,10 @@
                             <th>Fecha y Hora</th>
                                         <th>Salida</th>
                                         <th>Destino</th>
-                                        <th>Solicitado</th>
+                                        <th>Vehículo</th>
+                                        <th>Conductor</th>
+                                        <th>Solicitante</th>
+                                        <th>Pasajeros</th>
                                         <th>Precio base</th>
                                         <th>Metodo de pago</th>
                                         <th>Acciones</th>
@@ -70,7 +73,40 @@
                             <td class="text-center">{{ item.date|date:'d/m/Y'}}-{{ item.hour|date:'G:i' }}</td>
                             <td class="text-center">{{  item.rate.route.departure_point.name }}</td>
                             <td class="text-center">{{  item.rate.route.arrival_point.name }}</td>
-                            <td class="text-center">{{ item.company.name }}</td>
+                            <td class="text-center">
+                                {% if item.user_driver and item.user_driver.type %}
+                                    {{ item.user_driver.type.type }}
+                                {% else %}
+                                    <span class="text-muted">Sin vehículo</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if item.user_driver and item.user_driver.user %}
+                                    {% if item.user_driver.user.first_name or item.user_driver.user.last_name %}
+                                        {{ item.user_driver.user.first_name }} {{ item.user_driver.user.last_name }}
+                                    {% else %}
+                                        {{ item.user_driver.user.username }}
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">Sin conductor</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if item.primary_person %}
+                                    Traslado {{ item.primary_person.name }}
+                                {% else %}
+                                    {% with persons=item.person_to_transfer.all %}
+                                        {% if persons %}
+                                            {% for p in persons|slice:":1" %}
+                                                Traslado {{ p.name }}
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="text-muted">Sin personas</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ item.person_to_transfer.all|length }}</td>
                             <td class="text-center">{{ item.rate.price }}$</td>
                             <td class="text-center">{{ item.get_payment_method_display }}</td>
                             <td class="text-end">

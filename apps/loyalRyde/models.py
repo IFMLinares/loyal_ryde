@@ -362,6 +362,14 @@ class TransferRequest(models.Model):
     flight = models.CharField(max_length=255, verbose_name="Vuelo", blank=True, null=True)
     route_fly = models.CharField(max_length=255, verbose_name="Ruta de vuelo", blank=True, null=True)
     person_to_transfer = models.ManyToManyField(PeopleTransfer, verbose_name="Persona(s) a Transferir", blank=True)
+    primary_person = models.ForeignKey(
+        PeopleTransfer,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='primary_transfers',
+        verbose_name="Pasajero principal"
+    )
     service_authorize = models.TextField(verbose_name="Autorización del Servicio", blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Estado", blank=True, null=True, default='esperando validación' )
     executive_transfer = models.BooleanField(default=False, blank=True, null=True, verbose_name="Traslado ejecutivo")

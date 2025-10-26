@@ -10,7 +10,7 @@ from apps.loyalRyde.models import *
 class TripsProgressListView(LoginRequiredMixin, ListView):
     model = TransferRequest
     context_object_name = 'transfer'
-    template_name = 'loyal_ryde_system/trips_progress.html'
+    template_name = 'loyal_ryde_system/trips/trips_progress.html'
 
     def get_queryset(self):
         return TransferRequest.objects.filter(status='en proceso')
@@ -19,7 +19,7 @@ class TripsProgressListView(LoginRequiredMixin, ListView):
 class TripsCompletedListView(LoginRequiredMixin, ListView):
     model = TransferRequest
     context_object_name = 'transfer'
-    template_name = 'loyal_ryde_system/trips_complete.html'
+    template_name = 'loyal_ryde_system/trips/trips_complete.html'
     
     def get_queryset(self):
         return TransferRequest.objects.filter(status='finalizada')
@@ -28,7 +28,7 @@ class TripsCompletedListView(LoginRequiredMixin, ListView):
 class TripsHoldListView(LoginRequiredMixin, ListView):
     model = TransferRequest
     context_object_name = 'transfer'
-    template_name = 'loyal_ryde_system/trips_on_hold.html'
+    template_name = 'loyal_ryde_system/trips/trips_on_hold.html'
     
     def get_queryset(self):
         return TransferRequest.objects.filter(status__in=['esperando validación', 'validada'])
@@ -38,7 +38,7 @@ class TripsHoldListView(LoginRequiredMixin, ListView):
 class TripsAroveListView(LoginRequiredMixin, ListView):
     model = TransferRequest
     context_object_name = 'transfer'
-    template_name = 'loyal_ryde_system/trips_approve.html'
+    template_name = 'loyal_ryde_system/trips/trips_approve.html'
     
     def get_queryset(self):
         return TransferRequest.objects.filter(status='aprobada')
@@ -47,7 +47,7 @@ class TripsAroveListView(LoginRequiredMixin, ListView):
 class TripsProgramedListView(LoginRequiredMixin, ListView):
     model = TransferRequest
     context_object_name = 'transfer'
-    template_name = 'loyal_ryde_system/trips_programed.html'
+    template_name = 'loyal_ryde_system/trips/trips_programed.html'
     
     def get_queryset(self):
         return TransferRequest.objects.filter(status='validada')
@@ -56,7 +56,7 @@ class TripsProgramedListView(LoginRequiredMixin, ListView):
 class TripsCancelledListView(LoginRequiredMixin, ListView):
     model = TransferRequest
     context_object_name = 'transfer'
-    template_name = 'loyal_ryde_system/trips_canceled.html'
+    template_name = 'loyal_ryde_system/trips/trips_canceled.html'
     
     def get_queryset(self):
         return TransferRequest.objects.filter(status='cancelada')

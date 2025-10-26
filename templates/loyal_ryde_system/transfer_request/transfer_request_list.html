@@ -33,7 +33,9 @@ Inicio
                                     <th>Fecha Hora</th>
                                     <th>Salida</th>
                                     <th>Destino</th>
-                                    <th>Solicitado</th>
+                                    <th>Vehículo</th>
+                                    <th>Conductor</th>
+                                    <th>Solicitante</th>
                                     <th>Pasajeros</th>
                                     <th>Precio</th>
                                     <th>Aprobado</th>
@@ -52,14 +54,40 @@ Inicio
                                     </td>
                                     <td class="text-center">{{ transfer_request.rate.route.departure_point.name }}</td>
                                     <td class="text-center">{{ transfer_request.rate.route.arrival_point.name }}</td>
-                                    <td class="text-center">{{ transfer_request.company.name }}</td>
                                     <td class="text-center">
-                                        {% for person in transfer_request.person_to_transfer.all %}
-                                        {{ person.name }}{% if not forloop.last %}, {% endif %}
-                                        {% empty %}
-                                        <span class="text-muted">Sin personas</span>
-                                        {% endfor %}
+                                        {% if transfer_request.user_driver %}
+                                            {% if transfer_request.user_driver.type %}{{ transfer_request.user_driver.type }}{% endif %}
+                                        {% else %}
+                                            <span class="text-muted">Sin vehículo</span>
+                                        {% endif %}
                                     </td>
+                                    <td class="text-center">
+                                        {% if transfer_request.user_driver and transfer_request.user_driver.user %}
+                                            {% if transfer_request.user_driver.user.first_name or transfer_request.user_driver.user.last_name %}
+                                                {{ transfer_request.user_driver.user.first_name }} {{ transfer_request.user_driver.user.last_name }}
+                                            {% else %}
+                                                {{ transfer_request.user_driver.user.username }}
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">Sin conductor</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if transfer_request.primary_person %}
+                                            Traslado {{ transfer_request.primary_person.name }}
+                                        {% else %}
+                                            {% with persons=transfer_request.person_to_transfer.all %}
+                                                {% if persons %}
+                                                    {% for p in persons|slice:":1" %}
+                                                        Traslado {{ p.name }}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <span class="text-muted">Sin personas</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">{{ transfer_request.person_to_transfer.all|length }}</td>
                                     <td class="text-center">{{ transfer_request.get_total_price }}$</td>
                                     <td class="text-center">{{ transfer_request.approved_by|default:"N/A" }}</td>
                                     <td class="text-center">{{ transfer_request.get_payment_method_display }}</td>

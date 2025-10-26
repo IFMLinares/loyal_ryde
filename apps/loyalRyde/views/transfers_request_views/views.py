@@ -40,10 +40,23 @@ from apps.loyalRyde.forms import *
 from apps.loyalRyde.models import *
 
 
+# listado de Traslados
+class TransferRequestListView(LoginRequiredMixin, ListView):
+    model = TransferRequest
+    template_name = 'loyal_ryde_system/transfer_request/transfer_request_list.html'
+    context_object_name = 'transfer_requests'
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser or (user.company and user.company.name == "Loyal Ride"):
+            return TransferRequest.objects.all().order_by('-date')
+        else:
+            return TransferRequest.objects.filter(company=user.company).order_by('-date')
+
 # Agregar nuevo traslado
 class TransferRequestCreateView(LoginRequiredMixin, CreateView):
     model = TransferRequest
-    template_name = 'loyal_ryde_system/transfer_rerquest.html'
+    template_name = 'loyal_ryde_system/transfer_request/transfer_rerquest.html'
     form_class = TransferRequestForm
     success_url = reverse_lazy('core:transfer_request_list')
 
@@ -86,6 +99,14 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
             discount_coupon = DiscountCoupon.objects.filter(code=discount_code_value).first()
             if discount_coupon:
                 form.instance.discount_coupon = discount_coupon
+
+        # Determinar pasajero principal (primero en el POST)
+        try:
+            first_person_id = self.request.POST.getlist('person_to_transfer')[0]
+            if first_person_id:
+                form.instance.primary_person_id = int(first_person_id)
+        except (IndexError, ValueError):
+            pass
 
         transfer_request = form.save()
 
@@ -167,7 +188,7 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
 # Actualizar traslado
 class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
     model = TransferRequest
-    template_name = 'loyal_ryde_system/transfer_rerquest_update.html'
+    template_name = 'loyal_ryde_system/transfer_request/transfer_rerquest_update.html'
     form_class = TransferRequestForm
     success_url = reverse_lazy('core:transfer_request_list')
 
@@ -181,6 +202,14 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
         # guardar el formulario manteniendo el service_requested
         form.instance.service_requested = user
         # form.instance.service_requested = self.request.user
+        # Actualizar pasajero principal según el primero del POST (si se envía)
+        try:
+            first_person_id = self.request.POST.getlist('person_to_transfer')[0]
+            if first_person_id:
+                form.instance.primary_person_id = int(first_person_id)
+        except (IndexError, ValueError):
+            pass
+
         messages.success(self.request, 'Formulario guardado exitosamente!')
         return super().form_valid(form)
 
@@ -243,6 +272,20 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
         context['departure'] = departure_points
         context['desviations'] = self.object.deviation.all()
         return context
+
+# Detalles del traslado
+class TransferRequestDetailview(LoginRequiredMixin, DetailView):
+    model = TransferRequest
+    template_name = 'loyal_ryde_system/transfer_request/transfer_request_detail.html'
+    context_object_name = 'detail'
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        departure_points = DeparturePoint.objects.all()
+        context['departure'] = departure_points
+        context['desviations'] = self.object.deviation.all()
+        return context
+
 
 # agregar traslado (modo invitado)
 class GuestTransferCreateView(CreateView):
@@ -342,19 +385,6 @@ class GuestTransferCreateView(CreateView):
         context['departure'] = departure_points
         return context
 
-# Detalles del traslado
-class TransferRequestDetailview(LoginRequiredMixin, DetailView):
-    model = TransferRequest
-    template_name = 'loyal_ryde_system/transfer_request_detail.html'
-    context_object_name = 'detail'
-
-    def get_context_data(self,**kwargs):
-        context = super().get_context_data(**kwargs)
-        departure_points = DeparturePoint.objects.all()
-        context['departure'] = departure_points
-        context['desviations'] = self.object.deviation.all()
-        return context
-
 # Añadir traslado modo invitado
 class GuestTransferSuccessView(TemplateView):
     template_name = 'loyal_ryde_system/guest_transfer_success.html'
@@ -365,19 +395,6 @@ class GuestTransferSuccessView(TemplateView):
         transfer_request = get_object_or_404(TransferRequest, pk=transfer_request_id)
         context['transfer_request'] = transfer_request
         return context
-
-# listado de Traslados
-class TransferRequestListView(LoginRequiredMixin, ListView):
-    model = TransferRequest
-    template_name = 'loyal_ryde_system/transfer_request_list.html'
-    context_object_name = 'transfer_requests'
-    
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_superuser or (user.company and user.company.name == "Loyal Ride"):
-            return TransferRequest.objects.all().order_by('-date')
-        else:
-            return TransferRequest.objects.filter(company=user.company).order_by('-date')
 
 class TransferRequestExcelView(LoginRequiredMixin, ListView):
     model = TransferRequest
