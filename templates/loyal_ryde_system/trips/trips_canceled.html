@@ -73,17 +73,13 @@
                             <td class="text-center">{{ item.date|date:'d/m/Y'}}-{{ item.hour|date:'G:i' }}</td>
                             <td class="text-center">{{  item.rate.route.departure_point.name }}</td>
                             <td class="text-center">{{  item.rate.route.arrival_point.name }}</td>
-                            <td class="text-center">
-                                {% if item.user_driver %}
-                                    {% if item.user_driver.type %}{{ item.user_driver.type }}{% endif %}
-                                    {% if item.user_driver.marca %} {{ item.user_driver.marca }}{% endif %}
-                                    {% if item.user_driver.model %} {{ item.user_driver.model }}{% endif %}
-                                    {% if item.user_driver.color %} {{ item.user_driver.color }}{% endif %}
-                                    {% if item.user_driver.plaque %} - Placa {{ item.user_driver.plaque }}{% endif %}
-                                {% else %}
-                                    <span class="text-muted">Sin vehículo</span>
-                                {% endif %}
-                            </td>
+                                <td class="text-center">
+                                    {% if item.user_driver and item.user_driver.type %}
+                                        {{ item.user_driver.type.type }}
+                                    {% else %}
+                                        <span class="text-muted">Sin vehículo</span>
+                                    {% endif %}
+                                </td>
                             <td class="text-center">
                                 {% if item.user_driver and item.user_driver.user %}
                                     {% if item.user_driver.user.first_name or item.user_driver.user.last_name %}
