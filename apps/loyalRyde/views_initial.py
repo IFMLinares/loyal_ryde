@@ -27,7 +27,7 @@ from .models import *
 
 #  INICIO
 class Index(LoginRequiredMixin, TemplateView):
-    template_name = 'loyal_ryde_system/index.html'
+    template_name = 'loyal_ryde_system/index/index.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

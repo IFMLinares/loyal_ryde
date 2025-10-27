@@ -238,23 +238,46 @@
 										{% if item.status == 'validada' %}
 										<i class="fa fa-genderless text-primary fs-1"></i>
 										{% endif %}
+										{% if item.status == 'aprobada' %}
+										<i class="fa fa-genderless text-success fs-1"></i>
+										{% endif %}
 										{% if item.status == 'en proceso' %}
 										<i class="fa fa-genderless text-info fs-1"></i>
 										{% endif %}
 										{% if item.status == 'finalizada' %}
-										<i class="fa fa-genderless text-success fs-1"></i>
+										<i class="fa fa-genderless fs-1" style="color:#6f42c1;"></i>
 										{% endif %}
 										{% if item.status == 'cancelada' %}
-										<i class="fa fa-genderless text-danger fs-1"></i>
+										<i class="fa fa-genderless text-gray-500 fs-1"></i>
 										{% endif %}
 									</div>
 									<!--end::Badge-->
 									<!--begin::Text-->
 									{% if item.status == 'esperando validación' %}
-									<div class="fw-mormal timeline-content ps-3 text-muted">Traslado Nro #{{item.id}} {{ item.status }}</div>
+									<div class="fw-mormal timeline-content ps-3 text-muted">
+										{% if item.primary_person %}
+											Traslado {{ item.primary_person.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+										{% elif item.person_to_transfer.all|length > 0 %}
+											{% with first=item.person_to_transfer.all|first %}
+												Traslado {{ first.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+											{% endwith %}
+										{% else %}
+											Traslado <span class="text-muted">Sin personas</span> — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+										{% endif %}
+									</div>
 									{% else %} 
 									<div class="timeline-content d-flex">
-										<span class="fw-bolder text-gray-800 ps-3">Traslado Nro #{{item.id}} {{ item.status }}</span>
+										<span class="fw-bolder text-gray-800 ps-3">
+											{% if item.primary_person %}
+												Traslado {{ item.primary_person.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+											{% elif item.person_to_transfer.all|length > 0 %}
+												{% with first=item.person_to_transfer.all|first %}
+													Traslado {{ first.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+												{% endwith %}
+											{% else %}
+												Traslado <span class="text-muted">Sin personas</span> — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+											{% endif %}
+										</span>
 									</div>
 									{% endif %}
 									<!--end::Text-->
