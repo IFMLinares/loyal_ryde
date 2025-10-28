@@ -44,7 +44,18 @@
 				}
 
 				// Inicializar multi.js sobre el nuevo select
-				$nuevoSelect.multi();
+				$nuevoSelect.multi({
+					search_placeholder: 'Buscar pasajeros',
+					"none_text": 'No hay pasajeros seleccionados',
+					"select_all": false
+				});
+				// Cambiar el placeholder del input de búsqueda si multi.js no lo toma
+				setTimeout(function() {
+					var $input = $nuevoSelect.next('.multi-wrapper').find('input[type="text"]');
+					if ($input.length) {
+						$input.attr('placeholder', 'Buscar pasajeros');
+					}
+				}, 100);
 				// Forzar apertura/cierre para renderizar los options
 				setTimeout(function() {
 					var $label = $nuevoSelect.next('.multi-wrapper').find('.multi-label');
