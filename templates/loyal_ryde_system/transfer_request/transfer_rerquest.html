@@ -12,6 +12,8 @@
         height: 100%;
     }
 </style>
+
+<link rel="stylesheet" type="text/css" href="{% static 'libs/multi.js/dist/multi.min.css'%}" />
 {% endblock extra_css %}
 
 {% block content %}
@@ -86,10 +88,12 @@
                                 <div class="mt-5 col-md-6">
                                     <label class="form-label" for="id_person_to_transfer">Persona(s):</label>
                                     <!-- <input type="text" class="form-control" id="id_person_to_transfer" name="person_to_transfer"/> -->
-                                     <!-- {{ form.person_to_transfer }} -->
-                                    <select class="form-select" aria-label="seleccione" multiple  id="id_person_to_transfer" name="person_to_transfer" required>
-                                        <option disabled>Lista de personas añadidas</option>
-                                    </select>
+                                    <!-- {{ form.person_to_transfer }} -->
+                                    <div id="id_person_to_transfer_container">
+                                        <select class="form-select" aria-label="seleccione" multiple  id="id_person_to_transfer" name="person_to_transfer" required>
+                                            <option disabled>Lista de personas añadidas</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="mt-5 col-md-6">
                                 </div>
@@ -322,6 +326,13 @@
 <script src="{% static 'ruta.js' %}"></script>
 <script src="{% static 'transfer_form.js' %}"></script>
 
+<script src="{% static 'libs/multi.js/dist/multi.min.js'%}"></script>
+<script>
+    $(document).ready(function() {
+        // Inicializar multi.js en el select de personas
+        $("#id_person_to_transfer").multi();
+    });
+</script>
 <!-- Tomar el valor del select con id id_company y agregarlo a que tiene id company_id con jquery -->
 <script>
     $(document).ready(function() {
@@ -329,6 +340,7 @@
             var selectedValue = $(this).val();
             $('#id_company_1').val(selectedValue);
         });
+        
     });
 </script>
 

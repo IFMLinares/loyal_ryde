@@ -1,3 +1,8 @@
+from django.views.decorators.http import require_GET
+from django.utils.decorators import method_decorator
+# --- AJAX: Obtener personas de una empresa ---
+from django.views.decorators.csrf import csrf_exempt
+
 import calendar
 import locale
 from babel.dates import format_date
@@ -811,4 +816,15 @@ class TransferRequestPDFView(LoginRequiredMixin, View):
         doc.build(elements)
         return response
 
-
+@csrf_exempt
+@require_GET
+def get_people_transfer_by_company(request):
+    company_id = request.GET.get('company_id')
+    if not company_id:
+        return JsonResponse({'error': 'No company_id provided'}, status=400)
+    people = PeopleTransfer.objects.filter(company_id=company_id)
+    data = [
+        {'id': p.id, 'name': p.name, 'phone': p.phone}
+        for p in people
+    ]
+    return JsonResponse({'people': data})

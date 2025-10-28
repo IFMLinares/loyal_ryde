@@ -288,6 +288,13 @@ console.log(waypointCount);
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>
 <script src="{% static 'transfer_form.js' %}"></script>
+<script src="{% static 'libs/multi.js/dist/multi.min.js'%}"></script>
+<script>
+    $(document).ready(function() {
+        // Inicializar multi.js en el select de personas
+        $("#id_person_to_transfer").multi();
+    });
+</script>
 <script>
 $(document).ready(function () {
     $('#id_discount_code').on('input', function () {

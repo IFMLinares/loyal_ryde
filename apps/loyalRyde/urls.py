@@ -11,6 +11,7 @@ from apps.loyalRyde.views.fleet_views.views import *
 from apps.loyalRyde.views.rates_views.views import *
 from apps.loyalRyde.views.route_views.views import *
 from apps.loyalRyde.views.transfers_request_views.views import *
+from apps.loyalRyde.views.transfers_request_views.views import get_people_transfer_by_company
 from apps.loyalRyde.views.trips_views.views import *
 from apps.loyalRyde.views.user_views.views import *
 
@@ -18,6 +19,7 @@ app_name = 'loyalRyde'
 
 urlpatterns = [
     path('', Index.as_view(), name='index'),
+    path('ajax/people-transfer/', get_people_transfer_by_company, name='ajax_people_transfer'),
     path('transfer-request/create/', TransferRequestCreateView.as_view(), name='transfer_request_create'),
     path('transfer-request/guest/', GuestTransferCreateView.as_view(), name='transfer_request_create_guest'),
     path('transfer-request/list/', TransferRequestListView.as_view(), name='transfer_request_list'),

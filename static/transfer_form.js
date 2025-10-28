@@ -1,3 +1,61 @@
+	// --- Cargar personas de la empresa seleccionada en el select multi ---
+	$(document).on('change', '#id_company', function() {
+		var companyId = $(this).val();
+		if (!companyId) return;
+		$.ajax({
+			url: '/ajax/people-transfer/',
+			method: 'GET',
+			data: { company_id: companyId },
+			success: function(response) {
+				var $select = $('#id_person_to_transfer');
+				$select.empty();
+				if (response.people && response.people.length > 0) {
+					response.people.forEach(function(person) {
+						var option = new Option(person.name + ' (' + person.phone + ')', person.id, false, false);
+						$select.append(option);
+					});
+				} else {
+					$select.append(new Option('No hay personas registradas', '', false, false));
+				}
+				$select.trigger('change');
+				// Destruir y volver a inicializar multi.js para refrescar visualmente
+				if ($select.data('multi')) {
+					$select.multi('destroy');
+				}
+				// Eliminar el select y su wrapper
+				var $oldSelect = $('#id_person_to_transfer');
+				var $wrapper = $oldSelect.next('.multi-wrapper');
+				if ($wrapper.length) { $wrapper.remove(); }
+				$oldSelect.remove();
+
+				// Crear un nuevo select vacío
+				var $nuevoSelect = $('<select class="form-select" aria-label="seleccione" multiple id="id_person_to_transfer" name="person_to_transfer" required></select>');
+				// Insertar el nuevo select en el contenedor adecuado
+				$('#id_person_to_transfer_container').append($nuevoSelect);
+
+				// Llenar el select con las opciones traídas por AJAX
+				if (response.people && response.people.length > 0) {
+					response.people.forEach(function(person) {
+						var option = new Option(person.name + ' (' + person.phone + ')', person.id, false, false);
+						$nuevoSelect.append(option);
+					});
+				} else {
+					$nuevoSelect.append(new Option('No hay personas registradas', '', false, false));
+				}
+
+				// Inicializar multi.js sobre el nuevo select
+				$nuevoSelect.multi();
+				// Forzar apertura/cierre para renderizar los options
+				setTimeout(function() {
+					var $label = $nuevoSelect.next('.multi-wrapper').find('.multi-label');
+					$label.trigger('mousedown').trigger('mouseup');
+				}, 50);
+			},
+			error: function() {
+				alert('Error al cargar personas de la empresa.');
+			}
+		});
+	});
 $(document).ready(function () {
 	$("#id_date").daterangepicker({
 		singleDatePicker: true,
