@@ -4,6 +4,8 @@
 {% block title %}Inicio{% endblock title %}
 
 {% block extra_css %} 
+
+<link rel="stylesheet" type="text/css" href="{% static 'libs/multi.js/dist/multi.min.css'%}" />
 <style>
     .form-check {
         display: flex;
@@ -77,11 +79,21 @@
                                 <div class="mt-13 col-md-3">
                                     <button type="button" id="people-transfer-form" class="btn btn-success btn-hover-rotate-end">AGREGAR</button>
                                 </div>
-                                <div class="mt-5 col-md-6">
+                                <div class="mt-5 col-md-12">
                                     <label class="form-label" for="id_person_to_transfer">Persona(s):</label>
-                                    {{ form.person_to_transfer }}
-                                </div>
-                                <div class="mt-5 col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div id="id_person_to_transfer_container">
+                                                {{ form.person_to_transfer }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="id_primary_person">Pasajero principal:</label>
+                                            <select id="id_primary_person" name="primary_person" class="form-select" data-control="select2" required>
+                                                <option value="">Seleccione pasajero principal</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row mb-5">
                                     
@@ -288,6 +300,7 @@ console.log(waypointCount);
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>
 <script src="{% static 'transfer_form.js' %}"></script>
+
 <script src="{% static 'libs/multi.js/dist/multi.min.js'%}"></script>
 <script>
     $(document).ready(function() {

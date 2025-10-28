@@ -1,3 +1,47 @@
+// --- Lógica para poblar y sincronizar el select de primary_person también en la vista de edición ---
+function updatePrimaryPersonSelect() {
+	var $multi = $('#id_person_to_transfer');
+	var $primary = $('#id_primary_person');
+	var selected = $multi.val() || [];
+	$primary.empty();
+	$primary.append('<option value="">Seleccione pasajero principal</option>');
+	if (selected.length > 0) {
+		$multi.find('option:selected').each(function() {
+			var val = $(this).val();
+			var text = $(this).text();
+			$primary.append('<option value="' + val + '">' + text + '</option>');
+		});
+		$primary.prop('disabled', false);
+	} else {
+		$primary.prop('disabled', true);
+	}
+	$primary.trigger('change');
+}
+
+$(document).ready(function () {
+	// Inicializar Select2 en el select de primary_person (en create y update)
+	if ($.fn.select2) {
+		$('#id_primary_person').select2({
+			placeholder: 'Seleccione pasajero principal',
+			width: '100%'
+		});
+	}
+
+	// Sincronizar el select de primary_person con los seleccionados en el multi-select
+	$(document).on('change', '#id_person_to_transfer', function() {
+		updatePrimaryPersonSelect();
+	});
+	// Inicializar el select de primary_person si ya hay seleccionados (para update)
+	updatePrimaryPersonSelect();
+
+	// Personalizar el placeholder del buscador multi.js
+	setTimeout(function() {
+		var $input = $('#id_person_to_transfer').next('.multi-wrapper').find('input[type="text"]');
+		if ($input.length) {
+			$input.attr('placeholder', 'Buscar pasajeros');
+		}
+	}, 100);
+});
 	// --- Cargar personas de la empresa seleccionada en el select multi ---
 	$(document).on('change', '#id_company', function() {
 		var companyId = $(this).val();

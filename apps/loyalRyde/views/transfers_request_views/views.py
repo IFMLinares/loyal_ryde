@@ -207,13 +207,10 @@ class TransferRequestUpdateView(LoginRequiredMixin, UpdateView):
         # guardar el formulario manteniendo el service_requested
         form.instance.service_requested = user
         # form.instance.service_requested = self.request.user
-        # Actualizar pasajero principal según el primero del POST (si se envía)
-        try:
-            first_person_id = self.request.POST.getlist('person_to_transfer')[0]
-            if first_person_id:
-                form.instance.primary_person_id = int(first_person_id)
-        except (IndexError, ValueError):
-            pass
+        # Actualizar pasajero principal según el select de primary_person
+        primary_person_id = self.request.POST.get('primary_person')
+        if primary_person_id:
+            form.instance.primary_person_id = int(primary_person_id)
 
         messages.success(self.request, 'Formulario guardado exitosamente!')
         return super().form_valid(form)
