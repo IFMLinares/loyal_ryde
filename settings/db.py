@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -12,10 +14,10 @@ SQLITE = {
 POSTGRESQL = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': ' loyalride',
-        'USER': 'loyaluser',
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': 5432
+        'NAME': os.environ.get('POSTGRES_DB', 'loyalride'),
+        'USER': os.environ.get('POSTGRES_USER', 'admin'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'admin'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': int(os.environ.get('POSTGRES_PORT', 5432)),
     }
 }
