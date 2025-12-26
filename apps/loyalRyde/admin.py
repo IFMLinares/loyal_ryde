@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import TransferRequest, Company, AbstractUser, CustomUser, CustomUserDriver, TransferStop,Desviation, ArrivalPoint, DeparturePoint, PeopleTransfer, Rates, Route, DiscountCoupon
+from .models import TransferRequest, Company, AbstractUser, CustomUser, CustomUserDriver, TransferStop,Desviation, ArrivalPoint, DeparturePoint, PeopleTransfer, Rates, Route, DiscountCoupon, FleetType
+from .models_zones import Zone, ZoneRate, PricingConfig, ZoneUpload
+from leaflet.admin import LeafletGeoAdmin
 # Register your models here.
 
 admin.site.register(DiscountCoupon)
@@ -13,6 +15,15 @@ admin.site.register(DeparturePoint)
 admin.site.register(PeopleTransfer)
 admin.site.register(Rates)
 admin.site.register(Route)
+@admin.register(Zone)
+class ZoneAdmin(LeafletGeoAdmin):
+    list_display = ("name", "is_special")
+    search_fields = ("name",)
+
+admin.site.register(ZoneRate)
+admin.site.register(PricingConfig)
+admin.site.register(ZoneUpload)
+admin.site.register(FleetType)
 
 @admin.register(TransferRequest)
 class TransferRequestAdmin(admin.ModelAdmin):

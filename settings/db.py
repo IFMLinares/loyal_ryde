@@ -13,7 +13,7 @@ SQLITE = {
 
 POSTGRESQL = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.environ.get('POSTGRES_DB', 'loyalride'),
         'USER': os.environ.get('POSTGRES_USER', 'admin'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'admin'),

@@ -1,0 +1,207 @@
+{% extends "loyal_ryde_system/base/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+<style>
+  #map { height: 520px; border-radius: .475rem; }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="post d-flex flex-column-fluid" id="kt_post" data-aos="fade-up">
+  <div id="kt_content_container" class="container-xxl">
+    <form class="form d-flex flex-column flex-lg-row" method="post">
+      {% csrf_token %}
+      <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+        <div class="card card-flush py-4">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>{{ title }}</h2>
+            </div>
+          </div>
+          <div class="card-body pt-0">
+            <div class="mb-10 fv-row">
+              <div class="row g-5">
+                <div class="col-md-12" data-aos="fade-down">
+                  <label class="required form-label">Buscar lugar</label>
+                  <div class="input-group mb-3">
+                    <input type="text" id="place_query" class="form-control" placeholder="Ej: Instituto Aeropuerto Internacional Maiquetía">
+                    <button class="btn btn-light-primary" type="button" id="btn_search">Buscar</button>
+                  </div>
+                  <div id="search_results" class="mb-4"></div>
+                  <div id="map"></div>
+                </div>
+
+                <div class="col-md-8 mt-6" data-aos="fade-right">
+                  <label class="required form-label">{{ form.name.label }}</label>
+                  {{ form.name }}
+                  <div class="text-muted fs-7">{{ form.name.help_text }}</div>
+                </div>
+                <div class="col-md-4 mt-6 d-flex align-items-center" data-aos="fade-left">
+                  <div class="form-check form-check-custom form-check-solid">
+                    {{ form.is_special }}
+                    <label class="form-check-label ms-2" for="id_is_special">{{ form.is_special.label }}</label>
+                  </div>
+                </div>
+
+                {{ form.geometry }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end">
+          <a href="{{ url_return }}" class="btn btn-light me-5">Cancelar</a>
+          <button type="submit" class="btn btn-primary" id="btn_submit">
+            <span class="indicator-label">Guardar Zona</span>
+            <span class="indicator-progress">Por favor, espera...
+            <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+<script>
+(function(){
+  const map = L.map('map');
+  const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+  map.setView([10.4806, -66.9036], 7); // Centro aproximado Venezuela
+
+  const drawnItems = new L.FeatureGroup();
+  map.addLayer(drawnItems);
+
+  const drawControl = new L.Control.Draw({
+    edit: {
+      featureGroup: drawnItems,
+      poly: { allowIntersection: false }
+    },
+    draw: {
+      polyline: false,
+      rectangle: false,
+      circle: false,
+      circlemarker: false,
+      marker: false,
+      polygon: {
+        allowIntersection: false,
+        showArea: true,
+        drawError: { color: '#e55353', message: '<strong>Error:</strong> Polígono inválido' }
+      }
+    }
+  });
+  map.addControl(drawControl);
+
+  function setGeometryFromLayers(){
+    if(drawnItems.getLayers().length === 0){
+      document.getElementById('id_geometry').value = '';
+      return;
+    }
+    // Combinar a MultiPolygon si hay varias capas
+    const multipolygon = [];
+    drawnItems.eachLayer(function(layer){
+      const gj = layer.toGeoJSON();
+      if(gj.geometry.type === 'Polygon'){
+        multipolygon.push(gj.geometry.coordinates);
+      } else if(gj.geometry.type === 'MultiPolygon'){
+        gj.geometry.coordinates.forEach(coords => multipolygon.push(coords));
+      }
+    });
+    const geometry = multipolygon.length === 1
+      ? { type: 'Polygon', coordinates: multipolygon[0] }
+      : { type: 'MultiPolygon', coordinates: multipolygon };
+    document.getElementById('id_geometry').value = JSON.stringify(geometry);
+  }
+
+  map.on(L.Draw.Event.CREATED, function (e) {
+    drawnItems.addLayer(e.layer);
+    setGeometryFromLayers();
+  });
+  map.on(L.Draw.Event.EDITED, setGeometryFromLayers);
+  map.on(L.Draw.Event.DELETED, setGeometryFromLayers);
+
+  // Si venimos a editar, precargar geometría
+  const initialGeomInput = document.getElementById('id_geometry');
+  try {
+    if(initialGeomInput && initialGeomInput.value){
+      const g = JSON.parse(initialGeomInput.value);
+      const layer = L.geoJSON(g);
+      layer.eachLayer(function(l){ drawnItems.addLayer(l); });
+      map.fitBounds(layer.getBounds(), { padding: [20,20] });
+    }
+  } catch(err) {}
+
+  // Búsqueda de lugar con Nominatim (proxy backend)
+  const btnSearch = document.getElementById('btn_search');
+  const inputQ = document.getElementById('place_query');
+  const resultsDiv = document.getElementById('search_results');
+
+  function renderResults(list){
+    if(!list || list.length === 0){
+      resultsDiv.innerHTML = '<div class="text-muted">Sin resultados.</div>';
+      return;
+    }
+    const frag = document.createElement('div');
+    list.forEach((item, idx) => {
+      const el = document.createElement('div');
+      el.className = 'd-flex align-items-center justify-content-between border rounded p-2 mb-2';
+      el.innerHTML = `<div><strong>${item.name || 'Sin nombre'}</strong><div class="text-muted fs-8">${item.class || ''} · ${item.type || ''}</div></div>
+                      <button type="button" class="btn btn-sm btn-light-primary" data-idx="${idx}">Usar</button>`;
+      frag.appendChild(el);
+    });
+    resultsDiv.innerHTML = '';
+    resultsDiv.appendChild(frag);
+    // Attach events
+    resultsDiv.querySelectorAll('button[data-idx]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-idx'));
+        const chosen = list[idx];
+        if(!chosen || !chosen.geojson) return;
+        // Limpiar y añadir geometría
+        drawnItems.clearLayers();
+        const layer = L.geoJSON(chosen.geojson);
+        layer.eachLayer(function(l){ drawnItems.addLayer(l); });
+        setGeometryFromLayers();
+        try{ map.fitBounds(layer.getBounds(), { padding: [20,20] }); }catch(err){}
+        // Sugerir nombre si vacío
+        const nameInput = document.getElementById('id_name');
+        if(nameInput && !nameInput.value){ nameInput.value = (chosen.name || '').substring(0, 100); }
+      });
+    });
+  }
+
+  async function doSearch(){
+    const q = (inputQ.value || '').trim();
+    if(!q) return;
+    resultsDiv.innerHTML = '<div class="text-muted">Buscando...</div>';
+    try{
+      const url = new URL('{% url "core:zones_search" %}', window.location.origin);
+      url.searchParams.set('q', q);
+      url.searchParams.set('country', 've');
+      const res = await fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+      if(!res.ok){ throw new Error('Error en búsqueda'); }
+      const data = await res.json();
+      renderResults(data.results || []);
+    }catch(err){
+      resultsDiv.innerHTML = '<div class="text-danger">Error consultando Nominatim</div>';
+    }
+  }
+
+  btnSearch.addEventListener('click', doSearch);
+  inputQ.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); doSearch(); } });
+
+  // Antes de enviar, asegurar geometría capturada
+  document.getElementById('btn_submit').addEventListener('click', function(){ setGeometryFromLayers(); });
+})();
+</script>
+{% endblock extra_js %}

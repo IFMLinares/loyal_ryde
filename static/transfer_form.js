@@ -46,6 +46,10 @@ $(document).ready(function () {
 	$(document).on('change', '#id_company', function() {
 		var companyId = $(this).val();
 		if (!companyId) return;
+		// Ensure url_form is defined
+		if (typeof url_form === 'undefined' || !url_form) {
+			window.url_form = '/transfer-request/people/create';
+		}
 		$.ajax({
 			url: '/ajax/people-transfer/',
 			method: 'GET',
@@ -167,6 +171,10 @@ $(document).ready(function () {
 		}
 		console.log(name, phone, c);
 		// Realiza la petición AJAX
+		// Ensure url_form is defined
+		if (typeof url_form === 'undefined' || !url_form) {
+			window.url_form = '/transfer-request/people/create';
+		}
 		$.ajax({
 			url: url_form,
 			method: "POST",

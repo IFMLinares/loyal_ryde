@@ -140,7 +140,7 @@ function calculateRoute() {
 
     // Verificar que las coordenadas de inicio y fin sean válidas
     if (isNaN(startLat) || isNaN(startLng) || isNaN(endLat) || isNaN(endLng)) {
-        console.error('Invalid latitude and longitude');
+        // Aún no hay coordenadas suficientes; evita ruido en consola
         return;
     }
 
@@ -251,8 +251,16 @@ async function handleAddressChange() {
 
         console.log(departure, arrival);
 
+        // Resolve rates URL from multiple sources with safe fallback
+        const resolvedRatesUrl = window.rates_ajax
+            || (document.querySelector('meta[name="rates_ajax"]')?.content)
+            || (window.URLS && window.URLS.rates_ajax)
+            || '/transfer-request/rates';
+        if (!window.rates_ajax) {
+            console.info('Usando ruta por defecto para rates_ajax:', resolvedRatesUrl);
+        }
         $.ajax({
-            url: rates_ajax,  // URL de la vista Django
+            url: resolvedRatesUrl,  // URL de la vista Django
             type: "GET",
             data: {
                 departure_city: departure.city,
@@ -262,13 +270,59 @@ async function handleAddressChange() {
                 arrival_state: arrival.state,
                 arrival_sector: arrival.sector || "",
                 nro: nro,
+                // Pass coordinates for zone detection and fallback estimation
+                lat_1: $('#id_lat_1').val(),
+                long_1: $('#id_long_1').val(),
+                lat_2: $('#id_lat_2').val(),
+                long_2: $('#id_long_2').val(),
             },
             success: function (data) {
                 console.log(data);
-                const tarifas = data.rates; // Obtén todas las tarifas de la respuesta
+                const tarifas = Array.isArray(data.rates) ? data.rates.slice() : []; // copia segura
+
+                // Si viene una ZoneRate fija, agregarla como opción en la lista
+                if (data.estimated_rate && data.estimated_rate.zone_rate_id) {
+                    const est = data.estimated_rate;
+                    tarifas.push({
+                        rate_id: null,
+                        zone_rate_id: est.zone_rate_id,
+                        rate_price: est.price,
+                        rate_price_round_trip: est.price_round_trip,
+                        rate_detour_local: est.detour_local || 0,
+                        rate_vehicle: est.vehicle || 'Zona',
+                        rate_service_type: est.service_type || 'Tarifa por zona',
+                        rate_route: est.route_label || (est.origin_zone && est.destination_zone ? `${est.origin_zone} → ${est.destination_zone}` : 'Zona a zona'),
+                        rate_daytime_waiting_time: est.daytime_waiting_time || 0,
+                        rate_nightly_waiting_time: est.nightly_waiting_time || 0,
+                    });
+                }
 
                 // Verifica si hay tarifas disponibles
                 if (tarifas.length === 0) {
+                    // Mostrar fallback por distancia/tiempo si viene precio estimado
+                    if (data.estimated_rate && data.estimated_rate.price) {
+                        const est = data.estimated_rate;
+                            $("#rates_div").html(`
+                                <div class="mt-5 col-md-12">
+                                    <label class="btn btn-outline btn-outline-dashed btn-outline-default p-7 d-flex align-items-center mb-5">
+                                        <span class="d-block fw-bold text-start">
+                                            <span class="text-dark fw-bolder d-block fs-3">
+                                                Tarifa estimada (sin tarifa fija de ruta)
+                                            </span>
+                                            <span class="text-dark">Precio Estimado: </span> <span style="color:green">${parseFloat(est.price).toFixed(2)}$</span><br>
+                                            <span class="text-dark">Precio Estimado Ida y vuelta: </span> <span style="color:green">${parseFloat(est.price_round_trip).toFixed(2)}$</span><br>
+                                            <span class="text-muted">Distancia aprox: ${est.distance_km?.toFixed ? est.distance_km.toFixed(2) : est.distance_km} km, Tiempo aprox: ${est.duration_min?.toFixed ? est.duration_min.toFixed(0) : est.duration_min} min</span>
+                                        </span>
+                                    </label>
+                                </div>
+                            `).removeClass('d-none');
+
+                            // Set fields so the form still works with an estimated price
+                            $("#id_price").val(parseFloat(est.price).toFixed(2));
+                            $("#id_final_price").val(parseFloat(est.price).toFixed(2));
+                            return;
+                    }
+
                     $("#rates_div").html(`
                         <div class="mt-5 col-md-12">
                             <label class="btn btn-outline btn-outline-dashed btn-outline-default p-7 d-flex align-items-center mb-5">
@@ -295,7 +349,7 @@ async function handleAddressChange() {
                                 </svg>
                                 <span class="d-block fw-bold text-start">
                                     <span class="text-dark fw-bolder d-block fs-3">
-                                        <input type="radio" class="form-check-input rate-radio mt-1" name="rate-checkbox" value="${tarifa.rate_price}" data-rate-id="${tarifa.rate_id}" data-round-trip-price="${tarifa.rate_price_round_trip}"  data-detour-local="${tarifa.rate_detour_local}" required/> ${tarifa.rate_vehicle}: ${tarifa.rate_service_type}
+                                        <input type="radio" class="form-check-input rate-radio mt-1" name="rate-checkbox" value="${tarifa.rate_price}" data-rate-id="${tarifa.rate_id}" data-zone-rate-id="${tarifa.zone_rate_id || ''}" data-round-trip-price="${tarifa.rate_price_round_trip}"  data-detour-local="${tarifa.rate_detour_local}" required/> ${tarifa.rate_vehicle}: ${tarifa.rate_service_type}
                                     </span>
                                     <span class="text-dark">Ruta: ${tarifa.rate_route}</span> <br>
                                     <span class="text-dark">Precio Base: </span> <span style="color:green">${tarifa.rate_price}$</span><br>
@@ -316,10 +370,19 @@ async function handleAddressChange() {
 
                 // Añadir evento para actualizar el precio con la tarifa seleccionada
                 $(".rate-radio").change(function () {
-                    var rateId = $("input[name='rate-checkbox']:checked").data('rate-id');
-                    $("#id_rate").val(rateId);
+                    const selected = $("input[name='rate-checkbox']:checked");
+                    const rateId = selected.data('rate-id');
+                    const zoneRateId = selected.data('zone-rate-id');
+
+                    if (zoneRateId) {
+                        $("#id_zone_rate").val(zoneRateId);
+                        $("#id_rate").val('');
+                    } else {
+                        $("#id_rate").val(rateId);
+                        $("#id_zone_rate").val('');
+                    }
+
                     updatePrice();
-                    updateSelectRate($(this).data("rate-id"));
                 });
 
                 // Añadir evento para actualizar el precio cuando se cambia el checkbox de ida y vuelta
@@ -372,8 +435,14 @@ async function handleAddressChange() {
                 }
 
                 // Función para actualizar el campo select con la tarifa seleccionada
-                function updateSelectRate(rateId) {
-                    $("#id_rate").val(rateId);
+                function updateSelectRate(rateId, zoneRateId) {
+                    if (zoneRateId) {
+                        $("#id_zone_rate").val(zoneRateId);
+                        $("#id_rate").val('');
+                    } else {
+                        $("#id_rate").val(rateId);
+                        $("#id_zone_rate").val('');
+                    }
                 }
             },
             error: function () {

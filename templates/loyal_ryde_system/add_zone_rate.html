@@ -1,0 +1,203 @@
+{% extends "loyal_ryde_system/base/base.html" %} 
+{% load static %} 
+
+{% block title %}Agregar Tarifas por Zona{% endblock title %}
+
+{% block extra_css %} 
+
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="post d-flex flex-column-fluid" id="kt_post" data-aos="fade-up">
+  <!--begin::Container-->
+  <div id="kt_content_container" class="container-xxl">
+    <form class="form d-flex flex-column flex-lg-row" method="post" >
+      {% csrf_token %}
+      <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+        <div class="card card-flush py-4">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>Registrar Tarifa por Zona</h2>
+            </div>
+          </div>
+          <div class="card-body pt-0">
+            <div class="mb-10 fv-row">
+              <div class="row">
+                <!-- tipo de servicio -->
+                <div class="col-md-12 mb-3" data-aos="fade-down">
+                  <label class="required form-label">{{ form.service_type.label }}</label>
+                  {{ form.service_type }}
+                  <div class="text-muted fs-7">{{ form.service_type.help_text }}</div>
+                </div>
+                <!-- Origen -->
+                <div class="col-md-6 mb-3" data-aos="fade-right">
+                  <label class="required form-label">{{ form.origin.label }}</label>
+                  {{ form.origin }}
+                  <div class="text-muted fs-7">{{ form.origin.help_text }}</div>
+                </div>
+                <!-- Destino -->
+                <div class="col-md-6 mb-3" data-aos="fade-left">
+                  <label class="required form-label">{{ form.destination.label }}</label>
+                  {{ form.destination }}
+                  <div class="text-muted fs-7">{{ form.destination.help_text }}</div>
+                </div>
+                <!-- Tipo de Vehiculo -->
+                <div class="col-md-6 mb-3" data-aos="fade-left">
+                  <label class="required form-label">{{ form.type_vehicle.label }}</label>
+                  {{ form.type_vehicle }}
+                  <div class="text-muted fs-7">{{ form.type_vehicle.help_text }}</div>
+                </div>
+                <!-- Precio ida -->
+                <div class="col-md-4 mb-3" data-aos="fade-right">
+                  <label class="required form-label">{{ form.price.label }}</label>
+                  {{ form.price }}
+                  <div class="text-muted fs-7">{{ form.price.help_text }}</div>
+                </div>
+                <!-- Precio ida y vuelta -->
+                <div class="col-md-4 mb-3"data-aos="fade-down">
+                  <label class="required form-label">{{ form.price_round_trip.label }}</label>
+                  {{ form.price_round_trip }}
+                  <div class="text-muted fs-7">{{ form.price_round_trip.help_text }}</div>
+                </div>
+                <!-- Costo desvío local -->
+                <div class="col-md-4 mb-3" data-aos="fade-left">
+                  <label class="required form-label">{{ form.detour_local.label }}</label>
+                  {{ form.detour_local }}
+                  <div class="text-muted fs-7">{{ form.detour_local.help_text }}</div>
+                </div>
+                <!-- Hora de espera diurna -->
+                <div class="col-md-6 mb-3" data-aos="fade-right">
+                  <label class="required form-label">{{ form.daytime_waiting_time.label }}</label>
+                  {{ form.daytime_waiting_time }}
+                  <div class="text-muted fs-7">{{ form.daytime_waiting_time.help_text }}</div>
+                </div>
+                <!-- Hora de espera nocturna -->
+                <div class="col-md-6 mb-3" data-aos="fade-left">
+                  <label class="required form-label">{{ form.nightly_waiting_time.label }}</label>
+                  {{ form.nightly_waiting_time }}
+                  <div class="text-muted fs-7">{{ form.nightly_waiting_time.help_text }}</div>
+                </div>
+
+                <!-- Ganancias del conductor -->
+                <hr>
+                <h3>Ganancias conductor</h3>
+                <div class="col-md-4 mb-3" data-aos="fade-right">
+                  <label class="required form-label">{{ form.driver_gain.label }}</label>
+                  {{ form.driver_gain }}
+                  <div class="text-muted fs-7">{{ form.driver_gain.help_text }}</div>
+                </div>
+
+                <div class="col-md-4 mb-3" data-aos="fade-down">
+                  <label class="required form-label">{{ form.driver_gain_waiting_time.label }}</label>
+                  {{ form.driver_gain_waiting_time }}
+                  <div class="text-muted fs-7">{{ form.driver_gain_waiting_time.help_text }}</div>
+                </div>
+                                
+                <div class="col-md-4 mb-3" data-aos="fade-left">
+                  <label class="required form-label">{{ form.driver_gain_detour_local.label }}</label>
+                  {{ form.driver_gain_detour_local }}
+                  <div class="text-muted fs-7">{{ form.driver_gain_detour_local.help_text }}</div>
+                </div>
+                <div class="col-md-6 mb-3"data-aos="fade-right">
+                  <label class="required form-label">{{ form.driver_price.label }}</label>
+                  {{ form.driver_price }}
+                  <div class="text-muted fs-7">{{ form.driver_price.help_text }}</div>
+                </div>
+                <div class="col-md-6 mb-3" data-aos="fade-left">
+                  <label class="required form-label">{{ form.driver_price_round_trip.label }}</label>
+                  {{ form.driver_price_round_trip }}
+                  <div class="text-muted fs-7">{{ form.driver_price_round_trip.help_text }}</div>
+                </div>
+                                
+                <div class="col-md-4 mb-3" data-aos="fade-right">
+                  <label class="required form-label">{{ form.driver_gain_detour_local_quantity.label }}</label>
+                  {{ form.driver_gain_detour_local_quantity }}
+                  <div class="text-muted fs-7">{{ form.driver_gain_detour_local_quantity.help_text }}</div>
+                </div>
+                <div class="col-md-4 mb-3" data-aos="fade-down">
+                  <label class="required form-label">{{ form.driver_daytime_waiting_time.label }}</label>
+                  {{ form.driver_daytime_waiting_time }}
+                  <div class="text-muted fs-7">{{ form.driver_daytime_waiting_time.help_text }}</div>
+                </div>
+                <div class="col-md-4 mb-3" data-aos="fade-left">
+                  <label class="required form-label">{{ form.driver_nightly_waiting_time.label }}</label>
+                  {{ form.driver_nightly_waiting_time }}
+                  <div class="text-muted fs-7">{{ form.driver_nightly_waiting_time.help_text }}</div>
+                </div>
+                                
+                <!-- Ganancias empresa -->
+                <hr>
+                <h3>Ganancias Loyal Ride</h3>
+                <div class="col-md-6 mb-3" data-aos="fade-right">
+                  <label class="required form-label">{{ form.gain_loyal_ride.label }}</label>
+                  {{ form.gain_loyal_ride }}
+                  <div class="text-muted fs-7">{{ form.gain_loyal_ride.help_text }}</div>
+                </div>
+                <div class="col-md-6 mb-3" data-aos="fade-left">
+                  <label class="required form-label">{{ form.gain_loyal_ride_round_trip.label }}</label>
+                  {{ form.gain_loyal_ride_round_trip }}
+                  <div class="text-muted fs-7">{{ form.gain_loyal_ride_round_trip.help_text }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end">
+          <a href="{{ url_return }}" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancelar</a>
+          <button type="submit" class="btn btn-primary">
+            <span class="indicator-label">Registrar Tarifa</span>
+            <span class="indicator-progress">Por favor, espera...
+            <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %} 
+
+{% block extra_js %} 
+<script>
+  $(document).ready(function() {
+    $('#id_price, #id_driver_gain').on('input', function() {
+      var price = parseFloat($('#id_price').val());
+      var driverGain = parseFloat($('#id_driver_gain').val());
+      var driverPrice = (price * driverGain) / 100;
+      $('#id_driver_price').val(isNaN(driverPrice)?'':driverPrice.toFixed(2));
+      var gain = price - driverPrice;
+      $('#id_gain_loyal_ride').val(isNaN(gain)?'':gain.toFixed(2))
+    });
+    $('#id_price_round_trip, #id_driver_gain').on('input', function() {
+      var price = parseFloat($('#id_price_round_trip').val());
+      var driverGain = parseFloat($('#id_driver_gain').val());
+      var driverPrice = (price * driverGain) / 100;
+      $('#id_driver_price_round_trip').val(isNaN(driverPrice)?'':driverPrice.toFixed(2));
+      var gain = price - driverPrice;
+      $('#id_gain_loyal_ride_round_trip').val(isNaN(gain)?'':gain.toFixed(2))
+    });
+    $('#id_detour_local, #id_driver_gain_detour_local').on('input', function() {
+      var detuor = parseFloat($('#id_detour_local').val());
+      var detour_percent = parseFloat($('#id_driver_gain_detour_local').val());
+      var detour_gain_quantity = detuor * detour_percent / 100;
+      detour_gain_quantity = isNaN(detour_gain_quantity)?'':detour_gain_quantity.toFixed(2);
+      $('#id_driver_gain_detour_local_quantity').val(detour_gain_quantity);
+    });
+    $('#id_daytime_waiting_time, #id_driver_gain_waiting_time').on('input', function() {
+      var daytime_price = parseFloat($('#id_daytime_waiting_time').val());
+      var daytime_percent_gain = parseFloat($('#id_driver_gain_waiting_time').val());
+      var hour_gain_quantity = daytime_price * daytime_percent_gain / 100;
+      hour_gain_quantity = isNaN(hour_gain_quantity)?'':hour_gain_quantity.toFixed(2);
+      $('#id_driver_daytime_waiting_time').val(hour_gain_quantity);
+    });
+    $('#id_nightly_waiting_time, #id_driver_gain_waiting_time').on('input', function() {
+      var nighttime_price = parseFloat($('#id_nightly_waiting_time').val());
+      var nighttime_percent_gain = parseFloat($('#id_driver_gain_waiting_time').val());
+      var hour_gain_quantity = nighttime_price * nighttime_percent_gain / 100;
+      hour_gain_quantity = isNaN(hour_gain_quantity)?'':hour_gain_quantity.toFixed(2);
+      $('#id_driver_nightly_waiting_time').val(hour_gain_quantity);
+    });
+  });
+  </script>
+{% endblock extra_js %}

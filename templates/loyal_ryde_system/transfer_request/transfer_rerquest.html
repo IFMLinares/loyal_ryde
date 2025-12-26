@@ -189,6 +189,11 @@
                                     {{ form.long_1 }}
                                     {{ form.lat_2 }}
                                     {{ form.long_2 }}
+                                    {% if form.zone_rate %}
+                                        {{ form.zone_rate }}
+                                    {% else %}
+                                        <input type="hidden" name="zone_rate" id="id_zone_rate">
+                                    {% endif %}
                                     
                                     <select class="form-select" name="rate" id="id_rate">
                                         <option disabled selected>Seleccione una tarifa</option>
@@ -316,11 +321,11 @@
 {% block extra_js %}
 <script>    
     var waypointCount = 0;
-    let urlverify_discount_code = "{% url 'core:verify_discount_code' %}"
-    let url_routes_ajax = "{% url 'core:routes_ajax' %}";
-    let rates_ajax = "{% url 'core:rates_ajax' %}";
-    let url_form = "{% url 'core:transfer_request_people_create' %}";
-    let company = {{ request.user.company.pk }};
+    window.urlverify_discount_code = "{% url 'core:verify_discount_code' %}";
+    window.url_routes_ajax = "{% url 'core:routes_ajax' %}";
+    window.rates_ajax = "{% url 'core:rates_ajax' %}";
+    window.url_form = "{% url 'core:transfer_request_people_create' %}";
+    window.company = {{ request.user.company.pk }};
 </script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>

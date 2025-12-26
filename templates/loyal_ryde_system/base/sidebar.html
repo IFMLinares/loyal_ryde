@@ -256,6 +256,38 @@
 				</div>
 				{% if user.is_authenticated and user.role == 'administrador' %}
 				<!-- Contenido para administradores -->
+
+				<!-- Zonas -->
+				<div class="menu-item">
+					<div class="menu-content pt-8 pb-2">
+						<span class="font_white text-uppercase fs-8 ls-1">Zonas</span>
+					</div>
+				</div>
+				<div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+					<span class="menu-link">
+						<span class="menu-icon">
+							<i class="fas fa-solid fa-draw-polygon"></i>
+						</span>
+						<span class="menu-title">Zonas</span>
+						<span class="menu-arrow"></span>
+					</span>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a class="menu-link py-3" href="{% url 'core:zones_create' %}">
+								<span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+								<span class="menu-title">Registrar Zona</span>
+							</a>
+						</div>
+					</div>
+					<div class="menu-sub menu-sub-accordion menu-active-bg">
+						<div class="menu-item">
+							<a class="menu-link py-3" href="{% url 'core:zones_list' %}">
+								<span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+								<span class="menu-title">Lista de Zonas</span>
+							</a>
+						</div>
+					</div>
+				</div>
 				
 				<!-- Empresas -->
 				<div class="menu-item">
@@ -434,6 +466,7 @@
 					</div>
 				</div>
 
+				{% comment %}
 				<!-- Rutas -->
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
@@ -543,6 +576,7 @@
 
 
 				</div>
+				{% endcomment %}
 				
 				<!-- Tarifas -->
 				<div class="menu-item">
@@ -587,6 +621,19 @@
 									<span class="bullet bullet-dot"></span>
 								</span>
 								<span class="menu-title">Lista de tarifas</span>
+							</a>
+						</div>
+						<!-- Tarifas por Zona -->
+						<div class="menu-item">
+							<a class="menu-link py-3" href="{% url 'core:zone_rates_create' %}">
+								<span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+								<span class="menu-title">Registrar por Zona</span>
+							</a>
+						</div>
+						<div class="menu-item">
+							<a class="menu-link py-3" href="{% url 'core:zone_rates_list' %}">
+								<span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+								<span class="menu-title">Lista de tarifas por Zona</span>
 							</a>
 						</div>
 					</div>

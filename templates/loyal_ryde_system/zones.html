@@ -1,0 +1,66 @@
+{% extends "loyal_ryde_system/base/base.html" %}
+{% load static %}
+
+{% block title %}Lista de Zonas{% endblock title %}
+
+{% block extra_css %}
+<link href="{% static 'assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+
+{% block content %}
+<div class="post d-flex flex-column-fluid" id="kt_post" data-aos="fade-up">
+  <div id="kt_content_container" class="container-xxl">
+    <div class="card card-flush">
+      <div class="card-header align-items-center py-5 gap-2 gap-md-5">
+        <div class="card-title">
+          <h2 class="mb-0">Zonas</h2>
+        </div>
+        <div class="card-toolbar">
+          <a href="{% url 'core:zones_create' %}" class="btn btn-primary">Registrar Zona</a>
+        </div>
+      </div>
+      <div class="card-body pt-0">
+        <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_zones">
+          <thead>
+            <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+              <th>Nombre</th>
+              <th>Especial</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-600 fw-semibold">
+            {% for z in zones %}
+            <tr>
+              <td>{{ z.name }}</td>
+              <td>
+                {% if z.is_special %}
+                  <span class="badge badge-light-primary">Sí</span>
+                {% else %}
+                  <span class="badge badge-light">No</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{% url 'core:zones_update' z.pk %}" class="btn btn-sm btn-light">Editar</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-center text-muted">Sin zonas registradas</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script>
+  $(document).ready(function(){
+    $('#kt_table_zones').DataTable({
+      language: { url: '{% static "datatables/es.json" %}' }
+    });
+  });
+</script>
+{% endblock extra_js %}

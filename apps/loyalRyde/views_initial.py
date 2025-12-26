@@ -1,4 +1,5 @@
 import calendar
+import logging
 import json
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -23,7 +24,25 @@ from django.core.mail import send_mail
 
 from .forms import *
 from .models import *
+# Zone-based pricing imports
+try:
+    from .services.pricing import (
+        locate_zone,
+        resolve_zone_rate,
+        find_zone_rate,
+        distance_duration,
+        compute_fallback_price,
+    )
+except Exception:
+    locate_zone = resolve_zone_rate = find_zone_rate = distance_duration = compute_fallback_price = None
+
+try:
+    from .models_zones import PricingConfig
+except Exception:
+    PricingConfig = None
 # Create your views here.
+
+logger = logging.getLogger(__name__)
 
 #  INICIO
 class Index(LoginRequiredMixin, TemplateView):
@@ -206,12 +225,26 @@ def get_rates(request):
         arrival_state = request.GET.get("arrival_state")
         arrival_sector = request.GET.get("arrival_sector", "")
         nro = request.GET.get("nro")
-        print(departure_city, departure_state, arrival_city, arrival_state)
+        # Optional coordinates for zone-based and fallback pricing
+        lat_1 = request.GET.get("lat_1") or request.GET.get("lat1")
+        long_1 = request.GET.get("long_1") or request.GET.get("lng_1") or request.GET.get("lon_1")
+        lat_2 = request.GET.get("lat_2") or request.GET.get("lat2")
+        long_2 = request.GET.get("long_2") or request.GET.get("lng_2") or request.GET.get("lon_2")
+        service_type = request.GET.get("service_type") or "traslado"
 
-        # Validar que todos los parámetros estén presentes y no sean None o vacíos
+        # Debug inputs
+        logger.debug("[rates_debug] get_rates params: dep=(%s, %s, %s) arr=(%s, %s, %s) nro=%s lat/lng=(%s,%s)->(%s,%s) service_type=%s",
+                     departure_city, departure_state, departure_sector,
+                     arrival_city, arrival_state, arrival_sector, nro,
+                     lat_1, long_1, lat_2, long_2, service_type)
+        print(f"[rates_debug] get_rates params: dep=({departure_city}, {departure_state}, {departure_sector}) arr=({arrival_city}, {arrival_state}, {arrival_sector}) nro={nro} lat/lng=({lat_1},{long_1})->({lat_2},{long_2}) service_type={service_type}")
+
+        # Validar que los parámetros básicos estén presentes
         if not all([departure_city, departure_state, arrival_city, arrival_state, nro]):
             return JsonResponse({"error": "Faltan parámetros requeridos para buscar la tarifa."}, status=400)
 
+        rate_data = []
+        # 1) Lógica actual basada en rutas (si existe)
         try:
             nro = int(nro)
             # Estrategia de resolución de ruta (más específico primero):
@@ -227,10 +260,14 @@ def get_rates(request):
                     departure_point__state__icontains=departure_state,
                     arrival_point__state__icontains=arrival_state,
                 )
+                logger.debug("[rates_debug] Trying route by sector: sector='%s'", arrival_sector)
+                print(f"[rates_debug] Trying route by sector: sector='{arrival_sector}'")
                 # exacto por sector
                 route = route_qs.filter(arrival_point__name__iexact=arrival_sector).first()
                 # si no, icontains por sector
                 if route is None:
+                    logger.debug("[rates_debug] No exact sector match; trying icontains")
+                    print("[rates_debug] No exact sector match; trying icontains")
                     route = route_qs.filter(arrival_point__name__icontains=arrival_sector).first()
 
             # Intento 2: fallback a ciudad si no se encontró por sector
@@ -241,12 +278,15 @@ def get_rates(request):
                     arrival_point__name__icontains=arrival_city,
                     arrival_point__state__icontains=arrival_state,
                 ).first()
+                logger.debug("[rates_debug] Trying route by city/state fallback")
+                print("[rates_debug] Trying route by city/state fallback")
 
             if route is None:
                 raise Route.DoesNotExist()
             # Luego, busca la tarifa asociada a esa ruta
             rate = Rates.objects.filter(route=route)
-            rate_data = []
+            logger.debug("[rates_debug] Found route id=%s '%s' -> listing %s legacy rates", getattr(route, 'id', None), route, rate.count())
+            print(f"[rates_debug] Found route id={getattr(route, 'id', None)} '{route}' -> listing {rate.count()} legacy rates")
             for n in rate:
                 rate_data.append({
                     "rate_id": n.id,
@@ -264,13 +304,80 @@ def get_rates(request):
                     'rate_detour_local': n.detour_local,
                     'rate_service_type': n.service_type if n.service_type else 'No disponible',
                 })
-                print(rate_data)
-            response_data = {
-                "rates": rate_data
-            }
-            return JsonResponse(response_data)
         except (Route.DoesNotExist, Rates.DoesNotExist, ValueError):
-            return JsonResponse({"error": "No se encontró una tarifa para esta ruta o los parámetros son inválidos."}, status=404)
+            logger.debug("[rates_debug] No legacy route/rates found; moving to zone-based logic")
+            print("[rates_debug] No legacy route/rates found; moving to zone-based logic")
+
+        # 2) Lógica por zonas (si contamos con coordenadas y servicios disponibles)
+        estimated_rate = None
+        try:
+            if all([lat_1, long_1, lat_2, long_2]) and resolve_zone_rate:
+                try:
+                    o_lat, o_lng = float(lat_1), float(long_1)
+                    d_lat, d_lng = float(lat_2), float(long_2)
+                except (TypeError, ValueError):
+                    o_lat = o_lng = d_lat = d_lng = None
+
+                if None not in (o_lat, o_lng, d_lat, d_lng):
+                    logger.debug("[rates_debug] Resolving ZoneRate with coords: (%s,%s)->(%s,%s)", o_lat, o_lng, d_lat, d_lng)
+                    print(f"[rates_debug] Resolving ZoneRate with coords: ({o_lat},{o_lng})->({d_lat},{d_lng})")
+                    zr = resolve_zone_rate(o_lat, o_lng, d_lat, d_lng, service_type=service_type)
+                    if zr:
+                        logger.debug("[rates_debug] ZoneRate found: id=%s %s -> %s veh=%s svc=%s price=%s", zr.id, zr.origin, zr.destination, getattr(zr.type_vehicle, 'type', None), zr.service_type, zr.price)
+                        print(f"[rates_debug] ZoneRate found: id={zr.id} {zr.origin} -> {zr.destination} veh={getattr(zr.type_vehicle, 'type', None)} svc={zr.service_type} price={zr.price}")
+                        # Agregar Tarifa de Zona como opción en la lista, con mismo formato que legacy
+                        rate_data.append({
+                            "rate_id": None,
+                            "zone_rate_id": zr.id,
+                            'rate_vehicle': f'{zr.type_vehicle}' if getattr(zr, 'type_vehicle', None) else 'Zona',
+                            'rate_route': f'{zr.origin}-{zr.destination}',
+                            'rate_price': zr.price,
+                            'rate_price_round_trip': zr.price_round_trip,
+                            'rate_driver_gain': getattr(zr, 'driver_gain', None),
+                            'rate_driver_price': getattr(zr, 'driver_price', None),
+                            'rate_driver_price_round_trip': getattr(zr, 'driver_price_round_trip', None),
+                            'rate_gain_loyal_ride': getattr(zr, 'gain_loyal_ride', None),
+                            'rate_gain_loyal_ride_round_trip': getattr(zr, 'gain_loyal_ride_round_trip', None),
+                            'rate_daytime_waiting_time': getattr(zr, 'daytime_waiting_time', None),
+                            'rate_nightly_waiting_time': getattr(zr, 'nightly_waiting_time', None),
+                            'rate_detour_local': getattr(zr, 'detour_local', None),
+                            'rate_service_type': zr.service_type if getattr(zr, 'service_type', None) else 'Tarifa por zona',
+                        })
+                    else:
+                        logger.debug("[rates_debug] No ZoneRate found; computing fallback estimate if config present")
+                        print("[rates_debug] No ZoneRate found; computing fallback estimate if config present")
+                        # 3) Fallback (estimación por distancia/tiempo)
+                        if PricingConfig and distance_duration and compute_fallback_price:
+                            config = PricingConfig.objects.first()
+                            if config:
+                                try:
+                                    dist_km, dur_min = distance_duration(o_lat, o_lng, d_lat, d_lng)
+                                    total = compute_fallback_price(dist_km, dur_min, config)
+                                    logger.debug("[rates_debug] Fallback estimate: dist=%.2fkm dur=%.0fmin total=%.2f", dist_km, dur_min, total)
+                                    print(f"[rates_debug] Fallback estimate: dist={dist_km:.2f}km dur={dur_min:.0f}min total={float(total):.2f}")
+                                    estimated_rate = {
+                                        'price': float(total),
+                                        'price_round_trip': float(total) * 2,
+                                        'distance_km': dist_km,
+                                        'duration_min': dur_min,
+                                        'source': 'fallback'
+                                    }
+                                except Exception:
+                                    logger.exception("[rates_debug] Error computing fallback estimate")
+                                    print("[rates_debug] Error computing fallback estimate")
+                                    estimated_rate = None
+        except Exception:
+            logger.exception("[rates_debug] Unexpected error in zone-based pricing block")
+            print("[rates_debug] Unexpected error in zone-based pricing block")
+
+        response_data = {
+            "rates": rate_data
+        }
+        if estimated_rate is not None:
+            response_data["estimated_rate"] = estimated_rate
+        logger.debug("[rates_debug] Response: %s", response_data)
+        print(f"[rates_debug] Response: {response_data}")
+        return JsonResponse(response_data)
 
 @csrf_exempt
 @require_POST

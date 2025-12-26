@@ -344,7 +344,8 @@ class TransferRequest(models.Model):
             ('cancelada', 'Cancelada'),
         ]
     approved_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_requests', verbose_name="Aprobado por")
-    rate = models.ForeignKey(Rates, on_delete=models.CASCADE, verbose_name="Tarifa")
+    rate = models.ForeignKey(Rates, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Tarifa")
+    zone_rate = models.ForeignKey('loyalRyde.ZoneRate', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Tarifa por zona")
     service_requested = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Usuario que Llenó el Formulario", blank=True, null=True)
     user_driver = models.ForeignKey(CustomUserDriver, on_delete=models.CASCADE, verbose_name="Usuario conductor", blank=True, null=True)
     stop_time = models.ManyToManyField(TransferStop, verbose_name="Pausa del viaje", blank=True)
@@ -545,7 +546,8 @@ class TransferRequest(models.Model):
 
     def get_total_daytime_waiting_time(self):
         total_price = Decimal('0.00')
-        cost = self.rate.daytime_waiting_time if self.rate else Decimal('0.00')
+        tarifa = self.zone_rate if self.zone_rate else self.rate
+        cost = tarifa.daytime_waiting_time if tarifa and tarifa.daytime_waiting_time else Decimal('0.00')
         hours = self.hora_espera_diurna if self.hora_espera_diurna else Decimal('0.00')
         if hours:
             total_price = cost * Decimal(hours)
@@ -555,7 +557,8 @@ class TransferRequest(models.Model):
     
     def get_total_nightly_waiting_time(self):
         total_price = Decimal('0.00')
-        cost = self.rate.nightly_waiting_time if self.rate else Decimal('0.00')
+        tarifa = self.zone_rate if self.zone_rate else self.rate
+        cost = tarifa.nightly_waiting_time if tarifa and tarifa.nightly_waiting_time else Decimal('0.00')
         hours = self.hora_espera_nocturna if self.hora_espera_nocturna else Decimal('0.00')
         if hours:
             total_price = cost * Decimal(hours)
@@ -566,9 +569,10 @@ class TransferRequest(models.Model):
     def get_total_round_trip(self):
         total_price = Decimal('0.00')
         if self.is_round_trip:
-            total_price = self.rate.price_round_trip if self.rate else Decimal('0.00')
+            tarifa = self.zone_rate if self.zone_rate else self.rate
+            total_price = tarifa.price_round_trip if tarifa else Decimal('0.00')
         else:
-            total_price = self.rate.price if self.rate else Decimal('0.00')
+            total_price = tarifa.price if tarifa else Decimal('0.00')
         
         total_price = round(total_price, 2)
         return total_price
@@ -576,9 +580,10 @@ class TransferRequest(models.Model):
     def get_normal_total(self):
         total_price = Decimal('0.00')
         if self.is_round_trip:
-            total_price = self.rate.price_round_trip if self.rate else Decimal('0.00')
+            tarifa = self.zone_rate if self.zone_rate else self.rate
+            total_price = tarifa.price_round_trip if tarifa else Decimal('0.00')
         else:
-            total_price = self.rate.price if self.rate else Decimal('0.00')
+            total_price = tarifa.price if tarifa else Decimal('0.00')
         
         total_price = round(total_price, 2)
         return total_price
@@ -588,8 +593,12 @@ class TransferRequest(models.Model):
     
     def get_total_deviation(self):
         total_price = Decimal('0.00')
+    def get_total_deviation(self):
+        total_price = Decimal('0.00')
+        tarifa = self.zone_rate if self.zone_rate else self.rate
+        detour_cost = tarifa.detour_local if tarifa and tarifa.detour_local else Decimal('0.00')
         if self.deviation.all().count() > 0:
-            total_price = self.rate.detour_local * self.deviation.all().count()
+            total_price = detour_cost * self.deviation.all().count()
         
         total_price = round(total_price, 2)
         return total_price
@@ -620,3 +629,8 @@ class TransferRequest(models.Model):
         verbose_name = 'Solicitud de traslado'
         verbose_name_plural = 'Solicitudes de traslado'
         ordering = ["-date_created"]
+
+    # Ensure additional models in this app are registered
+    from . import models_zones  # noqa: F401
+
+    

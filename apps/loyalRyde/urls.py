@@ -9,6 +9,8 @@ from apps.loyalRyde.views.discount_views.views import *
 from apps.loyalRyde.views.driver_views.views import *
 from apps.loyalRyde.views.fleet_views.views import *
 from apps.loyalRyde.views.rates_views.views import *
+from apps.loyalRyde.views.zone_rates_views.views import ZoneRatesCreateView, ZoneRatesUpdateView, ZoneRatesDeleteView, ZoneRatesListView
+from apps.loyalRyde.views.zones_views.views import ZoneCreateView, ZoneUpdateView, ZonesListView, search_place
 from apps.loyalRyde.views.route_views.views import *
 from apps.loyalRyde.views.transfers_request_views.views import *
 from apps.loyalRyde.views.transfers_request_views.views import get_people_transfer_by_company
@@ -71,6 +73,16 @@ urlpatterns = [
     path('rates/update/<int:pk>/', RatesUpdateView.as_view(), name='rates_update'),
     path('rates/delete/<int:pk>/', RatesDeleteView.as_view(), name='rates_delete'),
     path('rates/create/', RatesCreateView.as_view(), name='rates_create'),
+    # Zone Rates (tarifas por zonas)
+    path('zone-rates/list/', ZoneRatesListView.as_view(), name='zone_rates_list'),
+    path('zone-rates/create/', ZoneRatesCreateView.as_view(), name='zone_rates_create'),
+    path('zone-rates/update/<int:pk>/', ZoneRatesUpdateView.as_view(), name='zone_rates_update'),
+    path('zone-rates/delete/<int:pk>/', ZoneRatesDeleteView.as_view(), name='zone_rates_delete'),
+    # Zones CRUD + Búsqueda
+    path('zones/list/', ZonesListView.as_view(), name='zones_list'),
+    path('zones/create/', ZoneCreateView.as_view(), name='zones_create'),
+    path('zones/update/<int:pk>/', ZoneUpdateView.as_view(), name='zones_update'),
+    path('zones/search/', search_place, name='zones_search'),
     path('discount-coupon/create/', DiscountCouponCreateView.as_view(), name='discount_coupon_create'),
     path('discount-coupons/', DiscountCouponListView.as_view(), name='discount_coupon_list'),
     path('discount-coupon/update/<int:pk>/', DiscountCouponUpdateView.as_view(), name='discount_coupon_update'),
