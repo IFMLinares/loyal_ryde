@@ -8,3 +8,4 @@ db.sqlite3
 /staticfiles/
 .env
 dump.rdb
+docker-compose.yml
