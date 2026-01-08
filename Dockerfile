@@ -13,6 +13,11 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && apt-get install -y \
     gcc \
     libpq-dev \
+    binutils \
+    libproj-dev \
+    gdal-bin \
+    libgdal-dev \
+    libgeos-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiamos primero requirements para aprovechar la caché de Docker
