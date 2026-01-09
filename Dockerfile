@@ -31,4 +31,5 @@ COPY . .
 EXPOSE 8000
 
 # Comando de arranque
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "settings.wsgi:application"]
+# Comando de arranque seguro para Dokploy
+CMD ["gunicorn", "settings.wsgi:application", "--bind", "0.0.0.0:8000", "--forwarded-allow-ips=*", "--workers", "3"]
