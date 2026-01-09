@@ -9,3 +9,4 @@ db.sqlite3
 .env
 dump.rdb
 docker-compose.yml
+/db_data

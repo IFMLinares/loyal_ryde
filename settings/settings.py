@@ -20,33 +20,28 @@ from dotenv import load_dotenv
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Make OSGeo4W bin available for GDAL/GEOS dependent DLLs (Windows)
-OSGEO4W_ROOT = os.environ.get('OSGEO4W_ROOT')
-if OSGEO4W_ROOT:
-    try:
-        os.add_dll_directory(os.path.join(OSGEO4W_ROOT, 'bin'))
-    except Exception:
-        pass
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
+USE_WINDOWS_GDAL = os.getenv('USE_WINDOWS_GDAL', '0') == '1'
+if USE_WINDOWS_GDAL:
+    OSGEO4W_ROOT = os.getenv('OSGEO4W_ROOT')
+    if OSGEO4W_ROOT:
+        try:
+            os.add_dll_directory(os.path.join(OSGEO4W_ROOT, 'bin'))
+        except Exception:
+            pass
+    GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
+    GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')
+else:
+    OSGEO4W_ROOT = None
+    GDAL_LIBRARY_PATH = None
+    GEOS_LIBRARY_PATH = None
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-b65fo+=uvne$h+ri(k0_4p5(2^oc)b_up#en&-(pz1n#n9kve!')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -129,7 +124,7 @@ WSGI_APPLICATION = 'settings.wsgi.application'
 
 
 # Selección dinámica de base de datos según .env
-DB_ENGINE = os.environ.get('DB_ENGINE', 'sqlite3').lower()
+DB_ENGINE = os.getenv('DB_ENGINE', 'sqlite3').lower()
 if DB_ENGINE == 'postgresql':
     DATABASES = db.POSTGRESQL
 else:
@@ -186,13 +181,13 @@ LOGIN_REDIRECT_URL = '/'
 AXES_LOGIN_FAILURE_LIMIT = 30
 SITE_ID = 1
 AUTH_USER_MODEL = 'loyalRyde.CustomUser'
-load_dotenv()
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER =  os.environ.get('email')
-EMAIL_HOST_PASSWORD = os.environ.get('passEmail')
+EMAIL_HOST_USER =  os.getenv('email')
+EMAIL_HOST_PASSWORD = os.getenv('passEmail')
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
@@ -224,11 +219,9 @@ SIMPLE_JWT = {
     'SIGNING_KEY': SECRET_KEY,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
-GOOGLE_MAPS_API_KEY = os.environ.get('DJANGO_GOOGLE_MAPS_API_KEY')
+GOOGLE_MAPS_API_KEY = os.getenv('DJANGO_GOOGLE_MAPS_API_KEY')
 
-# Optional: provide GDAL/GEOS library paths via environment variables on Windows
-GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
-GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
+## Las variables GDAL_LIBRARY_PATH y GEOS_LIBRARY_PATH ya se definen arriba según el entorno
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -238,24 +231,28 @@ CORS_ALLOW_ALL_ORIGINS = True
 #     "http://185.182.186.224"
 # ]
 
-SITE_DOMAIN = 'http://69.167.167.154:8000'
+# SITE_DOMAIN = 'http://69.167.167.154:8000'
 
 # Daphne
 ASGI_APPLICATION = 'settings.asgi.application'
 
 CSRF_TRUSTED_ORIGINS = [
     'https://miloyalride.com',
-    # Add other trusted origins if needed
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 ]
 
 # Channels
 CHANNEL_LAYERS = {
-	'default': {
-		'BACKEND': 'channels_redis.core.RedisChannelLayer',
-		'CONFIG': {
-			'hosts': [('127.0.0.1', 6379)]
-		}
-	}
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [(
+                os.getenv('REDIS_HOST', 'localhost'),
+                int(os.getenv('REDIS_PORT', 6379))
+            )]
+        }
+    }
 }
 
 # Leaflet widget config (for editing geometries in admin)

@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    restart: always
+    container_name: postgresql
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      - DATABASE_HOST=db
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: django_pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+
+  web:
+    build: .
+    container_name: loyalrde_django_web
+    command: gunicorn settings.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - db
+
+  redis:
+    image: redis:latest
+    container_name: loyalryde_redis
+    ports:
+      - "6379:6379"
