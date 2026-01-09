@@ -30,6 +30,8 @@ COPY . .
 # Exponemos el puerto
 EXPOSE 8000
 
-# Comando de arranque
-# Comando de arranque seguro para Dokploy
-CMD ["gunicorn", "settings.wsgi:application", "--bind", "0.0.0.0:8000", "--forwarded-allow-ips=*", "--workers", "3"]
+# Configuración segura para que Gunicorn acepte a Dokploy
+ENV FORWARDED_ALLOW_IPS="*"
+
+# Comando limpio sin símbolos raros
+CMD ["gunicorn", "settings.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
