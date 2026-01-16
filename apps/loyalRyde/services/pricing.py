@@ -62,14 +62,23 @@ def resolve_zone_rate(o_lat: float, o_lng: float, d_lat: float, d_lng: float,
     d_list = locate_zones(d_lat, d_lng)
     logger.debug("[rates_debug] resolve_zone_rate: origin_zones=%s dest_zones=%s",
                  [z.name for z in o_list], [z.name for z in d_list])
+    # Buscar la combinación de zonas más interna (menor área en origen y destino)
+    best_zr = None
+    best_area = None
     for oz in o_list:
         for dz in d_list:
             zr = find_zone_rate(oz, dz, service_type=service_type, type_vehicle_id=type_vehicle_id)
             if zr:
-                logger.debug("[rates_debug] resolve_zone_rate matched: %s -> %s => zr_id=%s price=%s",
-                             oz.name, dz.name, zr.id, zr.price)
-                return zr
-    return None
+                # Suma de áreas para priorizar la combinación más interna
+                area_sum = getattr(oz, 'area', None) or oz.polygon.area
+                area_sum += getattr(dz, 'area', None) or dz.polygon.area
+                if best_zr is None or area_sum < best_area:
+                    best_zr = zr
+                    best_area = area_sum
+    if best_zr:
+        logger.debug("[rates_debug] resolve_zone_rate matched: %s -> %s => zr_id=%s price=%s",
+                     best_zr.origin.name, best_zr.destination.name, best_zr.id, best_zr.price)
+    return best_zr
 
 
 def compute_fallback_price(dist_km: float, dur_min: float, config: PricingConfig,
