@@ -39,7 +39,6 @@ def locate_zones(lat: float, lng: float) -> list[Zone]:
     logger.debug("[rates_debug] locate_zones -> %s", [z.name for z in zs])
     return zs
 
-
 def find_zone_rate(origin_zone: Optional[Zone], dest_zone: Optional[Zone], service_type: Optional[str] = None,
                    type_vehicle_id: Optional[int] = None) -> Optional[ZoneRate]:
     if not origin_zone or not dest_zone:
@@ -79,7 +78,6 @@ def resolve_zone_rate(o_lat: float, o_lng: float, d_lat: float, d_lng: float,
         logger.debug("[rates_debug] resolve_zone_rate matched: %s -> %s => zr_id=%s price=%s",
                      best_zr.origin.name, best_zr.destination.name, best_zr.id, best_zr.price)
     return best_zr
-
 
 def compute_fallback_price(dist_km: float, dur_min: float, config: PricingConfig,
                            is_nocturnal: bool = False, airport: bool = False, tolls: bool = False) -> Decimal:

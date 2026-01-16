@@ -244,69 +244,6 @@ def get_rates(request):
             return JsonResponse({"error": "Faltan parámetros requeridos para buscar la tarifa."}, status=400)
 
         rate_data = []
-        # 1) Lógica actual basada en rutas (si existe)
-        try:
-            nro = int(nro)
-            # Estrategia de resolución de ruta (más específico primero):
-            # 1) Si hay sector de llegada, intentar por sector+estado
-            # 2) Si no, intentar por ciudad+estado (como antes)
-
-            route = None
-
-            # Intento 1: sector de llegada específico (prefiere coincidencia exacta primero)
-            if arrival_sector:
-                route_qs = Route.objects.filter(
-                    departure_point__name__icontains=departure_city,
-                    departure_point__state__icontains=departure_state,
-                    arrival_point__state__icontains=arrival_state,
-                )
-                logger.debug("[rates_debug] Trying route by sector: sector='%s'", arrival_sector)
-                print(f"[rates_debug] Trying route by sector: sector='{arrival_sector}'")
-                # exacto por sector
-                route = route_qs.filter(arrival_point__name__iexact=arrival_sector).first()
-                # si no, icontains por sector
-                if route is None:
-                    logger.debug("[rates_debug] No exact sector match; trying icontains")
-                    print("[rates_debug] No exact sector match; trying icontains")
-                    route = route_qs.filter(arrival_point__name__icontains=arrival_sector).first()
-
-            # Intento 2: fallback a ciudad si no se encontró por sector
-            if route is None:
-                route = Route.objects.filter(
-                    departure_point__name__icontains=departure_city,
-                    departure_point__state__icontains=departure_state,
-                    arrival_point__name__icontains=arrival_city,
-                    arrival_point__state__icontains=arrival_state,
-                ).first()
-                logger.debug("[rates_debug] Trying route by city/state fallback")
-                print("[rates_debug] Trying route by city/state fallback")
-
-            if route is None:
-                raise Route.DoesNotExist()
-            # Luego, busca la tarifa asociada a esa ruta
-            rate = Rates.objects.filter(route=route)
-            logger.debug("[rates_debug] Found route id=%s '%s' -> listing %s legacy rates", getattr(route, 'id', None), route, rate.count())
-            print(f"[rates_debug] Found route id={getattr(route, 'id', None)} '{route}' -> listing {rate.count()} legacy rates")
-            for n in rate:
-                rate_data.append({
-                    "rate_id": n.id,
-                    'rate_vehicle': f'{n.type_vehicle}',
-                    'rate_route': f'{n.route.departure_point}-{n.route.arrival_point}',
-                    'rate_price': n.price,
-                    'rate_price_round_trip': n.price_round_trip,
-                    'rate_driver_gain': n.driver_gain,
-                    'rate_driver_price': n.driver_price,
-                    'rate_driver_price_round_trip': n.driver_price_round_trip,
-                    'rate_gain_loyal_ride': n.gain_loyal_ride,
-                    'rate_gain_loyal_ride_round_trip': n.gain_loyal_ride_round_trip,
-                    'rate_daytime_waiting_time': n.daytime_waiting_time,
-                    'rate_nightly_waiting_time': n.nightly_waiting_time,
-                    'rate_detour_local': n.detour_local,
-                    'rate_service_type': n.service_type if n.service_type else 'No disponible',
-                })
-        except (Route.DoesNotExist, Rates.DoesNotExist, ValueError):
-            logger.debug("[rates_debug] No legacy route/rates found; moving to zone-based logic")
-            print("[rates_debug] No legacy route/rates found; moving to zone-based logic")
 
         # 2) Lógica por zonas (si contamos con coordenadas y servicios disponibles)
         estimated_rate = None
