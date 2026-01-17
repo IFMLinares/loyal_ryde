@@ -579,12 +579,11 @@ class TransferRequest(models.Model):
 
     def get_normal_total(self):
         total_price = Decimal('0.00')
+        tarifa = self.zone_rate if self.zone_rate else self.rate
         if self.is_round_trip:
-            tarifa = self.zone_rate if self.zone_rate else self.rate
             total_price = tarifa.price_round_trip if tarifa else Decimal('0.00')
         else:
             total_price = tarifa.price if tarifa else Decimal('0.00')
-        
         total_price = round(total_price, 2)
         return total_price
 

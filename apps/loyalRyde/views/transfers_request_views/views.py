@@ -68,21 +68,22 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
     def send_email_creation_transfer(self, transfer_request):
         # Recuperar los usuarios con los roles 'administrador' y 'despachador'
         recipients = CustomUser.objects.filter(role__in=['administrador', 'despachador']).values_list('email', flat=True)
-        
         subject = 'Nueva solicitud de traslado'
-        
         # Construir la URL completa de la imagen
         request = self.request
         image_url = request.build_absolute_uri(settings.STATIC_URL + 'assets/media/logos/logo-01.png')
-        
         html_message = render_to_string('emails/test.html', {
             'transfer_request': transfer_request,
             'image_url': image_url
         })
         plain_message = strip_tags(html_message)
         from_email = 'loyalride.test@gmail.com'
-
-        send_mail(subject, plain_message, from_email, recipients, html_message=html_message)
+        try:
+            send_mail(subject, plain_message, from_email, recipients, html_message=html_message)
+            return True
+        except Exception as e:
+            print(f"[WARN] Error enviando correo: {e}")
+            return False
 
     def form_valid(self, form):
         print("Form is valid, proceeding to save TransferRequest...")  # Depuración
@@ -113,28 +114,36 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
         except (IndexError, ValueError):
             pass
 
+        # Validar que haya una tarifa válida (rate o zone_rate)
+        rate = form.cleaned_data.get('rate')
+        zone_rate = form.cleaned_data.get('zone_rate')
+        tarifa = zone_rate if zone_rate else rate
+        if not tarifa:
+            messages.error(self.request, "Debes seleccionar una tarifa válida para el traslado.")
+            return self.form_invalid(form)
+
         transfer_request = form.save()
 
-        # Obtén el ID de la tarifa y el objeto Rates
-        rate_id = form.cleaned_data['rate'].id
-        rate = Rates.objects.get(id=rate_id)
-
         # Calcula el precio basado en si es ida y vuelta
-        if form.cleaned_data['is_round_trip']:
-            transfer_request.price = rate.price_round_trip
+        if form.cleaned_data.get('is_round_trip'):
+            transfer_request.price = getattr(tarifa, 'price_round_trip', 0) or 0
         else:
-            transfer_request.price = rate.price
+            transfer_request.price = getattr(tarifa, 'price', 0) or 0
 
         # Calcula el precio final basado en los desvíos
         waypoints_numbers = form.cleaned_data.get('waypoints_numbers', 0)
+        detour_local = getattr(tarifa, 'detour_local', 0) or 0
         if waypoints_numbers > 0:
-            transfer_request.final_price += (waypoints_numbers * rate.detour_local)
+            transfer_request.final_price += (waypoints_numbers * detour_local)
 
         # Guarda el objeto TransferRequest con los nuevos valores
         transfer_request.save()
 
-        # Enviar correo electrónico
-        self.send_email_creation_transfer(transfer_request)
+        # Enviar correo electrónico y mostrar mensajes
+        email_sent = self.send_email_creation_transfer(transfer_request)
+        messages.success(self.request, "¡Traslado creado exitosamente!")
+        if not email_sent:
+            messages.warning(self.request, "El traslado fue creado, pero no se pudo enviar el correo de notificación.")
 
         return super().form_valid(form)
 
