@@ -244,7 +244,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
     'https://main-vps-loyalridebackend-mjxuk1-8ed6e2-69-167-167-154.traefik.me',
-    'https://loyalride.top/',
+    'https://loyalride.top',
 ]
 
 # Channels
