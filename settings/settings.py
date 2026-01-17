@@ -226,38 +226,48 @@ GOOGLE_MAPS_API_KEY = os.getenv('DJANGO_GOOGLE_MAPS_API_KEY')
 
 ## Las variables GDAL_LIBRARY_PATH y GEOS_LIBRARY_PATH ya se definen arriba según el entorno
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost",
-#     "http://127.0.0.1",
-#     "http://185.182.186.224"
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost",
+    "http://127.0.0.1",
+    'https://loyalride.top',
+    'https://main-vps-loyalridebackend-mjxuk1-8ed6e2-69-167-167-154.traefik.me',
+    
+]
 
-# SITE_DOMAIN = 'http://69.167.167.154:8000'
+SITE_DOMAIN = 'https://loyalride.top'
 
 # Daphne
 ASGI_APPLICATION = 'settings.asgi.application'
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://miloyalride.com',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
     'https://main-vps-loyalridebackend-mjxuk1-8ed6e2-69-167-167-154.traefik.me',
     'https://loyalride.top',
+    'wss://loyalride.top'
 ]
 
-# Channels
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+REDIS_PORT = os.getenv('REDIS_PORT', '6379')
+REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', None)
+
+# Construimos la URL completa de conexión
+if REDIS_PASSWORD:
+    # Formato con contraseña: redis://:password@host:port/0
+    REDIS_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/0"
+else:
+    # Formato sin contraseña (para local): redis://host:port/0
+    REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [(
-                os.getenv('REDIS_HOST', 'localhost'),
-                int(os.getenv('REDIS_PORT', 6379))
-            )]
-        }
-    }
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL],
+        },
+    },
 }
 
 # Leaflet widget config (for editing geometries in admin)
