@@ -439,6 +439,13 @@ class TransferRequest(models.Model):
             # Obtener la información completa de las personas a trasladar
             persons_to_transfer = list(self.person_to_transfer.values('name', 'phone', 'company'))
 
+            # Usar solo zone_rate, nunca rate
+            tarifa = self.zone_rate
+            if tarifa and hasattr(tarifa, 'driver_price'):
+                driver_price = tarifa.driver_price
+            else:
+                driver_price = None
+            # ... resto del método ...
             # Añadir el nombre y apellido, la URL de la imagen de la empresa y la información de las personas a trasladar al diccionario de la transferencia
             serialized_transfer_data['fields']['service_requested'] = user_full_name
             serialized_transfer_data['fields']['company_image_url'] = company_image_url
