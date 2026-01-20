@@ -427,7 +427,7 @@ class TransferRequest(models.Model):
             user = self.service_requested
             try:
                 user_full_name = f"{user.first_name} {user.last_name}"
-            except:
+            except Exception:
                 user_full_name = "Usuario invitado"
 
             # Obtener la URL completa de la imagen de la empresa
@@ -441,12 +441,14 @@ class TransferRequest(models.Model):
 
             # Usar solo zone_rate, nunca rate
             tarifa = self.zone_rate
-            if tarifa and hasattr(tarifa, 'driver_price'):
-                driver_price = tarifa.driver_price
-            else:
-                driver_price = None
-            # ... resto del método ...
-            # Añadir el nombre y apellido, la URL de la imagen de la empresa y la información de las personas a trasladar al diccionario de la transferencia
+            driver_price = None
+            driver_price_round_trip = None
+            service_type = None
+            if tarifa:
+                driver_price = getattr(tarifa, 'driver_price', None)
+                driver_price_round_trip = getattr(tarifa, 'driver_price_round_trip', None)
+                service_type = getattr(tarifa, 'service_type', None)
+
             serialized_transfer_data['fields']['service_requested'] = user_full_name
             serialized_transfer_data['fields']['company_image_url'] = company_image_url
             serialized_transfer_data['fields']['person_to_transfer'] = persons_to_transfer
@@ -461,16 +463,15 @@ class TransferRequest(models.Model):
 
             if self.is_round_trip:
                 rates = {
-                    "driver_gain": str(self.rate.driver_price_round_trip),
-                    "service_type": str(self.rate.service_type),
+                    "driver_gain": str(driver_price_round_trip) if driver_price_round_trip is not None else "0",
+                    "service_type": str(service_type) if service_type is not None else "",
                 }
             else:
                 rates = {
-                    "driver_gain": str(self.rate.driver_price),
-                    "service_type": str(self.rate.service_type),
+                    "driver_gain": str(driver_price) if driver_price is not None else "0",
+                    "service_type": str(service_type) if service_type is not None else "",
                 }
 
-            
             # Normalizar el nombre del grupo
             group_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', conductor.username)  # Reemplazar caracteres no válidos
             group_name = group_name[:100]  # Asegurarse de que el nombre tenga menos de 100 caracteres
