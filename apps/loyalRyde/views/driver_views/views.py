@@ -23,7 +23,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, F, Q, Sum
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 import base64
 
@@ -352,35 +352,56 @@ class TransferStartView(LoginRequiredMixin, View):
     template_name = 'loyal_ryde_system/transfer_status_message.html'
 
     def get(self, request, *args, **kwargs):
+        # Mostrar página con botón para iniciar; la acción se enviará por POST
         encoded_id = request.GET.get('id')
         if not encoded_id:
             return render(request, self.template_name, {'message': 'ID no proporcionado.'})
+        return render(request, self.template_name, {'encoded_id': encoded_id, 'action': 'start'})
+
+    def post(self, request, *args, **kwargs):
+        encoded_id = request.POST.get('id')
+        if not encoded_id:
+            return JsonResponse({'status': 'error', 'message': 'ID no proporcionado.'}, status=400)
         try:
             decoded_id = int(base64.b64decode(encoded_id).decode())
         except Exception:
-            return render(request, self.template_name, {'message': 'ID inválido.'})
+            return JsonResponse({'status': 'error', 'message': 'ID inválido.'}, status=400)
         transfer = get_object_or_404(TransferRequest, pk=decoded_id)
         if transfer.status != 'aprobada':
-            return render(request, self.template_name, {'message': 'No se puede iniciar el traslado. El estado debe ser "aprobada".'})
+            return JsonResponse({'status': 'error', 'message': 'No se puede iniciar el traslado. El estado debe ser "aprobada".'}, status=400)
         transfer.status = 'en proceso'
         transfer.save()
-        return render(request, self.template_name, {'message': 'Traslado iniciado.'})
+        return JsonResponse({'status': 'success', 'message': 'Traslado iniciado.'})
 
 
 class TransferFinishView(LoginRequiredMixin, View):
     template_name = 'loyal_ryde_system/transfer_status_message.html'
 
     def get(self, request, *args, **kwargs):
+        # Mostrar página con botón + campo de imagen; la acción se enviará por POST
         encoded_id = request.GET.get('id')
         if not encoded_id:
             return render(request, self.template_name, {'message': 'ID no proporcionado.'})
+        return render(request, self.template_name, {'encoded_id': encoded_id, 'action': 'finish'})
+
+    def post(self, request, *args, **kwargs):
+        encoded_id = request.POST.get('id')
+        if not encoded_id:
+            return JsonResponse({'status': 'error', 'message': 'ID no proporcionado.'}, status=400)
         try:
             decoded_id = int(base64.b64decode(encoded_id).decode())
         except Exception:
-            return render(request, self.template_name, {'message': 'ID inválido.'})
+            return JsonResponse({'status': 'error', 'message': 'ID inválido.'}, status=400)
         transfer = get_object_or_404(TransferRequest, pk=decoded_id)
         if transfer.status != 'en proceso':
-            return render(request, self.template_name, {'message': 'No se puede finalizar el traslado. El estado debe ser "en proceso".'})
+            return JsonResponse({'status': 'error', 'message': 'No se puede finalizar el traslado. El estado debe ser "en proceso".'}, status=400)
+
+        # El comprobante debe venir en los archivos
+        comprobante = request.FILES.get('comprobante')
+        if not comprobante:
+            return JsonResponse({'status': 'error', 'message': 'El comprobante es obligatorio para finalizar el traslado.'}, status=400)
+
+        transfer.comprobante = comprobante
         transfer.status = 'finalizada'
         transfer.save()
-        return render(request, self.template_name, {'message': 'Traslado finalizado.'})
+        return JsonResponse({'status': 'success', 'message': 'Traslado finalizado.'})

@@ -256,26 +256,26 @@
 									{% if item.status == 'esperando validación' %}
 									<div class="fw-mormal timeline-content ps-3 text-muted">
 										{% if item.primary_person %}
-											Traslado {{ item.primary_person.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+											<a href="{% url 'core:transfer_request_detail' item.id %}" class="text-muted">Traslado {{ item.primary_person.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}</a>
 										{% elif item.person_to_transfer.all|length > 0 %}
 											{% with first=item.person_to_transfer.all|first %}
-												Traslado {{ first.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+												<a href="{% url 'core:transfer_request_detail' item.id %}" class="text-muted">Traslado {{ first.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}</a>
 											{% endwith %}
 										{% else %}
-											Traslado <span class="text-muted">Sin personas</span> — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+											<a href="{% url 'core:transfer_request_detail' item.id %}" class="text-muted">Traslado <span class="text-muted">Sin personas</span> — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}</a>
 										{% endif %}
 									</div>
 									{% else %} 
 									<div class="timeline-content d-flex">
 										<span class="fw-bolder text-gray-800 ps-3">
 											{% if item.primary_person %}
-												Traslado {{ item.primary_person.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+												<a href="{% url 'core:transfer_request_detail' item.id %}">Traslado {{ item.primary_person.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}</a>
 											{% elif item.person_to_transfer.all|length > 0 %}
 												{% with first=item.person_to_transfer.all|first %}
-													Traslado {{ first.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+													<a href="{% url 'core:transfer_request_detail' item.id %}">Traslado {{ first.name }} — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}</a>
 												{% endwith %}
 											{% else %}
-												Traslado <span class="text-muted">Sin personas</span> — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}
+												<a href="{% url 'core:transfer_request_detail' item.id %}">Traslado <span class="text-muted">Sin personas</span> — Nro #{{ item.id }} {% if item.status == 'finalizada' %}Completado{% elif item.status == 'aprobada' %}Aprobada{% else %}{{ item.status }}{% endif %}</a>
 											{% endif %}
 										</span>
 									</div>
