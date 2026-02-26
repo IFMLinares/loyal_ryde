@@ -87,12 +87,6 @@
                                                 {{ form.person_to_transfer }}
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="id_primary_person">Pasajero principal:</label>
-                                            <select id="id_primary_person" name="primary_person" class="form-select" data-control="select2" required>
-                                                <option value="">Seleccione pasajero principal</option>
-                                            </select>
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mb-5">
@@ -185,6 +179,11 @@
                                 {{ form.long_1 }}
                                 {{ form.lat_2 }}
                                 {{ form.long_2 }}
+                                {% if form.zone_rate %}
+                                    {{ form.zone_rate }}
+                                {% else %}
+                                    <input type="hidden" name="zone_rate" id="id_zone_rate">
+                                {% endif %}
                                 {{ form.deviation }}
                                 <input type="hidden" name="waypoints_numbers" id="id_waypoints_numbers" placeholder="">
                             </div>
@@ -297,6 +296,14 @@ let company = {{ request.user.company.pk }};
 console.log(company);
 console.log(waypointCount);
 </script>
+<script>
+// Variables iniciales para preseleccionar la tarifa en la vista de edición
+window.initial_rate_id = {% if object and object.rate %}{{ object.rate.pk }}{% else %}null{% endif %};
+window.initial_zone_rate_id = {% if object and object.zone_rate %}{{ object.zone_rate.pk }}{% else %}null{% endif %};
+// Pasajeros seleccionados y pasajero principal
+window.initial_people_ids = [{% for p in object.person_to_transfer.all %}{{ p.pk }}{% if not forloop.last %}, {% endif %}{% endfor %}];
+window.initial_primary_person_id = {% if object and object.primary_person %}{{ object.primary_person.pk }}{% else %}null{% endif %};
+</script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHnlD8Je1f9oPwGg8U6edTnN3MAFBoYsc&libraries=places&loading=async&callback=initMap"></script>
 <script src="{% static 'ruta.js' %}"></script>
 <script src="{% static 'transfer_form.js' %}"></script>
@@ -307,6 +314,18 @@ console.log(waypointCount);
         // Inicializar multi.js en el select de personas
         $("#id_person_to_transfer").multi();
     });
+</script>
+<script>
+$(document).ready(function() {
+    // Si hay una tarifa inicial en la vista de edición, forzar búsqueda de tarifas
+    if (window.initial_rate_id || window.initial_zone_rate_id) {
+        // Dejar que los scripts de mapa y DOM se inicialicen antes de llamar
+        setTimeout(function() {
+            try { if (typeof handleAddressChange === 'function') handleAddressChange(); }
+            catch (e) { console.error('handleAddressChange error:', e); }
+        }, 600);
+    }
+});
 </script>
 <script>
 $(document).ready(function () {

@@ -2,6 +2,9 @@
 function updatePrimaryPersonSelect() {
 	var $multi = $('#id_person_to_transfer');
 	var $primary = $('#id_primary_person');
+	if ($primary.length === 0) {
+		return;
+	}
 	var selected = $multi.val() || [];
 	$primary.empty();
 	$primary.append('<option value="">Seleccione pasajero principal</option>');
@@ -15,16 +18,23 @@ function updatePrimaryPersonSelect() {
 	} else {
 		$primary.prop('disabled', true);
 	}
+	if (window.initial_primary_person_id && !$primary.data('initialized')) {
+		$primary.val(String(window.initial_primary_person_id));
+		$primary.data('initialized', true);
+	}
 	$primary.trigger('change');
 }
 
 $(document).ready(function () {
 	// Inicializar Select2 en el select de primary_person (en create y update)
 	if ($.fn.select2) {
-		$('#id_primary_person').select2({
-			placeholder: 'Seleccione pasajero principal',
-			width: '100%'
-		});
+		var $primary = $('#id_primary_person');
+		if ($primary.length) {
+			$primary.select2({
+				placeholder: 'Seleccione pasajero principal',
+				width: '100%'
+			});
+		}
 	}
 
 	// Sincronizar el select de primary_person con los seleccionados en el multi-select
@@ -41,6 +51,16 @@ $(document).ready(function () {
 			$input.attr('placeholder', 'Buscar pasajeros');
 		}
 	}, 100);
+
+	// Si la vista es de cliente y no se muestra el select de empresa,
+	// cargar automáticamente las personas de la empresa del usuario.
+	$(function() {
+		var initCompany = $('#id_company').val() || window.company || null;
+		if (initCompany) {
+			// Disparamos el mismo flujo que el change del select para reutilizar la lógica
+			$('#id_company').trigger('change');
+		}
+	});
 });
 	// --- Cargar personas de la empresa seleccionada en el select multi ---
 	$(document).on('change', '#id_company', function() {
@@ -56,10 +76,14 @@ $(document).ready(function () {
 			data: { company_id: companyId },
 			success: function(response) {
 				var $select = $('#id_person_to_transfer');
+				var existingSelected = $select.val() || [];
+				var initialSelected = Array.isArray(window.initial_people_ids) ? window.initial_people_ids.map(String) : [];
+				var selectedSet = new Set(existingSelected.map(String).concat(initialSelected));
 				$select.empty();
 				if (response.people && response.people.length > 0) {
 					response.people.forEach(function(person) {
-						var option = new Option(person.name + ' (' + person.phone + ')', person.id, false, false);
+						var isSelected = selectedSet.has(String(person.id));
+						var option = new Option(person.name + ' (' + person.phone + ')', person.id, isSelected, isSelected);
 						$select.append(option);
 					});
 				} else {
@@ -84,7 +108,8 @@ $(document).ready(function () {
 				// Llenar el select con las opciones traídas por AJAX
 				if (response.people && response.people.length > 0) {
 					response.people.forEach(function(person) {
-						var option = new Option(person.name + ' (' + person.phone + ')', person.id, false, false);
+						var isSelected = selectedSet.has(String(person.id));
+						var option = new Option(person.name + ' (' + person.phone + ')', person.id, isSelected, isSelected);
 						$nuevoSelect.append(option);
 					});
 				} else {
@@ -109,6 +134,11 @@ $(document).ready(function () {
 					var $label = $nuevoSelect.next('.multi-wrapper').find('.multi-label');
 					$label.trigger('mousedown').trigger('mouseup');
 				}, 50);
+
+				// Re-sincronizar el pasajero principal con el estado actual
+				if ($('#id_primary_person').length) {
+					$nuevoSelect.trigger('change');
+				}
 			},
 			error: function() {
 				alert('Error al cargar personas de la empresa.');
@@ -185,22 +215,79 @@ $(document).ready(function () {
 			},
 			success: function (response) {
 				console.log(response.people_transfer);
-	
+
 				$("#name").val("");
 				$("#phone").val("");
-				// $("#id_company").val("");
+
+				var created = true;
+				if (typeof response.created !== 'undefined') {
+					created = !!response.created;
+				}
+
 				var people = JSON.parse(response.people_transfer);
-				people.forEach(function (person) {
-					var option = new Option(
-						person.fields.name,
-						person.pk,
-						true,
-						true
-					);
-					$("#id_person_to_transfer")
-						.append(option)
-						.trigger("change");
+				// Collect existing options into an array
+				var options = [];
+				$('#id_person_to_transfer option').each(function() {
+					var $opt = $(this);
+					if ($opt.val()) {
+						options.push({ value: $opt.val(), text: $opt.text(), selected: $opt.prop('selected') });
+					}
 				});
+
+				// Handle response: if already existed, prefer selecting existing option and warn
+				people.forEach(function(person) {
+					var pid = String(person.pk);
+					var ptext = person.fields.name + ' (' + person.fields.phone + ')';
+					var alreadyPresent = options.some(function(o) { return String(o.value) === pid; });
+					if (!alreadyPresent) {
+						options.push({ value: pid, text: ptext, selected: true });
+					} else {
+						// If present, ensure it's selected
+						options = options.map(function(o) {
+							if (String(o.value) === pid) { o.selected = true; }
+							return o;
+						});
+					}
+				});
+
+				// Remove old select and wrapper
+				var $oldSelect = $('#id_person_to_transfer');
+				var $wrapper = $oldSelect.next('.multi-wrapper');
+				if ($wrapper.length) { $wrapper.remove(); }
+				$oldSelect.remove();
+
+				// Create a new select and populate options
+				var $nuevoSelect = $('<select class="form-select" aria-label="seleccione" multiple id="id_person_to_transfer" name="person_to_transfer" required></select>');
+				options.forEach(function(opt) {
+					var $opt = $('<option></option>').val(opt.value).text(opt.text);
+					if (opt.selected) { $opt.prop('selected', true); }
+					$nuevoSelect.append($opt);
+				});
+
+				// Insert and initialize multi.js
+				$('#id_person_to_transfer_container').append($nuevoSelect);
+				$nuevoSelect.multi({
+					search_placeholder: 'Buscar pasajeros',
+					"none_text": 'No hay pasajeros seleccionados',
+					"select_all": false
+				});
+
+				// Ensure primary person select is updated
+				$nuevoSelect.trigger('change');
+
+				// Notify user if record already existed
+				if (!created) {
+					if (typeof Swal !== 'undefined') {
+						Swal.fire({ icon: 'warning', title: 'Ya existe', text: response.message || 'La persona ya existe.' });
+					} else {
+						alert(response.message || 'La persona ya existe.');
+					}
+				} else {
+					// optional success feedback
+					if (typeof Swal !== 'undefined') {
+						Swal.fire({ icon: 'success', title: 'Añadido', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
+					}
+				}
 			},
 		});
 	});

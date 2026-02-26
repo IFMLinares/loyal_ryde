@@ -50,8 +50,24 @@
                         {% for item in transfer %}
                         <tr>
                             <td class="text-center">{{ item.date|date:'d/m/Y'}}-{{ item.hour|date:'G:i' }}</td>
-                            <td class="text-center">{{  item.rate.route.departure_point.name }}</td>
-                            <td class="text-center">{{  item.rate.route.arrival_point.name }}</td>
+                            <td class="text-center">
+                                {% if item.zone_rate %}
+                                    {{ item.zone_rate.origin.name }}
+                                {% elif item.rate and item.rate.route and item.rate.route.departure_point %}
+                                    {{ item.rate.route.departure_point.name }}
+                                {% else %}
+                                    <span class="text-muted">N/D</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if item.zone_rate %}
+                                    {{ item.zone_rate.destination.name }}
+                                {% elif item.rate and item.rate.route and item.rate.route.arrival_point %}
+                                    {{ item.rate.route.arrival_point.name }}
+                                {% else %}
+                                    <span class="text-muted">N/D</span>
+                                {% endif %}
+                            </td>
                             <td class="text-center">
                                 {% if item.user_driver and item.user_driver.type %}
                                     {{ item.user_driver.type.type }}

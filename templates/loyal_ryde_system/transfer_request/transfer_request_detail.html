@@ -213,12 +213,23 @@
                                     <div class="card-body">
                                         <h5 class="card-title"><i class="fas fa-dollar-sign"></i> Tarifa</h5>
                                         <p class="card-text">
-                                            <span class="text-dark">{{ detail.rate.route.route_name|title }}</span> <br>
-                                            <span class="text-dark">Precio Base: </span> <span style="color:green">{{ detail.rate.price }}$</span><br>
-                                            <span class="text-dark">Precio ida y vuelta: </span> <span style="color:green">{{ detail.rate.price_round_trip }}$</span><br>
-                                            <span class="text-dark">Precio de espera por hora (diurna) C/U: </span> <span style="color:green">{{ detail.rate.daytime_waiting_time }}$<br>
-                                            <span class="text-dark">Precio de espera por hora (noctura) C/U: </span> <span style="color:green">{{ detail.rate.nightly_waiting_time }}$</span><br>
-                                            <span class="text-dark">Precio por desvio local C/U: </span> <span style="color:green">{{ detail.rate.detour_local }}$</span><br>
+                                            {% if detail.zone_rate %}
+                                                <span class="text-dark">{{ detail.zone_rate.origin.name }} → {{ detail.zone_rate.destination.name }}</span> <br>
+                                                <span class="text-dark">Precio Base: </span> <span style="color:green">{{ detail.zone_rate.price }}$</span><br>
+                                                <span class="text-dark">Precio ida y vuelta: </span> <span style="color:green">{{ detail.zone_rate.price_round_trip }}$</span><br>
+                                                <span class="text-dark">Precio de espera por hora (diurna) C/U: </span> <span style="color:green">{{ detail.zone_rate.daytime_waiting_time }}$<br>
+                                                <span class="text-dark">Precio de espera por hora (noctura) C/U: </span> <span style="color:green">{{ detail.zone_rate.nightly_waiting_time }}$</span><br>
+                                                <span class="text-dark">Precio por desvio local C/U: </span> <span style="color:green">{{ detail.zone_rate.detour_local }}$</span><br>
+                                            {% elif detail.rate %}
+                                                <span class="text-dark">{{ detail.rate.route.route_name|title }}</span> <br>
+                                                <span class="text-dark">Precio Base: </span> <span style="color:green">{{ detail.rate.price }}$</span><br>
+                                                <span class="text-dark">Precio ida y vuelta: </span> <span style="color:green">{{ detail.rate.price_round_trip }}$</span><br>
+                                                <span class="text-dark">Precio de espera por hora (diurna) C/U: </span> <span style="color:green">{{ detail.rate.daytime_waiting_time }}$<br>
+                                                <span class="text-dark">Precio de espera por hora (noctura) C/U: </span> <span style="color:green">{{ detail.rate.nightly_waiting_time }}$</span><br>
+                                                <span class="text-dark">Precio por desvio local C/U: </span> <span style="color:green">{{ detail.rate.detour_local }}$</span><br>
+                                            {% else %}
+                                                <span class="text-muted">No hay tarifa asociada</span>
+                                            {% endif %}
                                         </p>
                                     </div>
                                 </div>

@@ -113,16 +113,28 @@ def get_people_transfer(request):
                 return JsonResponse({'error': 'La empresa no existe.'}, status=400)
 
 
-        # Verificar si ya existe un registro con los datos proporcionados
-        person = PeopleTransfer.objects.filter(name=name, phone=phone, company=company).first()
-        if person:
-            data = serializers.serialize('json', [person])
-            return JsonResponse({'people_transfer': data}, status=200)
+        # Normalizar entrada
+        name_norm = (name or '').strip().lower()
+        phone_norm = re.sub(r"\D", "", phone or '')
+
+        # Buscar duplicados comparando en Python tras normalizar para evitar diferencias de formato
+        qs = PeopleTransfer.objects.filter(company=company)
+        existing = None
+        for p in qs:
+            p_name = (p.name or '').strip().lower()
+            p_phone = re.sub(r"\D", "", p.phone or '')
+            if p_name == name_norm and p_phone == phone_norm:
+                existing = p
+                break
+
+        if existing:
+            data = serializers.serialize('json', [existing])
+            return JsonResponse({'people_transfer': data, 'created': False, 'message': 'Ya existe una persona con esos datos.'}, status=200)
 
         # Crear un nuevo registro si no existe
-        person = PeopleTransfer.objects.create(name=name, phone=phone, company=company)
+        person = PeopleTransfer.objects.create(name=name.strip(), phone=phone.strip(), company=company)
         data = serializers.serialize('json', [person])
-        return JsonResponse({'people_transfer': data}, status=200)
+        return JsonResponse({'people_transfer': data, 'created': True}, status=200)
 
 @csrf_exempt
 def approve_request(request):
@@ -260,26 +272,57 @@ def get_rates(request):
                     print(f"[rates_debug] Resolving ZoneRate with coords: ({o_lat},{o_lng})->({d_lat},{d_lng})")
                     zr = resolve_zone_rate(o_lat, o_lng, d_lat, d_lng, service_type=service_type)
                     if zr:
-                        logger.debug("[rates_debug] ZoneRate found: id=%s %s -> %s veh=%s svc=%s price=%s", zr.id, zr.origin, zr.destination, getattr(zr.type_vehicle, 'type', None), zr.service_type, zr.price)
+                        # Obtener todas las ZoneRate para la misma combinación origen/destino
+                        try:
+                            from .models_zones import ZoneRate
+                        except Exception:
+                            ZoneRate = None
+
+                        logger.debug("[rates_debug] ZoneRate found (representative): id=%s %s -> %s veh=%s svc=%s price=%s", zr.id, zr.origin, zr.destination, getattr(zr.type_vehicle, 'type', None), zr.service_type, zr.price)
                         print(f"[rates_debug] ZoneRate found: id={zr.id} {zr.origin} -> {zr.destination} veh={getattr(zr.type_vehicle, 'type', None)} svc={zr.service_type} price={zr.price}")
-                        # Agregar Tarifa de Zona como opción en la lista, con mismo formato que legacy
-                        rate_data.append({
-                            "rate_id": None,
-                            "zone_rate_id": zr.id,
-                            'rate_vehicle': f'{zr.type_vehicle}' if getattr(zr, 'type_vehicle', None) else 'Zona',
-                            'rate_route': f'{zr.origin}-{zr.destination}',
-                            'rate_price': zr.price,
-                            'rate_price_round_trip': zr.price_round_trip,
-                            'rate_driver_gain': getattr(zr, 'driver_gain', None),
-                            'rate_driver_price': getattr(zr, 'driver_price', None),
-                            'rate_driver_price_round_trip': getattr(zr, 'driver_price_round_trip', None),
-                            'rate_gain_loyal_ride': getattr(zr, 'gain_loyal_ride', None),
-                            'rate_gain_loyal_ride_round_trip': getattr(zr, 'gain_loyal_ride_round_trip', None),
-                            'rate_daytime_waiting_time': getattr(zr, 'daytime_waiting_time', None),
-                            'rate_nightly_waiting_time': getattr(zr, 'nightly_waiting_time', None),
-                            'rate_detour_local': getattr(zr, 'detour_local', None),
-                            'rate_service_type': zr.service_type if getattr(zr, 'service_type', None) else 'Tarifa por zona',
-                        })
+
+                        if ZoneRate is not None:
+                            zr_qs = ZoneRate.objects.filter(origin=zr.origin, destination=zr.destination)
+                            if getattr(zr, 'service_type', None):
+                                zr_qs = zr_qs.filter(service_type=zr.service_type)
+                            # Añadir cada tarifa por zona disponible (distintos tipos de vehículo)
+                            for zrate in zr_qs:
+                                rate_data.append({
+                                    "rate_id": None,
+                                    "zone_rate_id": zrate.id,
+                                    'rate_vehicle': f'{zrate.type_vehicle}' if getattr(zrate, 'type_vehicle', None) else 'Zona',
+                                    'rate_route': f'{zrate.origin}-{zrate.destination}',
+                                    'rate_price': zrate.price,
+                                    'rate_price_round_trip': getattr(zrate, 'price_round_trip', None),
+                                    'rate_driver_gain': getattr(zrate, 'driver_gain', None),
+                                    'rate_driver_price': getattr(zrate, 'driver_price', None),
+                                    'rate_driver_price_round_trip': getattr(zrate, 'driver_price_round_trip', None),
+                                    'rate_gain_loyal_ride': getattr(zrate, 'gain_loyal_ride', None),
+                                    'rate_gain_loyal_ride_round_trip': getattr(zrate, 'gain_loyal_ride_round_trip', None),
+                                    'rate_daytime_waiting_time': getattr(zrate, 'daytime_waiting_time', None),
+                                    'rate_nightly_waiting_time': getattr(zrate, 'nightly_waiting_time', None),
+                                    'rate_detour_local': getattr(zrate, 'detour_local', None),
+                                    'rate_service_type': zrate.service_type if getattr(zrate, 'service_type', None) else 'Tarifa por zona',
+                                })
+                        else:
+                            # Fallback: si no se puede importar ZoneRate, añadir la representativa
+                            rate_data.append({
+                                "rate_id": None,
+                                "zone_rate_id": zr.id,
+                                'rate_vehicle': f'{zr.type_vehicle}' if getattr(zr, 'type_vehicle', None) else 'Zona',
+                                'rate_route': f'{zr.origin}-{zr.destination}',
+                                'rate_price': zr.price,
+                                'rate_price_round_trip': getattr(zr, 'price_round_trip', None),
+                                'rate_driver_gain': getattr(zr, 'driver_gain', None),
+                                'rate_driver_price': getattr(zr, 'driver_price', None),
+                                'rate_driver_price_round_trip': getattr(zr, 'driver_price_round_trip', None),
+                                'rate_gain_loyal_ride': getattr(zr, 'gain_loyal_ride', None),
+                                'rate_gain_loyal_ride_round_trip': getattr(zr, 'gain_loyal_ride_round_trip', None),
+                                'rate_daytime_waiting_time': getattr(zr, 'daytime_waiting_time', None),
+                                'rate_nightly_waiting_time': getattr(zr, 'nightly_waiting_time', None),
+                                'rate_detour_local': getattr(zr, 'detour_local', None),
+                                'rate_service_type': zr.service_type if getattr(zr, 'service_type', None) else 'Tarifa por zona',
+                            })
                     else:
                         logger.debug("[rates_debug] No ZoneRate found; computing fallback estimate if config present")
                         print("[rates_debug] No ZoneRate found; computing fallback estimate if config present")
@@ -400,6 +443,42 @@ def get_whatsapp_link(request):
             url_base = request.build_absolute_uri('/')[:-1]  # Quita el slash final
             iniciar_url = f"{url_base}/transfer/start/?id={encoded_id}"
             finalizar_url = f"{url_base}/transfer/finish/?id={encoded_id}"
+            # Construir enlace de Google Maps Directions
+            try:
+                from urllib.parse import quote_plus
+
+                # Preferir coordenadas si están disponibles
+                origin = ''
+                destination = ''
+                if transfer.lat_1 and transfer.long_1:
+                    origin = f"{transfer.lat_1},{transfer.long_1}"
+                else:
+                    # fallback a texto (campos pueden estar invertidos en la app, chequeamos ambos)
+                    origin = transfer.departure_direc or transfer.destination_direc or ''
+
+                if transfer.lat_2 and transfer.long_2:
+                    destination = f"{transfer.lat_2},{transfer.long_2}"
+                else:
+                    destination = transfer.destination_direc or transfer.departure_direc or ''
+
+                # Waypoints (desvíos)
+                wps = []
+                for d in transfer.deviation.all():
+                    if getattr(d, 'lat', None) and getattr(d, 'long', None):
+                        wps.append(f"{d.lat},{d.long}")
+                    elif getattr(d, 'desviation_direc', None):
+                        wps.append(d.desviation_direc)
+
+                maps_base = "https://www.google.com/maps/dir/?api=1"
+                maps_params = f"&origin={quote_plus(origin)}&destination={quote_plus(destination)}&travelmode=driving"
+                if wps:
+                    # waypoints joined with pipe '|'
+                    maps_params += "&waypoints=" + quote_plus("|".join(wps))
+
+                maps_url = maps_base + maps_params
+            except Exception as e:
+                maps_url = ''
+                print(f"[WARN] Error building maps url: {e}")
 
             mensaje = (
                 f"Solicitud de traslado aprobada\n"
@@ -416,12 +495,16 @@ def get_whatsapp_link(request):
                 f"Iniciar traslado: \n{iniciar_url}\n"
                 f"Finalizar traslado: \n{finalizar_url}\n"
             )
+            # Añadir enlace a Google Maps en el mensaje si se generó
+            if maps_url:
+                mensaje = mensaje + f"Ruta en Google Maps: \n{maps_url}\n"
             # Codifica el mensaje para URL
             from urllib.parse import quote
             mensaje_url = quote(mensaje)
             whatsapp_url = f"https://wa.me/{whatsapp_number}?text={mensaje_url}"
 
-            return JsonResponse({'status': 'success', 'whatsapp_url': whatsapp_url})
+            # Devolver además el enlace de Google Maps por separado
+            return JsonResponse({'status': 'success', 'whatsapp_url': whatsapp_url, 'maps_url': maps_url})
         except TransferRequest.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Transferencia no encontrada.'})
     return JsonResponse({'status': 'error', 'message': 'Método no permitido.'})

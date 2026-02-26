@@ -185,12 +185,21 @@ AXES_LOGIN_FAILURE_LIMIT = 30
 SITE_ID = 1
 AUTH_USER_MODEL = 'loyalRyde.CustomUser'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER =  os.getenv('email')
-EMAIL_HOST_PASSWORD = os.getenv('passEmail')
+# Email configuration
+# In development (DEBUG=True) use console backend to avoid external SMTP timeouts.
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+    EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+    EMAIL_PORT = int(os.getenv('EMAIL_PORT', '465'))
+    # Prefer explicit env flags for TLS/SSL
+    EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'True') == 'True'
+    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False') == 'True'
+    EMAIL_HOST_USER = os.getenv('email')
+    EMAIL_HOST_PASSWORD = os.getenv('passEmail')
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+    EMAIL_TIMEOUT = int(os.getenv('EMAIL_TIMEOUT', '20'))
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (

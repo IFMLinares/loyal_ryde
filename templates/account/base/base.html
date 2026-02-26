@@ -49,18 +49,7 @@
                     {% endblock content %}
 					<!--end::Wrapper-->
 				</div>
-				<!--end::Content-->
-				<!--begin::Footer-->
-				<!-- <div class="d-flex flex-center flex-column-auto p-10">
-					<div class="d-flex align-items-center fw-bold fs-6">
-						<a href="https://keenthemes.com" class="text-muted text-hover-primary px-2">About</a>
-						<a href="mailto:support@keenthemes.com" class="text-muted text-hover-primary px-2">Contact</a>
-						<a href="https://1.envato.market/EA4JP" class="text-muted text-hover-primary px-2">Contact Us</a>
-					</div>
-				</div> -->
-				<!--end::Footer-->
 			</div>
-			<!--end::Authentication - Sign-in-->
 		</div>
 		<!--end::Root-->
 		<!--end::Main-->
@@ -71,47 +60,91 @@
 		<script src="{% static 'assets/js/scripts.bundle.js'%}"></script>
 		<!--end::Global Javascript Bundle-->
 		<!--begin::Page Custom Javascript(used by this page)-->
-		<script src="{% static 'assets/js/custom/authentication/sign-in/general.js'%}"></script>
 		<script src="{% static 'assets/js/sweetalert2/sweet-alert-2-11.js'%}"></script>
 		<!--end::Page Custom Javascript-->
 		<!--end::Javascript-->
-        <script>
-            {% if messages %}
-                    var errors = '';
-                    {% for message in messages %}
-                        errors += '{{ message }}\n';
-                    {% endfor %}
-                    Swal.fire({
-                        title: 'Error!',
-                        text: errors,
-                        icon: "warning",
-                        // footer: '<a href="#">Why do I have this issue?</a>'
-                    });
-            {% endif %}
-        </script>
+		<!-- Render Django messages into a plain JS array for external handling -->
+		<script>
+			// Export Django messages as objects with text and level (tags)
+			window.djangoMessages = [
+				{% for message in messages %}
+					{"text": "{{ message|escapejs }}", "level": "{{ message.tags }}"},
+				{% endfor %}
+			];
+
+			(function(){
+				var msgs = window.djangoMessages || [];
+				if (!msgs.length) return;
+
+				var logoutTexts = [
+					'Ha cerrado sesión.',
+					'Sesión cerrada. Respira profundo, todo está bajo control'
+				];
+
+				var isLogout = msgs.some(function(m){ return logoutTexts.indexOf(m.text) !== -1; });
+
+				if (isLogout) {
+					Swal.fire({
+						title: 'Sesión cerrada',
+						text: 'Respira profundo, todo está bajo control.',
+						icon: 'success',
+						timer: 3000,
+						showConfirmButton: false
+					});
+					return;
+				}
+
+				// Show messages according to their level tag
+				msgs.forEach(function(m){
+					var level = (m.level || '').toLowerCase();
+					if (level.indexOf('success') !== -1) {
+						Swal.fire({title: 'Éxito', text: m.text, icon: 'success', timer: 3000, showConfirmButton: false});
+					} else if (level.indexOf('error') !== -1) {
+						Swal.fire({title: 'Error!', text: m.text, icon: 'error'});
+					} else if (level.indexOf('warning') !== -1) {
+						Swal.fire({title: 'Advertencia', text: m.text, icon: 'warning'});
+					} else {
+						// default to info
+						Swal.fire({title: 'Información', text: m.text, icon: 'info'});
+					}
+				});
+			})();
+		</script>
 		{% block error_js %}
-        <script>
-            {% if form.errors %}
-                var errors = '';
-                {% for field in form %}
-                    {% for error in field.errors %}
-                        errors += '<p style="margin-top: 7px; margin-bottom: 7px;">{{ field.label|title }}: {{ error|escape }}</p>';
-                    {% endfor %}
-                {% endfor %}
-                {% for error in form.non_field_errors %}
-                    errors += '<p style="margin-top: 7px; margin-bottom: 7px;">{{ error|escape }}</p>';
-                {% endfor %}
-                Swal.fire({
-                    title: 'Error!',
-                    html: errors, // Cambia 'text' por 'html'
-                    icon: "error",
-                    width: 500,
-                    height: 700
-                    // footer: '<a href="#">Why do I have this issue?</a>'
-                });
-            {% endif %}
-        </script>
-        
+
+		<!-- Export form errors to a plain JS array for external handling -->
+		<script>
+			window.djangoFormErrors = (function(){
+				var arr = [];
+				{% if form and form.errors %}
+					{% for field in form %}
+						{% for error in field.errors %}
+							arr.push("{{ field.label|title|escapejs }}: {{ error|escapejs }}");
+						{% endfor %}
+					{% endfor %}
+					{% for error in form.non_field_errors %}
+						arr.push("{{ error|escapejs }}");
+					{% endfor %}
+				{% endif %}
+				return arr;
+			})();
+
+			(function(){
+				var errs = window.djangoFormErrors || [];
+				if (!errs.length) return;
+
+				var html = errs.map(function(e){ return '<p style="margin-top:7px;margin-bottom:7px;">' + e + '</p>'; }).join('');
+
+				Swal.fire({
+					title: 'Error!',
+					html: html,
+					icon: 'error',
+					width: 500,
+					height: 700
+				});
+			})();
+		</script>
+
 		{% endblock error_js %}
 	</body>
 	<!--end::Body-->

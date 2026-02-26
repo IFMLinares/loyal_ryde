@@ -364,7 +364,12 @@ class AddZoneRateForm(ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         for form in self.visible_fields():
-            if form.name in ['origin','destination','type_vehicle','service_type']:
+            # Enable select2 with search for origin/destination
+            if form.name in ['origin', 'destination']:
+                form.field.widget.attrs['class'] = 'form-select mb-2'
+                form.field.widget.attrs['data-control'] = 'select2'
+            # Keep select2 without search for vehicle/service selectors
+            elif form.name in ['type_vehicle', 'service_type']:
                 form.field.widget.attrs['class'] = 'form-select mb-2'
                 form.field.widget.attrs['data-control'] = 'select2'
                 form.field.widget.attrs['data-hide-search'] = 'true'

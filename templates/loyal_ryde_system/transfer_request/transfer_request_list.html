@@ -52,8 +52,24 @@ Inicio
                                         data-order="{{ transfer_request.date|date:'Y-m-d' }} {{ transfer_request.hour|date:'H:i' }}">
                                         {{ transfer_request.date|date:'d/m/Y'}}-{{ transfer_request.hour|date:'G:i' }}
                                     </td>
-                                    <td class="text-center">{{ transfer_request.rate.route.departure_point.name }}</td>
-                                    <td class="text-center">{{ transfer_request.rate.route.arrival_point.name }}</td>
+                                    <td class="text-center">
+                                        {% if transfer_request.zone_rate %}
+                                            {{ transfer_request.zone_rate.origin.name }}
+                                        {% elif transfer_request.rate and transfer_request.rate.route and transfer_request.rate.route.departure_point %}
+                                            {{ transfer_request.rate.route.departure_point.name }}
+                                        {% else %}
+                                            <span class="text-muted">N/D</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if transfer_request.zone_rate %}
+                                            {{ transfer_request.zone_rate.destination.name }}
+                                        {% elif transfer_request.rate and transfer_request.rate.route and transfer_request.rate.route.arrival_point %}
+                                            {{ transfer_request.rate.route.arrival_point.name }}
+                                        {% else %}
+                                            <span class="text-muted">N/D</span>
+                                        {% endif %}
+                                    </td>
                                     <td class="text-center">
                                         {% if transfer_request.user_driver %}
                                             {% if transfer_request.user_driver.type %}{{ transfer_request.user_driver.type }}{% endif %}

@@ -444,6 +444,40 @@ async function handleAddressChange() {
                         $("#id_zone_rate").val('');
                     }
                 }
+
+                // Si la vista de edición pasó una tarifa inicial, intentar seleccionarla automáticamente
+                try {
+                    var initialZone = window.initial_zone_rate_id || null;
+                    var initialRate = window.initial_rate_id || null;
+                    var selector = null;
+                    if (initialZone) {
+                        selector = `.rate-radio[data-zone-rate-id="${initialZone}"]`;
+                    } else if (initialRate) {
+                        selector = `.rate-radio[data-rate-id="${initialRate}"]`;
+                    }
+
+                    if (selector) {
+                        // Encuentra el input generado y márcalo
+                        var $initial = $(selector).first();
+                        if ($initial.length) {
+                            $initial.prop('checked', true);
+                            // Actualizar selects ocultos y precio
+                            var zoneId = $initial.data('zone-rate-id') || '';
+                            var rateId = $initial.data('rate-id') || '';
+                            if (zoneId) {
+                                $("#id_zone_rate").val(zoneId);
+                                $("#id_rate").val('');
+                            } else {
+                                $("#id_rate").val(rateId);
+                                $("#id_zone_rate").val('');
+                            }
+                            // Trigger change so updatePrice() runs
+                            $initial.trigger('change');
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error al preseleccionar tarifa inicial:', e);
+                }
             },
             error: function () {
                 // Maneja el error si no se encuentra una tarifa
