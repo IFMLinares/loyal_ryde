@@ -68,13 +68,59 @@ class TransferRequestCreateView(LoginRequiredMixin, CreateView):
     def send_email_creation_transfer(self, transfer_request):
         # Recuperar los usuarios con los roles 'administrador' y 'despachador'
         recipients = CustomUser.objects.filter(role__in=['administrador', 'despachador']).values_list('email', flat=True)
-        subject = 'Nueva solicitud de traslado'
         # Construir la URL completa de la imagen
         request = self.request
         image_url = request.build_absolute_uri(settings.STATIC_URL + 'assets/media/logos/logo-01.png')
+        # Preparar datos adicionales para la plantilla de correo
+        try:
+            passengers = transfer_request.person_to_transfer.all()
+        except Exception:
+            passengers = []
+
+        # Determinar nombre del pasajero principal (fallback al primer pasajero)
+        primary_name = ''
+        try:
+            primary_person = getattr(transfer_request, 'primary_person', None)
+            if primary_person and getattr(primary_person, 'name', None):
+                primary_name = primary_person.name
+            else:
+                if passengers:
+                    first = passengers[0]
+                    primary_name = getattr(first, 'name', str(first))
+        except Exception:
+            primary_name = ''
+
+        # Asunto incluye el pasajero principal si está disponible
+        subject = f"Nueva solicitud de traslado{(' - ' + primary_name) if primary_name else ''}"
+
+        # Intentar obtener una etiqueta legible para el tipo de vehículo
+        vehicle_label = ''
+        vehicle_obj = getattr(transfer_request, 'fleet', None) or getattr(transfer_request, 'vehicle', None)
+        if vehicle_obj:
+            vehicle_label = getattr(vehicle_obj, 'name', str(vehicle_obj))
+        else:
+            vehicle_label = getattr(transfer_request, 'vehicle_type', '') or ''
+
+        # Empresa
+        company_name = ''
+        try:
+            company_name = transfer_request.company.name
+        except Exception:
+            company_name = ''
+
+        # URL al detalle del traslado en la plataforma
+        try:
+            transfer_url = request.build_absolute_uri(reverse('core:transfer_request_detail', args=[transfer_request.id]))
+        except Exception:
+            transfer_url = ''
+
         html_message = render_to_string('emails/test.html', {
             'transfer_request': transfer_request,
-            'image_url': image_url
+            'image_url': image_url,
+            'passengers': passengers,
+            'vehicle_label': vehicle_label,
+            'company_name': company_name,
+            'transfer_url': transfer_url,
         })
         plain_message = strip_tags(html_message)
         from_email = 'loyalride.test@gmail.com'

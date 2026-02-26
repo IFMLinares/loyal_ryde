@@ -372,7 +372,7 @@ class TransferRequest(models.Model):
         verbose_name="Pasajero principal"
     )
     service_authorize = models.TextField(verbose_name="Autorización del Servicio", blank=True, null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Estado", blank=True, null=True, default='esperando validación' )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Estado", blank=True, null=True, default='validada' )
     executive_transfer = models.BooleanField(default=False, blank=True, null=True, verbose_name="Traslado ejecutivo")
     encomienda = models.BooleanField(default=False, blank=True, null=True, verbose_name="Encomienda")
     driver = models.BooleanField(default=False, blank=True, null=True, verbose_name="Conductor")

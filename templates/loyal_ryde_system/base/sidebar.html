@@ -867,6 +867,8 @@
 
 
 				<!-- Reportes -->
+				
+				{% if user.is_authenticated and user.role == 'administrador' %}
 				<div class="menu-item">
 					<div class="menu-content pt-8 pb-2">
 						<span
@@ -965,7 +967,7 @@
 						</div>
 					</div> -->
 				</div>
-				
+				{% endif %}
 
 
 

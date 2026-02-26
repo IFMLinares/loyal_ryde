@@ -52,10 +52,16 @@ class Index(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         now = timezone.now()
         start_of_month = now.replace(day=1)
-        context['latest_transfer_requests'] = TransferRequest.objects.all().order_by('-date_created')[:10]
-        context['in_progress_transfer_requests'] = TransferRequest.objects.filter(status='en proceso').order_by('-date_created')[:10]
-        context['total_transfer_requests'] = TransferRequest.objects.count()
-        context['total_records'] = TransferRequest.objects.filter(date_created__gte=start_of_month).count()
+        user = self.request.user
+        if user.is_superuser or (hasattr(user, 'company') and user.company and user.company.name == "Loyal Ride"):
+            base_qs = TransferRequest.objects.all()
+        else:
+            base_qs = TransferRequest.objects.filter(company=user.company)
+
+        context['latest_transfer_requests'] = base_qs.order_by('-date_created')[:10]
+        context['in_progress_transfer_requests'] = base_qs.filter(status='en proceso').order_by('-date_created')[:10]
+        context['total_transfer_requests'] = base_qs.count()
+        context['total_records'] = base_qs.filter(date_created__gte=start_of_month).count()
         return context
 
 class GeneralReportsView(TemplateView):
@@ -148,8 +154,10 @@ def approve_request(request):
         request_id = request.POST.get('request_id')
         transfer_request = TransferRequest.objects.get(id=request_id)
 
-        if transfer_request.service_requested.company != request.user.company:
-            return JsonResponse({'status': 'error', 'message': 'No puede aprobar solicitudes de otra compañía.'})
+        # Administradores pueden validar solicitudes de cualquier empresa; supervisores NO
+        if request.user.role != 'administrador':
+            if transfer_request.service_requested.company != request.user.company:
+                return JsonResponse({'status': 'error', 'message': 'No puede aprobar solicitudes de otra compañía.'})
 
         transfer_request.status = 'validada'
         transfer_request.approved_by = request.user
