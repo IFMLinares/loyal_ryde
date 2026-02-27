@@ -367,11 +367,20 @@ class TransferStartView(LoginRequiredMixin, View):
         except Exception:
             return JsonResponse({'status': 'error', 'message': 'ID inválido.'}, status=400)
         transfer = get_object_or_404(TransferRequest, pk=decoded_id)
-        if transfer.status != 'aprobada':
-            return JsonResponse({'status': 'error', 'message': 'No se puede iniciar el traslado. El estado debe ser "aprobada".'}, status=400)
-        transfer.status = 'en proceso'
-        transfer.save()
-        return JsonResponse({'status': 'success', 'message': 'Traslado iniciado.'})
+        status = (transfer.status or '').lower()
+        if status == 'aprobada':
+            transfer.status = 'en proceso'
+            transfer.save()
+            return JsonResponse({'status': 'success', 'message': 'Traslado iniciado.'})
+        if status == 'en proceso':
+            return JsonResponse({'status': 'error', 'message': 'El traslado ya fue iniciado.'}, status=400)
+        if status == 'finalizada':
+            return JsonResponse({'status': 'error', 'message': 'El traslado ya fue finalizado.'}, status=400)
+        if status == 'cancelada':
+            return JsonResponse({'status': 'error', 'message': 'El traslado fue cancelado.'}, status=400)
+        if status in ['esperando validación', 'validada']:
+            return JsonResponse({'status': 'error', 'message': 'El traslado debe ser aprobado antes de iniciarlo.'}, status=400)
+        return JsonResponse({'status': 'error', 'message': f'Estado no válido: {transfer.status}.'}, status=400)
 
 
 class TransferFinishView(LoginRequiredMixin, View):
@@ -393,15 +402,23 @@ class TransferFinishView(LoginRequiredMixin, View):
         except Exception:
             return JsonResponse({'status': 'error', 'message': 'ID inválido.'}, status=400)
         transfer = get_object_or_404(TransferRequest, pk=decoded_id)
-        if transfer.status != 'en proceso':
-            return JsonResponse({'status': 'error', 'message': 'No se puede finalizar el traslado. El estado debe ser "en proceso".'}, status=400)
+        status = (transfer.status or '').lower()
+        if status == 'en proceso':
+            # El comprobante debe venir en los archivos
+            comprobante = request.FILES.get('comprobante')
+            if not comprobante:
+                return JsonResponse({'status': 'error', 'message': 'El comprobante es obligatorio para finalizar el traslado.'}, status=400)
 
-        # El comprobante debe venir en los archivos
-        comprobante = request.FILES.get('comprobante')
-        if not comprobante:
-            return JsonResponse({'status': 'error', 'message': 'El comprobante es obligatorio para finalizar el traslado.'}, status=400)
-
-        transfer.comprobante = comprobante
-        transfer.status = 'finalizada'
-        transfer.save()
-        return JsonResponse({'status': 'success', 'message': 'Traslado finalizado.'})
+            transfer.comprobante = comprobante
+            transfer.status = 'finalizada'
+            transfer.save()
+            return JsonResponse({'status': 'success', 'message': 'Traslado finalizado.'})
+        if status == 'finalizada':
+            return JsonResponse({'status': 'error', 'message': 'El traslado ya fue finalizado.'}, status=400)
+        if status == 'aprobada':
+            return JsonResponse({'status': 'error', 'message': 'El traslado aún no ha sido iniciado. Debe iniciarlo antes de finalizar.'}, status=400)
+        if status == 'cancelada':
+            return JsonResponse({'status': 'error', 'message': 'El traslado fue cancelado.'}, status=400)
+        if status in ['esperando validación', 'validada']:
+            return JsonResponse({'status': 'error', 'message': 'El traslado debe ser aprobado e iniciado antes de finalizar.'}, status=400)
+        return JsonResponse({'status': 'error', 'message': f'Estado no válido: {transfer.status}.'}, status=400)
