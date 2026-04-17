@@ -53,22 +53,10 @@ Inicio
                                         {{ transfer_request.date|date:'d/m/Y'}}-{{ transfer_request.hour|date:'G:i' }}
                                     </td>
                                     <td class="text-center">
-                                        {% if transfer_request.zone_rate %}
-                                            {{ transfer_request.zone_rate.origin.name }}
-                                        {% elif transfer_request.rate and transfer_request.rate.route and transfer_request.rate.route.departure_point %}
-                                            {{ transfer_request.rate.route.departure_point.name }}
-                                        {% else %}
-                                            <span class="text-muted">N/D</span>
-                                        {% endif %}
+                                        {{ transfer_request.destination_direc|default:"N/D" }}
                                     </td>
                                     <td class="text-center">
-                                        {% if transfer_request.zone_rate %}
-                                            {{ transfer_request.zone_rate.destination.name }}
-                                        {% elif transfer_request.rate and transfer_request.rate.route and transfer_request.rate.route.arrival_point %}
-                                            {{ transfer_request.rate.route.arrival_point.name }}
-                                        {% else %}
-                                            <span class="text-muted">N/D</span>
-                                        {% endif %}
+                                        {{ transfer_request.departure_direc|default:"N/D" }}
                                     </td>
                                     <td class="text-center">
                                         {% if transfer_request.user_driver %}

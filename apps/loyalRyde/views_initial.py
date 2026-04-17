@@ -488,9 +488,11 @@ def get_whatsapp_link(request):
                 maps_url = ''
                 print(f"[WARN] Error building maps url: {e}")
 
+            tipo_traslado = "Ida y Vuelta" if transfer.is_round_trip else "Solo Ida"
             mensaje = (
                 f"Solicitud de traslado aprobada\n"
                 f"ID: {transfer.id}\n"
+                f"Tipo de traslado: {tipo_traslado}\n"
                 f"Conductor: {driver.user.get_full_name()}\n"
                 f"Pasajero(s): {persons}\n"
                 f"Salida: {transfer.destination_direc}\n"

@@ -10,3 +10,5 @@ db.sqlite3
 dump.rdb
 docker-compose.yml
 /db_data
+
+.agents/
