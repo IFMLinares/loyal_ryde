@@ -146,6 +146,11 @@ $(document).ready(function () {
 		});
 	});
 $(document).ready(function () {
+	// Inicializar waypointCount si no está definido (evita ReferenceError)
+	if (typeof window.waypointCount === 'undefined') {
+		window.waypointCount = $('.waypoint-div').length;
+	}
+
 	$("#id_date").daterangepicker({
 		singleDatePicker: true,
 		showDropdowns: true,
@@ -404,8 +409,8 @@ $(document).ready(function () {
 	updateCheckboxes();
 
 	$("#addWaypointBtn").on("click", function () {
-		waypointCount++;
-		console.log(waypointCount)
+		window.waypointCount++;
+		console.log(window.waypointCount)
 		var waypointsContainer = $("#waypointsContainer");
 		var waypointDiv = $("<div>")
 			.addClass("waypoint-div")
@@ -437,7 +442,7 @@ $(document).ready(function () {
 				waypointDiv.remove();
 				removeWaypointMarker(index);
 				updateWaypointNumbers();
-				waypointCount = waypointCount - 1
+				// Eliminado decremento manual redundante aquí
 				AditionalDetour();
 			});
 
@@ -469,37 +474,39 @@ $(document).ready(function () {
 	});
 
 	function updateWaypointNumbers() {
+		// Reiniciar contador para re-numerar correctamente desde el DOM
+		window.waypointCount = 0;
 		$(".waypoint-div").each(function (index, element) {
-			waypointCount++;
-			$(element).attr("data-index", waypointCount);
-			$(element).find("h3").text(`Desvío # ${waypointCount}`);
+			window.waypointCount++;
+			$(element).attr("data-index", window.waypointCount);
+			$(element).find("h3").text(`Desvío # ${window.waypointCount}`);
 			$(element)
 				.find("input[type='hidden']")
 				.each(function () {
 					var name = $(this).attr("name");
 					if (name.startsWith("lat_")) {
-						$(this).attr("id", `id_lat_${waypointCount + 2}`);
-						$(this).attr("name", `lat_${waypointCount + 2}`);
+						$(this).attr("id", `id_lat_${window.waypointCount + 2}`);
+						$(this).attr("name", `lat_${window.waypointCount + 2}`);
 					} else if (name.startsWith("lng_")) {
-						$(this).attr("id", `id_long_${waypointCount + 2}`);
-						$(this).attr("name", `lng_${waypointCount + 2}`);
+						$(this).attr("id", `id_long_${window.waypointCount + 2}`);
+						$(this).attr("name", `lng_${window.waypointCount + 2}`);
 					}
 				});
 		});
-		console.log(waypointCount + 'update')
-		$("#id_waypoints_numbers").val(waypointCount); // Actualiza el valor del input
+		console.log(window.waypointCount + ' update')
+		$("#id_waypoints_numbers").val(window.waypointCount); // Actualiza el valor del input
 		calculateRoute();
 	}
 	
 	function removeWaypointMarker(index) {
-		console.log(waypointCount + 'Eliminar')
+		console.log(window.waypointCount + ' Eliminar')
 		var marker = waypointMarkers[index - 1];
 		if (marker) {
 			marker.setMap(null);
 			waypointMarkers.splice(index - 1, 1);
 		}
-		waypointCount = waypointCount - 1
-		// updateWaypointNumbers(); // Llama a la función para actualizar el número de desvíos
+		// El decremento de waypointCount se manejará en updateWaypointNumbers() 
+		// al re-contar los elementos del DOM, evitando desincronización.
 		calculateRoute();
 	}
 
@@ -511,14 +518,15 @@ $(document).ready(function () {
 	function AditionalDetour(){
 		var detour_price = $('input[name="rate-checkbox"]:checked');
 		var detourLocalValue = parseFloat(detour_price.data('detour-local'));
-		var waypointCount = $('#waypointsContainer').children().length; // Asegúrate de definir waypointCount
+		// Usar el conteo real del DOM en lugar de la variable global para el cálculo de adicionales
+		var currentWaypoints = $('#waypointsContainer').children('.waypoint-div').length;
 
 		// Si detourLocalValue es NaN, se devuelve 0
 		if (isNaN(detourLocalValue)) {
 			detourLocalValue = 0;
 		}
 
-		$('#id_aditional').val(detourLocalValue * waypointCount);
+		$('#id_aditional').val(detourLocalValue * currentWaypoints);
 		$('#id_final_price').val(parseFloat($('#id_price').val()) + parseFloat($('#id_aditional').val()));
 	}
 
