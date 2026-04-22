@@ -1,6 +1,7 @@
 import calendar
 import logging
 import json
+import re
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
@@ -13,7 +14,6 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import strip_tags
-from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.urls import reverse_lazy
@@ -144,25 +144,32 @@ def get_people_transfer(request):
 
 @csrf_exempt
 def approve_request(request):
-    if request.method == 'POST':
-        print(request.user.role)
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Método no permitido.'}, status=405)
+
+    try:
         # Permitir solo a administradores o supervisores aprobar solicitudes
         if request.user.role not in ['administrador', 'supervisor']:
-            return JsonResponse({'status': 'error', 'message': 'No tiene permisos para aprobar esta solicitud.'})
-
+            return JsonResponse({'status': 'error', 'message': 'No tiene permisos para validar esta solicitud.'})
 
         request_id = request.POST.get('request_id')
-        transfer_request = TransferRequest.objects.get(id=request_id)
+        if not request_id:
+            return JsonResponse({'status': 'error', 'message': 'ID de solicitud no proporcionado.'})
+
+        transfer_request = get_object_or_404(TransferRequest, id=request_id)
 
         # Administradores pueden validar solicitudes de cualquier empresa; supervisores NO
         if request.user.role != 'administrador':
-            if transfer_request.service_requested.company != request.user.company:
-                return JsonResponse({'status': 'error', 'message': 'No puede aprobar solicitudes de otra compañía.'})
+            if transfer_request.company != request.user.company:
+                return JsonResponse({'status': 'error', 'message': 'No puede validar solicitudes de otra compañía.'})
 
         transfer_request.status = 'validada'
         transfer_request.approved_by = request.user
         transfer_request.save()
         return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido validada con éxito.'})
+    except Exception as e:
+        logger.exception("Error al validar solicitud: %s", str(e))
+        return JsonResponse({'status': 'error', 'message': f'Error interno del servidor: {str(e)}'}, status=500)
 
 def send_approval_email(transfer_request):
     # Obtener los correos de los administradores
@@ -196,23 +203,40 @@ def send_approval_email(transfer_request):
 
 @csrf_exempt
 def approve_request_admin(request):
-    if request.method == 'POST':
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Método no permitido.'}, status=405)
+
+    try:
         if request.user.role != 'administrador':
             return JsonResponse({'status': 'error', 'message': 'No tiene permisos para aprobar esta solicitud.'})
 
         request_id = request.POST.get('request_id')
-        transfer_request = TransferRequest.objects.get(id=request_id)
+        if not request_id:
+            return JsonResponse({'status': 'error', 'message': 'ID de solicitud no proporcionado.'})
+
+        transfer_request = get_object_or_404(TransferRequest, id=request_id)
 
         if not transfer_request.user_driver:
             return JsonResponse({'status': 'error', 'message': 'No ha seleccionado un conductor.'})
-        else:
-            transfer_request.status = 'aprobada'
-            transfer_request.save()
+        
+        transfer_request.status = 'aprobada'
+        transfer_request.save()
 
-            # Enviar notificación por correo
+        # Enviar notificación por correo
+        try:
             send_approval_email(transfer_request)
+        except Exception as mail_error:
+            logger.error("Error al enviar correo de aprobación: %s", str(mail_error))
+            # No bloqueamos el éxito de la aprobación si falla el correo, pero avisamos en el log
+            return JsonResponse({
+                'status': 'success', 
+                'message': 'La solicitud ha sido aprobada con éxito, pero hubo un error al enviar las notificaciones por correo.'
+            })
 
-            return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido aprobada con éxito.'})
+        return JsonResponse({'status': 'success', 'message': 'La solicitud ha sido aprobada con éxito.'})
+    except Exception as e:
+        logger.exception("Error al aprobar solicitud (admin): %s", str(e))
+        return JsonResponse({'status': 'error', 'message': f'Error interno del servidor: {str(e)}'}, status=500)
 
 @csrf_exempt
 def cancel_request(request):

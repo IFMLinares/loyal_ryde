@@ -197,6 +197,8 @@
     let url_approve_ajax = "{% url 'core:transfer_request_approve' %}";
     let url_approve_ajax_admin = "{% url 'core:transfer_request_approve_admin' %}";
     let url_cancel_ajax = "{% url 'core:transfer_request_cancel' %}";
+    let url_list = "{% url 'core:trips_hold' %}";
+    let csr_token = "{{ csrf_token }}";
     </script>   
     <script src="{% static 'trasnfer_request_list.js' %}"></script>
     <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
