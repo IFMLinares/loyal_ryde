@@ -44,6 +44,18 @@
                     <td class="label">Conductor</td>
                     <td class="value">{{ transfer_request.user_driver.user.get_full_name }}</td>
                 </tr>
+                {% if transfer_request.user_driver %}
+                <tr>
+                    <td class="label">Vehículo</td>
+                    <td class="value">
+                        {{ transfer_request.user_driver.type.type }} 
+                        {{ transfer_request.user_driver.marca }} 
+                        {{ transfer_request.user_driver.model }} 
+                        ({{ transfer_request.user_driver.color }}) — 
+                        Placa: {{ transfer_request.user_driver.plaque }}
+                    </td>
+                </tr>
+                {% endif %}
                 <tr>
                     <td class="label">Pasajero(s)</td>
                     <td class="value">
