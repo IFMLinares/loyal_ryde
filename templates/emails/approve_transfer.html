@@ -44,6 +44,10 @@
                     <td class="label">Conductor</td>
                     <td class="value">{{ transfer_request.user_driver.user.get_full_name }}</td>
                 </tr>
+                <tr>
+                    <td class="label">Teléfono Conductor</td>
+                    <td class="value">{{ transfer_request.user_driver.user.phone }}</td>
+                </tr>
                 {% if transfer_request.user_driver %}
                 <tr>
                     <td class="label">Vehículo</td>

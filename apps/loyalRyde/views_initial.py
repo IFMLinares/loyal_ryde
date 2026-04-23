@@ -523,6 +523,7 @@ def get_whatsapp_link(request):
                 f"ID: {transfer.id}\n"
                 f"Tipo de traslado: {tipo_traslado}\n"
                 f"Conductor: {driver.user.get_full_name()}\n"
+                f"Teléfono Conductor: {driver.user.phone}\n"
                 f"{vehiculo_info}"
                 f"Pasajero(s): {persons}\n"
                 f"Salida: {transfer.destination_direc}\n"
