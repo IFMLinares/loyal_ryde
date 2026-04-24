@@ -100,7 +100,9 @@
 <!-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> -->
 <script>
 $(document).ready(function() {
-    $('#transfer_list_table').DataTable();
+    $('#transfer_list_table').DataTable({
+        pageLength: 100
+    });
 
     // Mantener los valores de los filtros después de la recarga
     var urlParams = new URLSearchParams(window.location.search);

@@ -160,7 +160,8 @@
 <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
         <script>
                 $('#kt_ecommerce_category_table').DataTable({
-                    "order": [[0, "desc"]]
+                    "order": [[0, "desc"]],
+                    "pageLength": 100
                 });
             
 			{% if messages %}

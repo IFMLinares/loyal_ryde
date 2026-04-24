@@ -1,5 +1,6 @@
 $(document).ready(function() {
     $('#transfer_list_table').DataTable({
+        pageLength: 100,
         order: [[1, 'desc']], // Ordenar por la segunda columna (Fecha y Hora) de forma descendente
         columnDefs: [
             { type: 'datetime-ddmmyyyy-hhmm', targets: 1 } // Definir el tipo de columna personalizada para la fecha y hora

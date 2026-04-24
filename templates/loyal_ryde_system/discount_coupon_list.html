@@ -61,7 +61,9 @@
 <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
 <script>
     $(document).ready(function() {
-        $('#discount_coupon_table').DataTable();
+        $('#discount_coupon_table').DataTable({
+            pageLength: 100
+        });
 
         $('.eliminar-coupon').click(function(e) {
             e.preventDefault();

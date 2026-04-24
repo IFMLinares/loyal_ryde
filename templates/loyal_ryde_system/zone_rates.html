@@ -105,7 +105,8 @@
       searching: true,
       ordering: true,
       info: true,
-      language: { url: "{% static 'datatables/es.json' %}" }
+      language: { url: "{% static 'datatables/es.json' %}" },
+      pageLength: 100
     });
     $('[data-kt-ecommerce-category-filter="search"]').on('keyup', function() {
       table.search(this.value).draw();
